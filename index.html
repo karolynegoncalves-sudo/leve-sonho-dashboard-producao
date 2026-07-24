@@ -412,8 +412,9 @@ const st = {pol:{}, ela:{}, viv:{}, elas:{}, bot:{}};
 function stKey(label){ return label.replace(/\s/g,'_'); }
 
 // ─── SINCRONIZAÇÃO EM TEMPO REAL (Google Sheets via Apps Script) ──
+const DEFAULT_SYNC_URL='https://script.google.com/macros/s/AKfycbx3CT7Qd1mmIKV7k9EyUCAwyazeHEbMzOJRvBRmYgkERe5B4fgvLdJ9XR2CCVotIrG9/exec';
 const SYNC_URL_KEY='ls_sync_url', SYNC_USER_KEY='ls_sync_user', SYNC_POLL_MS=15000;
-let syncUrl=localStorage.getItem(SYNC_URL_KEY)||'';
+let syncUrl=localStorage.getItem(SYNC_URL_KEY)||DEFAULT_SYNC_URL;
 let syncUser=localStorage.getItem(SYNC_USER_KEY)||'';
 let syncTimer=null, syncInFlight=false;
 
@@ -984,6 +985,7 @@ renderPlano(); renderEnc(); buildPol(); buildEla(); buildViv(); buildElas(); bui
 if(syncUrl){
   setSyncStatus('busy','Conectando...');
   syncPull().then(()=>{ renderPlano(); startSyncPolling(); });
+  if(!syncUser) toggleSyncPanel();
 } else {
   setSyncStatus('off','Sincronização não configurada — clique em ⚙️ para ligar');
 }
