@@ -88,10 +88,15 @@ tr.row-ok td{color:#555}
 .enc-cor{flex:1;min-width:110px}
 .c-qtd{width:70px;text-align:right;color:#555}
 .c-fol{width:90px;text-align:right;font-weight:bold;color:#3949ab}
+.c-cortada{width:100px;padding-left:10px;text-align:right}
+.c-cortada input[type=number]{width:74px;padding:3px 6px;border:1px solid #ccc;border-radius:4px;font-size:11px;text-align:right}
+.c-cortada input:focus{outline:none;border-color:#3949ab}
 .c-med{width:100px;text-align:right;color:#c0392b;font-weight:bold}
 .c-dat{width:140px;padding-left:10px}
 .c-dat input[type=date]{border:1px solid #ccc;border-radius:4px;padding:3px 6px;font-size:11px;width:128px;color:#333}
 .c-dat input:focus{outline:none;border-color:#3949ab}
+.enc-row.parcial{background:#fff8e1!important}
+.enc-row.parcial .enc-cor{color:#8d6e00;font-weight:bold}
 .enc-resumo{display:flex;gap:8px;padding:8px 14px;background:#fafbff;border-top:2px solid #e8eaf6;flex-wrap:wrap}
 .enc-tag{font-size:11px;background:#e8eaf6;color:#3949ab;padding:2px 8px;border-radius:10px}
 .enc-tag.warn{background:#fff3e0;color:#e65100}
@@ -99,6 +104,15 @@ tr.row-ok td{color:#555}
 .enc-prod-sep{padding:8px 14px 4px;font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:.5px;border-top:2px solid #ede9ff;background:#faf9ff}
 .prog-wrap{height:5px;background:#e0e0e0;border-radius:3px;margin-top:4px}
 .prog-bar{height:100%;background:#2e7d32;border-radius:3px;transition:width .3s}
+.falta-item{border:1px solid #e0e0e0;border-radius:8px;margin-bottom:10px;padding:10px 14px;background:#fff}
+.falta-item.falta-pendente{border-left:4px solid #e65100;background:#fffaf5}
+.falta-item-hdr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:12px}
+.falta-qtd{margin-left:auto;font-size:11px;color:#555}
+.falta-item-body{display:flex;gap:10px;flex-wrap:wrap}
+.falta-item-body select{padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:12px;min-width:210px}
+.falta-item-body select:focus{outline:none;border-color:#3949ab}
+.falta-item-body textarea{flex:1;min-width:220px;min-height:36px;padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:12px;font-family:inherit;resize:vertical}
+.falta-item-body textarea:focus{outline:none;border-color:#3949ab}
 .syncbar{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
 .sync-status{font-size:11.5px;font-weight:bold;padding:4px 10px;border-radius:12px;background:#f0f2f5}
 .sync-status.ok{background:#e8f5e9;color:#2e7d32}
@@ -149,6 +163,7 @@ tr.row-ok td{color:#555}
 <div class="tabs">
   <button class="tab active" onclick="showTab('plano',this)">📋 Plano</button>
   <button class="tab" onclick="showTab('enc',this)">✂️ Encaixe de Corte</button>
+  <button class="tab" onclick="showTab('falta',this)">📝 Cortes que Faltaram</button>
   <button class="tab" onclick="showTab('pol',this)">🧶 Cetim Poliéster</button>
   <button class="tab" onclick="showTab('ela',this)">🧶 Cetim Elastano</button>
   <button class="tab" onclick="showTab('viv',this)">🎀 Vivo</button>
@@ -211,6 +226,16 @@ tr.row-ok td{color:#555}
   </div>
   <div class="enc-busca-res" id="enc-busca-res"></div>
   <div id="enc-body"></div>
+</div>
+
+<!-- CORTES QUE FALTARAM -->
+<div id="falta" class="section">
+  <h2>📝 Cortes que Faltaram — Justificativas</h2>
+  <div class="banner" style="margin-bottom:14px">
+    Preenchido automaticamente quando a quantidade cortada (aba Encaixe de Corte) fica abaixo da quantidade sugerida. Escolha o motivo e, se quiser, adicione uma observação — fica registrado pra sempre com data, quantidade e quem preencheu.
+  </div>
+  <div class="sgrid" id="falta-cards"></div>
+  <div id="falta-body"></div>
 </div>
 
 <!-- CETIM POLIÉSTER -->
@@ -478,9 +503,23 @@ function applyRemoteState(rowsIn){
     const campo2=(r.campo2===undefined||r.campo2===null)?'':r.campo2;
     const by=r.atualizado_por||'', at=r.atualizado_em||'';
     if(aba==='enc'){
+      let parsed={date:'',qtd:'',motivo:'',obs:''};
+      if(campo2){
+        try{
+          const p=JSON.parse(campo2);
+          if(p&&typeof p==='object'){
+            parsed={date:p.date||'',qtd:(p.qtd===undefined||p.qtd===null)?'':p.qtd,motivo:p.motivo||'',obs:p.obs||''};
+          } else {
+            parsed.date=String(campo2).slice(0,10);
+          }
+        }catch(e){
+          parsed.date=String(campo2).slice(0,10); // formato antigo (só data, antes desta atualização)
+        }
+      }
       const cur=encSt[chave];
-      if(!cur||cur.chk!==ok||String(cur.date||'')!==String(campo2)||cur.by!==by){
-        encSt[chave]={chk:ok,date:campo2?String(campo2).slice(0,10):'',by,at};
+      const diff=!cur||cur.chk!==ok||cur.date!==parsed.date||String(cur.qtd??'')!==String(parsed.qtd)||cur.motivo!==parsed.motivo||cur.obs!==parsed.obs||cur.by!==by;
+      if(diff){
+        encSt[chave]={chk:ok,date:parsed.date,qtd:parsed.qtd,motivo:parsed.motivo,obs:parsed.obs,by,at};
         changed=true;
       }
     } else {
@@ -506,8 +545,13 @@ function syncPush(aba,chave,campo1,campo2){
     });
 }
 function rerenderAll(){
-  buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderEnc();
+  buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderEnc(); renderFaltaram();
 }
+function pushEnc(k){
+  const s=encSt[k]||{};
+  syncPush('enc',k,!!s.chk,JSON.stringify({date:s.date||'',qtd:(s.qtd===undefined||s.qtd===null)?'':s.qtd,motivo:s.motivo||'',obs:s.obs||''}));
+}
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function mkCkInput(tab, key, checked, onchange){
   return `<input type="checkbox" class="ck-ok" ${checked?'checked':''} onchange="${onchange}">`;
@@ -835,18 +879,58 @@ function encBusca(v){
   el.innerHTML=`🔍 <b>${m[0].cor}</b> — Total: <b>${total} peças</b> · ${partes} · ${m.length} combinações`;
 }
 
-function renderEnc(){
-  const grupos=calcEnc(), cont=document.getElementById('enc-body');
-  let tInf=0,tVar=0,tCort=0;
+function encRowStatus(k,sug){
+  const s=encSt[k];
+  if(!s||!s.chk) return 'pendente';
+  const raw=s.qtd;
+  const cortada=(raw===''||raw===undefined||raw===null)?sug:parseFloat(raw);
+  if(isNaN(cortada)) return 'pendente';
+  return cortada>=sug?'completo':'parcial';
+}
+function updateEncRowVisual(k,rowId,sug){
+  const row=document.getElementById(rowId);
+  if(!row)return;
+  const status=encRowStatus(k,sug);
+  row.classList.toggle('cortado',status==='completo');
+  row.classList.toggle('parcial',status==='parcial');
+}
+function refreshEncCards(){
+  const grupos=calcEnc();
+  let tInf=0,tVar=0,tCompleto=0,tParcial=0;
   grupos.forEach(g=>{
     tInf+=g.infestos.length;
-    g.infestos.forEach((inf,ii)=>inf.cores.forEach(c=>{tVar++;if(encSt[encKey(g.prod,g.tam,ii,c.cor)]?.chk)tCort++;}));
+    g.infestos.forEach((inf,ii)=>inf.cores.forEach(c=>{
+      tVar++;
+      const st_=encRowStatus(encKey(g.prod,g.tam,ii,c.cor),c.qtd);
+      if(st_==='completo')tCompleto++; else if(st_==='parcial')tParcial++;
+    }));
   });
-  const pct=tVar?Math.round(tCort/tVar*100):0;
+  const pct=tVar?Math.round(tCompleto/tVar*100):0;
+  const cards=document.getElementById('enc-cards');
+  if(!cards)return;
+  const sc=cards.querySelectorAll('.scard');
+  if(sc[1]){sc[1].querySelector('.v').textContent=`${tCompleto}/${tVar}`;const pb=sc[1].querySelector('.prog-bar');if(pb)pb.style.width=pct+'%';}
+  if(sc[2])sc[2].querySelector('.v').textContent=tVar-tCompleto;
+  if(sc[3])sc[3].querySelector('.v').textContent=tParcial;
+}
+
+function renderEnc(){
+  const grupos=calcEnc(), cont=document.getElementById('enc-body');
+  let tInf=0,tVar=0,tCompleto=0,tParcial=0;
+  grupos.forEach(g=>{
+    tInf+=g.infestos.length;
+    g.infestos.forEach((inf,ii)=>inf.cores.forEach(c=>{
+      tVar++;
+      const st_=encRowStatus(encKey(g.prod,g.tam,ii,c.cor),c.qtd);
+      if(st_==='completo')tCompleto++; else if(st_==='parcial')tParcial++;
+    }));
+  });
+  const pct=tVar?Math.round(tCompleto/tVar*100):0;
   document.getElementById('enc-cards').innerHTML=
     `<div class="scard"><div class="v">${tInf}</div><div class="l">Total de infestos</div></div>`+
-    `<div class="scard grn"><div class="v">${tCort}/${tVar}</div><div class="l">Variações cortadas</div><div class="prog-wrap"><div class="prog-bar" style="width:${pct}%"></div></div></div>`+
-    `<div class="scard ora"><div class="v">${tVar-tCort}</div><div class="l">Pendentes</div></div>`+
+    `<div class="scard grn"><div class="v">${tCompleto}/${tVar}</div><div class="l">Variações cortadas</div><div class="prog-wrap"><div class="prog-bar" style="width:${pct}%"></div></div></div>`+
+    `<div class="scard ora"><div class="v">${tVar-tCompleto}</div><div class="l">Pendentes</div></div>`+
+    `<div class="scard red"><div class="v">${tParcial}</div><div class="l">⚠️ Cortes incompletos</div></div>`+
     `<div class="scard"><div class="v">6/dia</div><div class="l">Infestos por tam/dia (sugerido)</div></div>`;
 
   let html='', lastTipo=null;
@@ -857,11 +941,11 @@ function renderEnc(){
     if(encFiltro!=='todos'&&encFiltro!=='pendentes'&&encFiltro!=='cortados'&&g.tipo!==encFiltro)return;
     let temVis=false;
     g.infestos.forEach((inf,ii)=>inf.cores.forEach(c=>{
-      const k=encKey(g.prod,g.tam,ii,c.cor), cort=!!encSt[k]?.chk;
+      const k=encKey(g.prod,g.tam,ii,c.cor), status=encRowStatus(k,c.qtd);
       const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
       if(!mb)return;
-      if(encFiltro==='pendentes'&&!cort)temVis=true;
-      if(encFiltro==='cortados'&&cort)temVis=true;
+      if(encFiltro==='pendentes'&&status!=='completo')temVis=true;
+      if(encFiltro==='cortados'&&status==='completo')temVis=true;
       if(encFiltro==='todos'||encFiltro===g.tipo)temVis=true;
     }));
     if(!temVis)return;
@@ -875,17 +959,17 @@ function renderEnc(){
     g.infestos.forEach((inf,ii)=>{
       let infVis=false;
       inf.cores.forEach(c=>{
-        const k=encKey(g.prod,g.tam,ii,c.cor),cort=!!encSt[k]?.chk;
+        const k=encKey(g.prod,g.tam,ii,c.cor),status=encRowStatus(k,c.qtd);
         const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
         if(!mb)return;
-        if(encFiltro==='pendentes'&&!cort)infVis=true;
-        if(encFiltro==='cortados'&&cort)infVis=true;
+        if(encFiltro==='pendentes'&&status!=='completo')infVis=true;
+        if(encFiltro==='cortados'&&status==='completo')infVis=true;
         if(encFiltro==='todos'||encFiltro===g.tipo)infVis=true;
       });
       if(!infVis)return;
       const diaNum=Math.floor(ii/6)+1;
       const nFolhasInf=g.dobrado?Math.ceil(inf.total/2):inf.total;
-      const todasCort=inf.cores.every(c=>!!encSt[encKey(g.prod,g.tam,ii,c.cor)]?.chk);
+      const todasCort=inf.cores.every(c=>encRowStatus(encKey(g.prod,g.tam,ii,c.cor),c.qtd)==='completo');
       html+=`<div class="enc-infesto" style="border-bottom:1px solid #f0f0f0">
         <div class="enc-inf-hdr">
           <span class="inf-badge">Infesto ${ii+1}</span>
@@ -896,19 +980,24 @@ function renderEnc(){
         <div class="col-hdr">
           <div class="c-chk"></div><div class="enc-cor">Cor</div>
           <div class="c-qtd">Qtd pç</div><div class="c-fol">Nº folhas</div>
+          <div class="c-cortada">Qtd Cortada</div>
           <div class="c-med">Medida folha</div><div class="c-dat">Data do corte</div>
         </div>`;
       inf.cores.forEach(c=>{
         const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
         if(!mb)return;
-        const k=encKey(g.prod,g.tam,ii,c.cor), cort=!!encSt[k]?.chk, dataVal=encSt[k]?.date||'';
+        const k=encKey(g.prod,g.tam,ii,c.cor), s=encSt[k]||{};
+        const cort=!!s.chk, dataVal=s.date||'';
+        const cortadaVal=(s.qtd===''||s.qtd===undefined||s.qtd===null)?'':s.qtd;
+        const status=encRowStatus(k,c.qtd);
         const nFol=g.dobrado?Math.ceil(c.qtd/2):c.qtd;
         const rowId='r_'+k.replace(/[|]/g,'_').replace(/\s/g,'_');
-        html+=`<div class="enc-row${cort?' cortado':''}" id="${rowId}"${syncTip(encSt[k])}>
-          <div class="c-chk"><input type="checkbox" ${cort?'checked':''} onchange="togChk('${k}',this,'${rowId}')"></div>
+        html+=`<div class="enc-row${status==='completo'?' cortado':''}${status==='parcial'?' parcial':''}" id="${rowId}"${syncTip(s)}>
+          <div class="c-chk"><input type="checkbox" ${cort?'checked':''} onchange="togChk('${k}',this,'${rowId}',${c.qtd})"></div>
           <div class="enc-cor">${dot(c.cor)}</div>
           <div class="c-qtd">${c.qtd} pç</div>
           <div class="c-fol">${nFol} folhas</div>
+          <div class="c-cortada"><input type="number" min="0" step="1" placeholder="—" value="${cortadaVal}" oninput="setQtdCortada('${k}',this.value,${c.qtd},'${rowId}')"></div>
           <div class="c-med">${f2(g.medFolha)} m</div>
           <div class="c-dat"><input type="date" value="${dataVal}" ${cort?'':'disabled'} onchange="setDat('${k}',this.value)"></div>
         </div>`;
@@ -927,26 +1016,94 @@ function renderEnc(){
   cont.innerHTML=html||'<p style="padding:16px;color:#999">Nenhum item encontrado.</p>';
 }
 
-function togChk(k,el,rowId){
-  if(!encSt[k])encSt[k]={chk:false,date:''};
+function togChk(k,el,rowId,sug){
+  if(!encSt[k])encSt[k]={chk:false,date:'',qtd:'',motivo:'',obs:''};
   encSt[k].chk=el.checked;
   const row=document.getElementById(rowId);
   if(row){
-    row.classList.toggle('cortado',el.checked);
     const di=row.querySelector('input[type=date]');
-    if(di){di.disabled=!el.checked;if(el.checked&&!di.value){const t=new Date().toISOString().split('T')[0];di.value=t;encSt[k].date=t;}}
+    const qi=row.querySelector('.c-cortada input');
+    if(el.checked){
+      if(encSt[k].qtd===''||encSt[k].qtd===undefined||encSt[k].qtd===null){
+        encSt[k].qtd=sug;
+        if(qi)qi.value=sug;
+      }
+      if(di&&!di.value){const t=new Date().toISOString().split('T')[0];di.value=t;encSt[k].date=t;}
+    }
+    if(di)di.disabled=!el.checked;
+    updateEncRowVisual(k,rowId,sug);
   }
-  const grupos=calcEnc(); let tv=0,tc=0;
-  grupos.forEach(g=>g.infestos.forEach((inf,ii)=>inf.cores.forEach(c=>{tv++;if(encSt[encKey(g.prod,g.tam,ii,c.cor)]?.chk)tc++;})));
-  const pct=tv?Math.round(tc/tv*100):0;
-  const cards=document.getElementById('enc-cards');
-  if(cards){const sc=cards.querySelectorAll('.scard');if(sc[1]){sc[1].querySelector('.v').textContent=`${tc}/${tv}`;const pb=sc[1].querySelector('.prog-bar');if(pb)pb.style.width=pct+'%';}if(sc[2])sc[2].querySelector('.v').textContent=tv-tc;}
-  syncPush('enc',k,encSt[k].chk,encSt[k].date);
+  refreshEncCards();
+  renderFaltaram();
+  pushEnc(k);
+}
+function setQtdCortada(k,val,sug,rowId){
+  if(!encSt[k])encSt[k]={chk:false,date:'',qtd:'',motivo:'',obs:''};
+  encSt[k].qtd=val;
+  updateEncRowVisual(k,rowId,sug);
+  refreshEncCards();
+  renderFaltaram();
+  pushEnc(k);
 }
 function setDat(k,v){
-  if(!encSt[k])encSt[k]={chk:true,date:''};
+  if(!encSt[k])encSt[k]={chk:true,date:'',qtd:'',motivo:'',obs:''};
   encSt[k].date=v;
-  syncPush('enc',k,encSt[k].chk,encSt[k].date);
+  pushEnc(k);
+}
+
+// ─── CORTES QUE FALTARAM (justificativas) ────────────────
+const MOTIVOS_FALTA=['Falta de tecido','Mudança de estratégia','Problema na máquina','Falta de energia','Outro'];
+function setMotivo(k,val){
+  if(!encSt[k])encSt[k]={chk:true,date:'',qtd:'',motivo:'',obs:''};
+  encSt[k].motivo=val;
+  renderFaltaram();
+  pushEnc(k);
+}
+function setObs(k,val){
+  if(!encSt[k])encSt[k]={chk:true,date:'',qtd:'',motivo:'',obs:''};
+  encSt[k].obs=val;
+  pushEnc(k);
+}
+function renderFaltaram(){
+  const cardsEl=document.getElementById('falta-cards'), bodyEl=document.getElementById('falta-body');
+  if(!cardsEl||!bodyEl)return;
+  const grupos=calcEnc();
+  const itens=[];
+  grupos.forEach(g=>{
+    g.infestos.forEach((inf,ii)=>{
+      inf.cores.forEach(c=>{
+        const k=encKey(g.prod,g.tam,ii,c.cor);
+        if(encRowStatus(k,c.qtd)!=='parcial')return;
+        const s=encSt[k]||{};
+        const cortada=(s.qtd===''||s.qtd===undefined||s.qtd===null)?0:parseFloat(s.qtd);
+        itens.push({k,g,ii,c,sug:c.qtd,cortada,falta:c.qtd-cortada,date:s.date||'',motivo:s.motivo||'',obs:s.obs||''});
+      });
+    });
+  });
+  const semJust=itens.filter(i=>!i.motivo).length;
+  cardsEl.innerHTML=
+    `<div class="scard ora"><div class="v">${itens.length}</div><div class="l">Cortes incompletos</div></div>`+
+    `<div class="scard red"><div class="v">${semJust}</div><div class="l">Sem justificativa ainda</div></div>`+
+    `<div class="scard grn"><div class="v">${itens.length-semJust}</div><div class="l">Já justificados</div></div>`;
+  if(!itens.length){bodyEl.innerHTML='<p style="padding:16px;color:#999">Nenhum corte incompleto no momento — tudo em dia! ✅</p>';return;}
+  const tBadge={RMC:'b-rmc',RIF:'b-rif',PMC:'b-pmc',PMI:'b-pmi'};
+  bodyEl.innerHTML=itens.map(i=>{
+    const opts=MOTIVOS_FALTA.map(m=>`<option value="${m}" ${i.motivo===m?'selected':''}>${m}</option>`).join('');
+    return `<div class="falta-item${i.motivo?'':' falta-pendente'}">
+      <div class="falta-item-hdr">
+        <span class="badge ${tBadge[i.g.tipo]}">${i.g.tipo}</span>
+        <b>${dot(i.c.cor)}</b> — ${i.g.prod} Tam. ${i.g.tam} <span class="na">(Infesto ${i.ii+1}${i.date?' · cortado em '+i.date.split('-').reverse().join('/'):''})</span>
+        <span class="falta-qtd">Sugerido: <b>${i.sug}</b> pç · Cortado: <b>${i.cortada}</b> pç · <span class="falta-pos">Faltou: ${i.falta} pç</span></span>
+      </div>
+      <div class="falta-item-body">
+        <select onchange="setMotivo('${i.k}',this.value)">
+          <option value="">Selecione o motivo...</option>
+          ${opts}
+        </select>
+        <textarea placeholder="Observações (opcional)" oninput="setObs('${i.k}',this.value)">${esc(i.obs)}</textarea>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function showTab(id,btn){
@@ -974,14 +1131,14 @@ function importState(file){
       const data = JSON.parse(e.target.result);
       if(data.st){ Object.keys(st).forEach(k=>{ if(data.st[k]) st[k]=data.st[k]; }); }
       if(data.encSt){ Object.keys(encSt).forEach(k=>delete encSt[k]); Object.assign(encSt, data.encSt); }
-      renderPlano(); renderEnc(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot();
+      renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot();
       alert('Backup carregado! (salvo em '+(data.savedAt||'').slice(0,10)+')');
     }catch(err){ alert('Não consegui ler esse arquivo: '+err.message); }
   };
   reader.readAsText(file);
 }
 
-renderPlano(); renderEnc(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot();
+renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot();
 if(syncUrl){
   setSyncStatus('busy','Conectando...');
   syncPull().then(()=>{ renderPlano(); startSyncPolling(); });
