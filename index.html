@@ -168,8 +168,8 @@ tr.row-ok td{color:#555}
   <button class="tab" onclick="showTab('ela',this)">🧶 Cetim Elastano</button>
   <button class="tab" onclick="showTab('viv',this)">🎀 Vivo</button>
   <button class="tab" onclick="showTab('elas',this)">🔵 Elástico</button>
-  <button class="tab" onclick="showTab('compras',this)">🛒 Lista de Compras</button>
   <button class="tab" onclick="showTab('bot',this)">🔘 Botões</button>
+  <button class="tab" onclick="showTab('compras',this)">🛒 Lista de Compras</button>
 </div>
 
 <!-- PLANO -->
@@ -320,16 +320,6 @@ tr.row-ok td{color:#555}
   <p class="note">* Sem distinção de cor. Rolos de 25m. Elástico do Pijama Inverno usa a mesma taxa m/peça do Pijama Verão (mesmo padrão de "short"). Informe rolos FECHADOS em estoque.</p>
 </div>
 
-<!-- LISTA DE COMPRAS -->
-<div id="compras" class="section">
-  <h2>🛒 Lista de Compras</h2>
-  <div class="banner" style="margin-bottom:14px">
-    Preenchida automaticamente: todo item marcado (✓) nas abas de insumo cuja quantidade em estoque (rolos/pacotes fechados) fica abaixo do necessário aparece aqui com a diferença a comprar.
-  </div>
-  <div class="sgrid" id="compras-cards"></div>
-  <div id="compras-body"></div>
-</div>
-
 <!-- BOTÕES -->
 <div id="bot" class="section">
   <h2>🔘 Botões — Pijama Verão + Inverno (5 por peça)</h2>
@@ -350,6 +340,16 @@ tr.row-ok td{color:#555}
     <tfoot id="bot-foot"></tfoot>
   </table>
   <p class="note">* Consolidado por cor de botão. Inclui Pijama Verão + Pijama Inverno (mesmo padrão de cor contrastante). Informe pacotes FECHADOS (50un) em estoque, não botões avulsos.</p>
+</div>
+
+<!-- LISTA DE COMPRAS -->
+<div id="compras" class="section">
+  <h2>🛒 Lista de Compras</h2>
+  <div class="banner" style="margin-bottom:14px">
+    Preenchida automaticamente: todo item marcado (✓) nas abas de insumo cuja quantidade em estoque (rolos/pacotes fechados) fica abaixo do necessário aparece aqui com a diferença a comprar.
+  </div>
+  <div class="sgrid" id="compras-cards"></div>
+  <div id="compras-body"></div>
 </div>
 
 <script>
