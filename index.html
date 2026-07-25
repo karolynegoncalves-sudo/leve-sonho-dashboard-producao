@@ -168,6 +168,7 @@ tr.row-ok td{color:#555}
   <button class="tab" onclick="showTab('ela',this)">🧶 Cetim Elastano</button>
   <button class="tab" onclick="showTab('viv',this)">🎀 Vivo</button>
   <button class="tab" onclick="showTab('elas',this)">🔵 Elástico</button>
+  <button class="tab" onclick="showTab('compras',this)">🛒 Lista de Compras</button>
   <button class="tab" onclick="showTab('bot',this)">🔘 Botões</button>
 </div>
 
@@ -248,13 +249,13 @@ tr.row-ok td{color:#555}
       <th>Cor</th>
       <th class="r">Necessário (m)</th>
       <th class="r">Rolos 60m</th>
-      <th class="r">Temos (m)</th>
-      <th class="r">Falta (m)</th>
+      <th class="r">Temos (rolos)</th>
+      <th class="r">Falta (rolos)</th>
     </tr></thead>
     <tbody id="pol-body"></tbody>
     <tfoot id="pol-foot"></tfoot>
   </table>
-  <p class="note">* Cada rolo = 60m. Marque ✓ e informe quanto já tem em estoque — o "Falta" recalcula na hora.</p>
+  <p class="note">* Cada rolo = 60m. Marque ✓ e informe quantos rolos FECHADOS já tem em estoque (não conte rolos abertos) — o "Falta" recalcula na hora e vai para a Lista de Compras.</p>
 </div>
 
 <!-- CETIM ELASTANO -->
@@ -268,13 +269,13 @@ tr.row-ok td{color:#555}
       <th>Vivo/Botão</th>
       <th class="r">Necessário (m)</th>
       <th class="r">Rolos 60m</th>
-      <th class="r">Temos (m)</th>
-      <th class="r">Falta (m)</th>
+      <th class="r">Temos (rolos)</th>
+      <th class="r">Falta (rolos)</th>
     </tr></thead>
     <tbody id="ela-body"></tbody>
     <tfoot id="ela-foot"></tfoot>
   </table>
-  <p class="note">* Escuro (Preto/Azul Marinho/Marsala) → vivo e botão Branco. Claro → vivo e botão Preto. Inclui Pijama Verão + Pijama Inverno (mesmo tecido: cetim com elastano).</p>
+  <p class="note">* Escuro (Preto/Azul Marinho/Marsala) → vivo e botão Branco. Claro → vivo e botão Preto. Inclui Pijama Verão + Pijama Inverno (mesmo tecido: cetim com elastano). Informe rolos FECHADOS em estoque.</p>
 </div>
 
 <!-- VIVO -->
@@ -290,13 +291,13 @@ tr.row-ok td{color:#555}
       <th>Cor Vivo</th>
       <th class="r">Necessário (m)</th>
       <th class="r">Rolos 50m</th>
-      <th class="r">Temos (m)</th>
-      <th class="r">Falta (m)</th>
+      <th class="r">Temos (rolos)</th>
+      <th class="r">Falta (rolos)</th>
     </tr></thead>
     <tbody id="viv-body"></tbody>
     <tfoot id="viv-foot"></tfoot>
   </table>
-  <p class="note">* Rolo = 50m. Consolidado por cor de vivo. Inclui Pijama Verão + Pijama Inverno (rendimento do inverno: soma de componentes em cm ÷ 100, confirmado com a Karolyne).</p>
+  <p class="note">* Rolo = 50m. Consolidado por cor de vivo. Inclui Pijama Verão + Pijama Inverno (rendimento do inverno: soma de componentes em cm ÷ 100, confirmado com a Karolyne). Informe rolos FECHADOS em estoque.</p>
 </div>
 
 <!-- ELÁSTICO -->
@@ -310,13 +311,23 @@ tr.row-ok td{color:#555}
       <th class="r">Peças</th>
       <th class="r">m/peça</th>
       <th class="r">Necessário (m)</th>
-      <th class="r">Temos (m)</th>
-      <th class="r">Falta (m)</th>
+      <th class="r">Temos (rolos)</th>
+      <th class="r">Falta (rolos)</th>
     </tr></thead>
     <tbody id="elas-body"></tbody>
     <tfoot id="elas-foot"></tfoot>
   </table>
-  <p class="note">* Sem distinção de cor. Rolos de 25m. Elástico do Pijama Inverno usa a mesma taxa m/peça do Pijama Verão (mesmo padrão de "short").</p>
+  <p class="note">* Sem distinção de cor. Rolos de 25m. Elástico do Pijama Inverno usa a mesma taxa m/peça do Pijama Verão (mesmo padrão de "short"). Informe rolos FECHADOS em estoque.</p>
+</div>
+
+<!-- LISTA DE COMPRAS -->
+<div id="compras" class="section">
+  <h2>🛒 Lista de Compras</h2>
+  <div class="banner" style="margin-bottom:14px">
+    Preenchida automaticamente: todo item marcado (✓) nas abas de insumo cuja quantidade em estoque (rolos/pacotes fechados) fica abaixo do necessário aparece aqui com a diferença a comprar.
+  </div>
+  <div class="sgrid" id="compras-cards"></div>
+  <div id="compras-body"></div>
 </div>
 
 <!-- BOTÕES -->
@@ -332,13 +343,13 @@ tr.row-ok td{color:#555}
       <th>Cor Botão</th>
       <th class="r">Necessário (un)</th>
       <th class="r">Pacotes (50un)</th>
-      <th class="r">Temos (un)</th>
-      <th class="r">Falta (un)</th>
+      <th class="r">Temos (pacotes)</th>
+      <th class="r">Falta (pacotes)</th>
     </tr></thead>
     <tbody id="bot-body"></tbody>
     <tfoot id="bot-foot"></tfoot>
   </table>
-  <p class="note">* Consolidado por cor de botão. Inclui Pijama Verão + Pijama Inverno (mesmo padrão de cor contrastante).</p>
+  <p class="note">* Consolidado por cor de botão. Inclui Pijama Verão + Pijama Inverno (mesmo padrão de cor contrastante). Informe pacotes FECHADOS (50un) em estoque, não botões avulsos.</p>
 </div>
 
 <script>
@@ -545,7 +556,7 @@ function syncPush(aba,chave,campo1,campo2){
     });
 }
 function rerenderAll(){
-  buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderEnc(); renderFaltaram();
+  buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderEnc(); renderFaltaram(); renderListaCompras();
 }
 function pushEnc(k){
   const s=encSt[k]||{};
@@ -557,7 +568,7 @@ function mkCkInput(tab, key, checked, onchange){
   return `<input type="checkbox" class="ck-ok" ${checked?'checked':''} onchange="${onchange}">`;
 }
 function mkQtyInput(tab, key, val, oninput, disabled){
-  return `<input class="inp-estq" type="number" min="0" step="0.01" placeholder="—" value="${val}" ${disabled?'disabled':''} oninput="${oninput}">`;
+  return `<input class="inp-estq" type="number" min="0" step="1" placeholder="—" value="${val}" ${disabled?'disabled':''} oninput="${oninput}">`;
 }
 function syncTip(entry){
   if(!entry || !entry.by) return '';
@@ -575,7 +586,7 @@ function faltaCell(necessario, temosVal, isOk){
   }
   const diff = necessario - parseFloat(temosVal);
   if(diff<=0) return `<span class="falta-zero">✅ OK</span>`;
-  return `<span class="falta-pos">▲ ${f2(diff)}</span>`;
+  return `<span class="falta-pos">▲ ${Math.round(diff)}</span>`;
 }
 
 // ─── CETIM POLIÉSTER (RMC + RIF) ─────────────────────────
@@ -589,13 +600,14 @@ function buildPol(){
   document.getElementById('pol-body').innerHTML=e.map(([c,v])=>{
     const k=stKey(c), s=st.pol[k]||{ok:false,qty:''};
     const dis=s.ok&&s.qty==='';
-    return `<tr id="pol-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=v.mt)?'row-ok':''}"${syncTip(s)}>
-      <td class="ok-cell">${mkCkInput('pol',k,s.ok,`togSt('pol','${k}',${v.mt},this)`)}</td>
+    const rolosNec=rl(v.mt,60);
+    return `<tr id="pol-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=rolosNec)?'row-ok':''}"${syncTip(s)}>
+      <td class="ok-cell">${mkCkInput('pol',k,s.ok,`togSt('pol','${k}',${rolosNec},this)`)}</td>
       <td>${dot(c)}</td>
       <td class="r">${f2(v.mt)}</td>
-      <td class="r"><span class="badge b-blu">${rl(v.mt,60)}</span></td>
-      <td class="r">${mkQtyInput('pol',k,s.qty,`updSt('pol','${k}',${v.mt},this)`,dis)}</td>
-      <td class="r" id="pol-falta-${k}">${faltaCell(v.mt,s.qty,s.ok)}</td>
+      <td class="r"><span class="badge b-blu">${rolosNec}</span></td>
+      <td class="r">${mkQtyInput('pol',k,s.qty,`updSt('pol','${k}',${rolosNec},this)`,dis)}</td>
+      <td class="r" id="pol-falta-${k}">${faltaCell(rolosNec,s.qty,s.ok)}</td>
     </tr>`;
   }).join('');
   document.getElementById('pol-foot').innerHTML=`<tr><td></td><td>TOTAL</td><td class="r">${f2(tM)}</td><td class="r">${rl(tM,60)} rolos</td><td></td><td></td></tr>`;
@@ -618,13 +630,14 @@ function buildEla(){
   document.getElementById('ela-body').innerHTML=e.map(([c,v])=>{
     const k=stKey(c), s=st.ela[k]||{ok:false,qty:''};
     const vc=v.t==='e'?'Branco':'Preto', dis=s.ok&&s.qty==='';
-    return `<tr id="ela-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=v.mt)?'row-ok':''}"${syncTip(s)}>
-      <td class="ok-cell">${mkCkInput('ela',k,s.ok,`togSt('ela','${k}',${v.mt},this)`)}</td>
+    const rolosNec=rl(v.mt,60);
+    return `<tr id="ela-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=rolosNec)?'row-ok':''}"${syncTip(s)}>
+      <td class="ok-cell">${mkCkInput('ela',k,s.ok,`togSt('ela','${k}',${rolosNec},this)`)}</td>
       <td>${dot(c)}</td><td>${vbadge(vc)}</td>
       <td class="r">${f2(v.mt)}</td>
-      <td class="r"><span class="badge b-blu">${rl(v.mt,60)}</span></td>
-      <td class="r">${mkQtyInput('ela',k,s.qty,`updSt('ela','${k}',${v.mt},this)`,dis)}</td>
-      <td class="r" id="ela-falta-${k}">${faltaCell(v.mt,s.qty,s.ok)}</td>
+      <td class="r"><span class="badge b-blu">${rolosNec}</span></td>
+      <td class="r">${mkQtyInput('ela',k,s.qty,`updSt('ela','${k}',${rolosNec},this)`,dis)}</td>
+      <td class="r" id="ela-falta-${k}">${faltaCell(rolosNec,s.qty,s.ok)}</td>
     </tr>`;
   }).join('');
   document.getElementById('ela-foot').innerHTML=`<tr><td></td><td colspan="2">TOTAL</td><td class="r">${f2(tM)}</td><td class="r">${rl(tM,60)} rolos</td><td></td><td></td></tr>`;
@@ -652,13 +665,13 @@ function buildViv(){
   document.getElementById('viv-body').innerHTML=vivRows.map(v=>{
     const k=stKey('Vivo_'+v.label), s=st.viv[k]||{ok:false,qty:''};
     const dis=s.ok&&s.qty==='';
-    return `<tr id="viv-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=v.necessario)?'row-ok':''}"${syncTip(s)}>
-      <td class="ok-cell">${mkCkInput('viv',k,s.ok,`togSt('viv','${k}',${v.necessario},this)`)}</td>
+    return `<tr id="viv-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=v.rolos)?'row-ok':''}"${syncTip(s)}>
+      <td class="ok-cell">${mkCkInput('viv',k,s.ok,`togSt('viv','${k}',${v.rolos},this)`)}</td>
       <td>${vbadge(v.label)} Vivo ${v.label}</td>
       <td class="r">${f2(v.necessario)}</td>
       <td class="r"><span class="${v.label==='Branco'?'badge b-wh':'badge b-bk'}">${v.rolos} rolos</span></td>
-      <td class="r">${mkQtyInput('viv',k,s.qty,`updSt('viv','${k}',${v.necessario},this)`,dis)}</td>
-      <td class="r" id="viv-falta-${k}">${faltaCell(v.necessario,s.qty,s.ok)}</td>
+      <td class="r">${mkQtyInput('viv',k,s.qty,`updSt('viv','${k}',${v.rolos},this)`,dis)}</td>
+      <td class="r" id="viv-falta-${k}">${faltaCell(v.rolos,s.qty,s.ok)}</td>
     </tr>`;
   }).join('');
   document.getElementById('viv-foot').innerHTML=`<tr><td></td><td><b>TOTAL</b></td><td class="r"><b>${f2(totB+totP)}</b></td><td class="r">${rl(totB,50)+rl(totP,50)} rolos</td><td></td><td></td></tr>`;
@@ -674,19 +687,19 @@ function buildElas(){
     return{t,p,mpp,tot:p*mpp};
   }).filter(x=>x.p>0);
   const tM=d.reduce((a,x)=>a+x.tot,0);
+  const r=rl(tM,25);
   const k='elastico_total'; const s=st.elas[k]||{ok:false,qty:''};
   document.getElementById('elas-body').innerHTML=d.map(x=>`
     <tr><td></td><td>${x.t}</td><td class="r">${x.p}</td><td class="r">${f2(x.mpp)}</td><td class="r">${f2(x.tot)}</td><td></td><td></td></tr>`
   ).join('');
   const dis=s.ok&&s.qty==='';
-  document.getElementById('elas-foot').innerHTML=`<tr id="elas-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=tM)?'row-ok':''}"${syncTip(s)}>
-    <td class="ok-cell">${mkCkInput('elas',k,s.ok,`togSt('elas','${k}',${tM},this)`)}</td>
+  document.getElementById('elas-foot').innerHTML=`<tr id="elas-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=r)?'row-ok':''}"${syncTip(s)}>
+    <td class="ok-cell">${mkCkInput('elas',k,s.ok,`togSt('elas','${k}',${r},this)`)}</td>
     <td><b>TOTAL</b></td><td class="r">${d.reduce((a,x)=>a+x.p,0)}</td><td class="r">—</td>
     <td class="r"><b>${f2(tM)}</b></td>
-    <td class="r">${mkQtyInput('elas',k,s.qty,`updSt('elas','${k}',${tM},this)`,dis)}</td>
-    <td class="r" id="elas-falta-${k}">${faltaCell(tM,s.qty,s.ok)}</td>
+    <td class="r">${mkQtyInput('elas',k,s.qty,`updSt('elas','${k}',${r},this)`,dis)}</td>
+    <td class="r" id="elas-falta-${k}">${faltaCell(r,s.qty,s.ok)}</td>
   </tr>`;
-  const r=rl(tM,25);
   document.getElementById('elas-cards').innerHTML=
     `<div class="scard"><div class="v">${d.reduce((a,x)=>a+x.p,0)}</div><div class="l">Pijamas</div></div>`+
     `<div class="scard red"><div class="v">${f2(tM)} m</div><div class="l">Total necessário</div></div>`+
@@ -709,16 +722,105 @@ function buildBot(){
   document.getElementById('bot-body').innerHTML=botRows.map(v=>{
     const k=stKey('Bot_'+v.label), s=st.bot[k]||{ok:false,qty:''};
     const dis=s.ok&&s.qty==='';
-    return `<tr id="bot-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=v.necessario)?'row-ok':''}"${syncTip(s)}>
-      <td class="ok-cell">${mkCkInput('bot',k,s.ok,`togSt('bot','${k}',${v.necessario},this)`)}</td>
+    return `<tr id="bot-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=v.pacotes)?'row-ok':''}"${syncTip(s)}>
+      <td class="ok-cell">${mkCkInput('bot',k,s.ok,`togSt('bot','${k}',${v.pacotes},this)`)}</td>
       <td>${vbadge(v.label)} Botão ${v.label}</td>
       <td class="r">${v.necessario}</td>
       <td class="r"><span class="${v.label==='Branco'?'badge b-wh':'badge b-bk'}">${v.pacotes} pacotes</span></td>
-      <td class="r">${mkQtyInput('bot',k,s.qty,`updSt('bot','${k}',${v.necessario},this)`,dis)}</td>
-      <td class="r" id="bot-falta-${k}">${faltaCell(v.necessario,s.qty,s.ok)}</td>
+      <td class="r">${mkQtyInput('bot',k,s.qty,`updSt('bot','${k}',${v.pacotes},this)`,dis)}</td>
+      <td class="r" id="bot-falta-${k}">${faltaCell(v.pacotes,s.qty,s.ok)}</td>
     </tr>`;
   }).join('');
   document.getElementById('bot-foot').innerHTML=`<tr><td></td><td><b>TOTAL</b></td><td class="r"><b>${tW+tP}</b></td><td class="r">${Math.ceil(tW/50)+Math.ceil(tP/50)} pacotes</td><td></td><td></td></tr>`;
+}
+
+// ─── LISTA DE COMPRAS (consolidada) ──────────────────────
+function calcListaCompras(){
+  const itens=[];
+  const addSe=(aba,label,item,unidade,nec,s)=>{
+    if(!s||!s.ok||s.qty===''||s.qty===undefined||s.qty===null) return;
+    const temos=parseFloat(s.qty);
+    if(isNaN(temos)) return;
+    const falta=nec-temos;
+    if(falta>0) itens.push({aba:label,item,unidade,necessario:nec,temos,falta:Math.round(falta)});
+  };
+  // Cetim Poliéster
+  (function(){
+    const m={};
+    rows.filter(r=>tip(r)==='RMC'||tip(r)==='RIF').forEach(r=>{
+      const c=r.cor; if(!m[c])m[c]={mt:0}; m[c].mt+=r.qtd*r.tec;
+    });
+    Object.entries(m).forEach(([c,v])=>{
+      const k=stKey(c);
+      addSe('pol','Cetim Poliéster',c,'rolos',rl(v.mt,60),st.pol[k]);
+    });
+  })();
+  // Cetim Elastano
+  (function(){
+    const m={};
+    rows.filter(r=>tip(r)==='PMC'||tip(r)==='PMI').forEach(r=>{
+      const c=r.cor; if(!m[c])m[c]={mt:0}; m[c].mt+=r.qtd*r.tec;
+    });
+    Object.entries(m).forEach(([c,v])=>{
+      const k=stKey(c);
+      addSe('ela','Cetim Elastano',c,'rolos',rl(v.mt,60),st.ela[k]);
+    });
+  })();
+  // Vivo
+  (function(){
+    const m={};
+    rows.filter(r=>(tip(r)==='PMC'||tip(r)==='PMI')&&r.vivo).forEach(r=>{
+      const c=r.cor; if(!m[c])m[c]={mv:0,t:ESCUROS.includes(c)?'e':'c'}; m[c].mv+=r.qtd*r.vivo;
+    });
+    const e=Object.entries(m);
+    const totB=e.filter(([,v])=>v.t==='e').reduce((a,[,v])=>a+v.mv,0);
+    const totP=e.filter(([,v])=>v.t==='c').reduce((a,[,v])=>a+v.mv,0);
+    addSe('viv','Vivo','Branco','rolos',rl(totB,50),st.viv[stKey('Vivo_Branco')]);
+    addSe('viv','Vivo','Preto','rolos',rl(totP,50),st.viv[stKey('Vivo_Preto')]);
+  })();
+  // Elástico
+  (function(){
+    const tams=['P','M','G','GG'];
+    const tM=tams.map(t=>{
+      const s=rows.filter(r=>(tip(r)==='PMC'||tip(r)==='PMI')&&r.tam===t&&r.elas);
+      const p=s.reduce((a,r)=>a+r.qtd,0), mpp=s.length?s[0].elas:0;
+      return p*mpp;
+    }).reduce((a,x)=>a+x,0);
+    addSe('elas','Elástico','Total','rolos',rl(tM,25),st.elas['elastico_total']);
+  })();
+  // Botões
+  (function(){
+    const m={};
+    rows.filter(r=>tip(r)==='PMC'||tip(r)==='PMI').forEach(r=>{
+      const c=r.cor; if(!m[c])m[c]={p:0,t:ESCUROS.includes(c)?'e':'c'}; m[c].p+=r.qtd;
+    });
+    const e=Object.entries(m);
+    const tW=e.filter(([,v])=>v.t==='e').reduce((a,[,v])=>a+v.p*5,0);
+    const tP=e.filter(([,v])=>v.t==='c').reduce((a,[,v])=>a+v.p*5,0);
+    addSe('bot','Botões','Branco','pacotes',Math.ceil(tW/50),st.bot[stKey('Bot_Branco')]);
+    addSe('bot','Botões','Preto','pacotes',Math.ceil(tP/50),st.bot[stKey('Bot_Preto')]);
+  })();
+  return itens;
+}
+function renderListaCompras(){
+  const cardsEl=document.getElementById('compras-cards'), bodyEl=document.getElementById('compras-body');
+  if(!cardsEl||!bodyEl) return;
+  const itens=calcListaCompras();
+  cardsEl.innerHTML=`<div class="scard ora"><div class="v">${itens.length}</div><div class="l">Itens para comprar</div></div>`;
+  if(!itens.length){
+    bodyEl.innerHTML='<p style="padding:16px;color:#999">Nada pendente de compra no momento — tudo conferido! ✅</p>';
+    return;
+  }
+  bodyEl.innerHTML=`<table><thead><tr>
+      <th>Insumo</th><th>Item</th><th class="r">Necessário</th><th class="r">Temos</th><th class="r">Falta (comprar)</th>
+    </tr></thead><tbody>`+
+    itens.map(i=>`<tr>
+      <td>${i.aba}</td><td>${dot(i.item)}</td>
+      <td class="r">${i.necessario} ${i.unidade}</td>
+      <td class="r">${i.temos} ${i.unidade}</td>
+      <td class="r"><span class="falta-pos">▲ ${i.falta} ${i.unidade}</span></td>
+    </tr>`).join('')+
+    `</tbody></table>`;
 }
 
 // ─── HANDLERS ESTOQUE ────────────────────────────────────
@@ -732,6 +834,7 @@ function togSt(tab, key, nec, el){
     updFalta(tab,key,nec);
     row.classList.toggle('row-ok', el.checked&&(st[tab][key].qty===''||parseFloat(st[tab][key].qty||0)>=nec));
   }
+  renderListaCompras();
   syncPush(tab,key,st[tab][key].ok,st[tab][key].qty);
 }
 function updSt(tab, key, nec, el){
@@ -743,6 +846,7 @@ function updSt(tab, key, nec, el){
     const s=st[tab][key];
     row.classList.toggle('row-ok', s.ok&&(s.qty===''||parseFloat(s.qty||0)>=nec));
   }
+  renderListaCompras();
   syncPush(tab,key,st[tab][key].ok,st[tab][key].qty);
 }
 function updFalta(tab,key,nec){
@@ -1131,14 +1235,14 @@ function importState(file){
       const data = JSON.parse(e.target.result);
       if(data.st){ Object.keys(st).forEach(k=>{ if(data.st[k]) st[k]=data.st[k]; }); }
       if(data.encSt){ Object.keys(encSt).forEach(k=>delete encSt[k]); Object.assign(encSt, data.encSt); }
-      renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot();
+      renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras();
       alert('Backup carregado! (salvo em '+(data.savedAt||'').slice(0,10)+')');
     }catch(err){ alert('Não consegui ler esse arquivo: '+err.message); }
   };
   reader.readAsText(file);
 }
 
-renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot();
+renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras();
 if(syncUrl){
   setSyncStatus('busy','Conectando...');
   syncPull().then(()=>{ renderPlano(); startSyncPolling(); });
