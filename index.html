@@ -1014,7 +1014,7 @@ function refreshEncCards(){
   if(!cards)return;
   const sc=cards.querySelectorAll('.scard');
   if(sc[1]){sc[1].querySelector('.v').textContent=`${tCompleto}/${tVar}`;const pb=sc[1].querySelector('.prog-bar');if(pb)pb.style.width=pct+'%';}
-  if(sc[2])sc[2].querySelector('.v').textContent=tVar-tCompleto;
+  if(sc[2])sc[2].querySelector('.v').textContent=tVar-tCompleto-tParcial;
   if(sc[3])sc[3].querySelector('.v').textContent=tParcial;
 }
 
@@ -1033,7 +1033,7 @@ function renderEnc(){
   document.getElementById('enc-cards').innerHTML=
     `<div class="scard"><div class="v">${tInf}</div><div class="l">Total de infestos</div></div>`+
     `<div class="scard grn"><div class="v">${tCompleto}/${tVar}</div><div class="l">Variações cortadas</div><div class="prog-wrap"><div class="prog-bar" style="width:${pct}%"></div></div></div>`+
-    `<div class="scard ora"><div class="v">${tVar-tCompleto}</div><div class="l">Pendentes</div></div>`+
+    `<div class="scard ora"><div class="v">${tVar-tCompleto-tParcial}</div><div class="l">Pendentes</div></div>`+
     `<div class="scard red"><div class="v">${tParcial}</div><div class="l">⚠️ Cortes incompletos</div></div>`+
     `<div class="scard"><div class="v">6/dia</div><div class="l">Infestos por tam/dia (sugerido)</div></div>`;
 
@@ -1048,7 +1048,7 @@ function renderEnc(){
       const k=encKey(g.prod,g.tam,ii,c.cor), status=encRowStatus(k,c.qtd);
       const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
       if(!mb)return;
-      if(encFiltro==='pendentes'&&status!=='completo')temVis=true;
+      if(encFiltro==='pendentes'&&status==='pendente')temVis=true;
       if(encFiltro==='cortados'&&status==='completo')temVis=true;
       if(encFiltro==='todos'||encFiltro===g.tipo)temVis=true;
     }));
@@ -1066,7 +1066,7 @@ function renderEnc(){
         const k=encKey(g.prod,g.tam,ii,c.cor),status=encRowStatus(k,c.qtd);
         const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
         if(!mb)return;
-        if(encFiltro==='pendentes'&&status!=='completo')infVis=true;
+        if(encFiltro==='pendentes'&&status==='pendente')infVis=true;
         if(encFiltro==='cortados'&&status==='completo')infVis=true;
         if(encFiltro==='todos'||encFiltro===g.tipo)infVis=true;
       });
