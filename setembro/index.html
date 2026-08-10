@@ -996,7 +996,7 @@ function calcEnc(){
   rows.forEach(r=>{
     const t=tip(r),k=`${t}||${r.prod}||${r.tam}`;
     if(!map[k])map[k]={tipo:t,prod:r.prod,tam:r.tam,tec:r.tec,cores:[]};
-    map[k].cores.push({cor:r.cor,qtd:r.qtd});
+    map[k].cores.push({cor:r.cor,qtd:r.qtd}); map[k].vd=(map[k].vd||0)+(r.vendaDia||0); map[k].oversold=(map[k].oversold||0)+Math.max(0,-(r.estoqueAtual||0));
   });
   const res=[];
   Object.values(map).forEach(g=>{
@@ -1019,11 +1019,11 @@ function calcEnc(){
       if(!ok)break;
     }
     if(inf.total>0)infestos.push(inf);
-    res.push({tipo:g.tipo,prod:g.prod,tam:g.tam,tec:g.tec,dobrado,maxPec,medFolha,infestos,totalPec:g.cores.reduce((a,c)=>a+c.qtd,0)});
+    res.push({tipo:g.tipo,prod:g.prod,tam:g.tam,tec:g.tec,dobrado,maxPec,medFolha,infestos,totalPec:g.cores.reduce((a,c)=>a+c.qtd,0),prio:(g.oversold||0)*1000+(g.vd||0)*100+g.cores.reduce((a,c)=>a+c.qtd,0),oversold:(g.oversold||0)});
   });
   const ot={RMC:0,RIF:1,PMC:2,PMI:3};
   const otam=['P','M','G','GG','G1','G2','G3','02','04','06','08','10','12','14','2','4','6','8','10','12','14'];
-  res.sort((a,b)=>(ot[a.tipo]-ot[b.tipo])||otam.indexOf(a.tam)-otam.indexOf(b.tam));
+  res.sort((a,b)=>(b.prio-a.prio)||(ot[a.tipo]-ot[b.tipo])||(otam.indexOf(a.tam)-otam.indexOf(b.tam)));
   return res;
 }
 
@@ -1106,7 +1106,7 @@ function renderEnc(){
     `<div class="scard red"><div class="v">${tParcial}</div><div class="l">⚠️ Cortes incompletos</div></div>`+
     `<div class="scard"><div class="v">6/dia</div><div class="l">Infestos por tam/dia (sugerido)</div></div>`;
 
-  let html='', lastTipo=null;
+  let html='', lastTipo=null, encRank=0;
   const tBadge={RMC:'b-rmc',RIF:'b-rif',PMC:'b-pmc',PMI:'b-pmi'};
   const tCor={RMC:'#6a5acd',RIF:'#2e8b57',PMC:'#c0392b',PMI:'#1565c0'};
 
@@ -1122,10 +1122,10 @@ function renderEnc(){
       if(encFiltro==='todos'||encFiltro===g.tipo)temVis=true;
     }));
     if(!temVis)return;
-    if(lastTipo!==g.tipo){html+=`<div class="enc-prod-sep" style="color:${tCor[g.tipo]}">${g.prod}</div>`;lastTipo=g.tipo;}
+    encRank++;
     const totPec=g.infestos.reduce((a,i)=>a+i.total,0);
     html+=`<div class="enc-bloco"><div class="enc-bloco-hdr"><span>
-      <span class="badge ${tBadge[g.tipo]}">${g.tipo}</span> Tam. <b>${g.tam}</b> — ${g.prod}
+      <span style="display:inline-block;min-width:20px;text-align:center;background:#7A2233;color:#fff;border-radius:6px;padding:1px 6px;font-weight:800;margin-right:5px">#${encRank}</span><span class="badge ${tBadge[g.tipo]}">${g.tipo}</span> Tam. <b>${g.tam}</b> — ${g.prod}${g.oversold>0?` <span style="color:#c0392b;font-weight:700;font-size:11px;margin-left:4px">🔴 ${g.oversold} em falta</span>`:``}
       <span class="sub">${totPec} peças · ${g.infestos.length} infesto${g.infestos.length>1?'s':''} · ${g.dobrado?'Dobrado (folha = medida×2)':'Simples (folha = medida×1)'}</span>
     </span><span style="font-size:11px;opacity:.8">📐 ${f2(g.medFolha)}m/folha</span></div>`;
 
