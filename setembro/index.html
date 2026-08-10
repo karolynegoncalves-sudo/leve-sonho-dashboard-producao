@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leve Sonho — Plano de Produção, Insumos &amp; Encaixe de Corte (Setembro/2026)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:12px;background:#f0f2f5;padding:16px;color:#1a1a2e}
+h1{font-size:16px;color:#1a1a2e;margin-bottom:2px}
+.subtitle{font-size:11px;color:#777;margin-bottom:10px}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.backup-btns{display:flex;gap:6px;flex-shrink:0}
+.bkbtn{padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:bold;background:#1a1a2e;color:#fff;white-space:nowrap}
+.bkbtn.secondary{background:#e0e0e0;color:#333}
+.banner{background:#fff3e0;border-left:4px solid #e65100;border-radius:6px;padding:8px 14px;margin-bottom:8px;font-size:11.5px;color:#7a3e00;line-height:1.5}
+.banner b{color:#e65100}
+.banner.warn2{background:#fdecea;border-left-color:#c62828;color:#7a1212}
+.banner.warn2 b{color:#c62828}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tab{padding:7px 14px;border:none;border-radius:6px 6px 0 0;cursor:pointer;font-size:12px;font-weight:bold;background:#ccc;color:#555}
+.tab.active{background:#1a1a2e;color:#fff}
+.section{display:none;background:#fff;border-radius:0 8px 8px 8px;box-shadow:0 2px 6px rgba(0,0,0,.12);padding:16px}
+.section.active{display:block}
+h2{font-size:13px;color:#1a1a2e;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e0e0e0}
+table{border-collapse:collapse;width:100%}
+thead th{background:#1a1a2e;color:#fff;padding:7px 10px;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:2}
+thead th.r{text-align:right}
+thead th.grp{background:#111827;text-align:center;font-size:11px}
+tbody tr:nth-child(even){background:#f7f8fc}
+tbody tr:hover{background:#eef}
+td{padding:6px 10px;border-bottom:1px solid #eee;white-space:nowrap}
+td.r{text-align:right}
+tfoot td{background:#e8eaf6;font-weight:bold;border-top:2px solid #9fa8da}
+tfoot td.r{text-align:right}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:middle;border:1px solid #ccc}
+.badge{display:inline-block;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:bold}
+.b-blu{background:#e8eaf6;color:#3949ab}
+.b-wh{background:#f5f5f5;color:#333;border:1px solid #ccc}
+.b-bk{background:#333;color:#fff}
+.b-rmc{background:#ede9ff;color:#6a5acd}
+.b-rif{background:#e0f4ea;color:#2e8b57}
+.b-pmc{background:#fde8e8;color:#c0392b}
+.b-pmi{background:#e3edfb;color:#1565c0}
+.note{font-size:11px;color:#777;margin-top:10px;font-style:italic}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.scard{background:#f7f8fc;border-radius:8px;padding:10px 14px;border-left:4px solid #3949ab}
+.scard .v{font-size:18px;font-weight:bold;color:#1a1a2e}
+.scard .l{font-size:11px;color:#777;margin-top:2px}
+.scard.red{border-color:#c62828}.scard.grn{border-color:#2e7d32}
+.scard.rmc{border-color:#6a5acd}.scard.rif{border-color:#2e8b57}.scard.pmc{border-color:#c0392b}.scard.pmi{border-color:#1565c0}.scard.ora{border-color:#e65100}
+.legend{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.leg{font-size:11px;background:#f7f8fc;padding:5px 10px;border-radius:6px}
+.filters{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.filters label{font-weight:bold;color:#555}
+.fbtn{padding:6px 12px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold}
+.fbtn-all{background:#555;color:#fff}.fbtn-rmc{background:#6a5acd;color:#fff}
+.fbtn-rif{background:#2e8b57;color:#fff}.fbtn-pmc{background:#c0392b;color:#fff}.fbtn-pmi{background:#1565c0;color:#fff}
+.fbtn.off{opacity:.3}
+.search{padding:6px 10px;border:1px solid #ccc;border-radius:4px;font-size:12px;width:180px}
+.na{color:#bbb}.mono{font-family:monospace;font-size:11px}.tbl-wrap{overflow-x:auto}
+td.ok-cell{text-align:center}
+input[type=checkbox].ck-ok{width:15px;height:15px;cursor:pointer;accent-color:#2e7d32}
+input.inp-estq{width:80px;padding:3px 5px;border:1px solid #ccc;border-radius:4px;font-size:11px;text-align:right}
+input.inp-estq:focus{outline:none;border-color:#3949ab}
+.falta-pos{color:#c62828;font-weight:bold}
+.falta-zero{color:#2e7d32;font-weight:bold}
+tr.row-ok{background:#f0fff4!important}
+tr.row-ok td{color:#555}
+.efbtn{padding:5px 12px;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:bold;background:#e0e0e0;color:#555}
+.efbtn.active{background:#1a1a2e;color:#fff}
+.enc-filters{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.enc-busca-res{display:none;margin-bottom:10px;padding:8px 12px;background:#fffde7;border-radius:6px;border-left:3px solid #f9a825;font-size:12px}
+.enc-bloco{border:1px solid #e0e0e0;border-radius:8px;margin-bottom:14px;overflow:hidden}
+.enc-bloco-hdr{background:#1a1a2e;color:#fff;padding:8px 14px;font-weight:bold;font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.enc-bloco-hdr .sub{font-size:11px;opacity:.7;font-weight:normal;margin-left:6px}
+.enc-inf-hdr{background:#f0f2ff;padding:6px 14px;font-size:11px;font-weight:bold;color:#3949ab;display:flex;align-items:center;gap:8px;border-bottom:1px solid #e0e0e0;border-top:1px solid #e8e8f8}
+.inf-badge{background:#3949ab;color:#fff;border-radius:10px;padding:1px 8px;font-size:10px}
+.dia-badge{background:#e8eaf6;color:#3949ab;border-radius:10px;padding:1px 8px;font-size:10px}
+.col-hdr{display:flex;align-items:center;padding:4px 14px;background:#fafafa;border-bottom:1px solid #eee;font-size:10px;color:#999;font-weight:bold;text-transform:uppercase}
+.enc-row{display:flex;align-items:center;padding:5px 14px;border-bottom:1px solid #f5f5f5;transition:background .12s}
+.enc-row:hover{background:#f0f4ff}
+.enc-row:last-child{border-bottom:none}
+.enc-row.cortado{background:#f0fff4!important}
+.enc-row.cortado .enc-cor{text-decoration:line-through;color:#aaa}
+.c-chk{width:28px;flex-shrink:0}
+.c-chk input{width:15px;height:15px;cursor:pointer;accent-color:#2e7d32}
+.enc-cor{flex:1;min-width:110px}
+.c-qtd{width:70px;text-align:right;color:#555}
+.c-fol{width:90px;text-align:right;font-weight:bold;color:#3949ab}
+.c-cortada{width:100px;padding-left:10px;text-align:right}
+.c-cortada input[type=number]{width:74px;padding:3px 6px;border:1px solid #ccc;border-radius:4px;font-size:11px;text-align:right}
+.c-cortada input:focus{outline:none;border-color:#3949ab}
+.c-med{width:100px;text-align:right;color:#c0392b;font-weight:bold}
+.c-dat{width:140px;padding-left:10px}
+.c-dat input[type=date]{border:1px solid #ccc;border-radius:4px;padding:3px 6px;font-size:11px;width:128px;color:#333}
+.c-dat input:focus{outline:none;border-color:#3949ab}
+.enc-row.parcial{background:#fff8e1!important}
+.enc-row.parcial .enc-cor{color:#8d6e00;font-weight:bold}
+.enc-resumo{display:flex;gap:8px;padding:8px 14px;background:#fafbff;border-top:2px solid #e8eaf6;flex-wrap:wrap}
+.enc-tag{font-size:11px;background:#e8eaf6;color:#3949ab;padding:2px 8px;border-radius:10px}
+.enc-tag.warn{background:#fff3e0;color:#e65100}
+.enc-tag.ok{background:#e8f5e9;color:#2e7d32}
+.enc-prod-sep{padding:8px 14px 4px;font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:.5px;border-top:2px solid #ede9ff;background:#faf9ff}
+.prog-wrap{height:5px;background:#e0e0e0;border-radius:3px;margin-top:4px}
+.prog-bar{height:100%;background:#2e7d32;border-radius:3px;transition:width .3s}
+.falta-item{border:1px solid #e0e0e0;border-radius:8px;margin-bottom:10px;padding:10px 14px;background:#fff}
+.falta-item.falta-pendente{border-left:4px solid #e65100;background:#fffaf5}
+.falta-item-hdr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:12px}
+.falta-qtd{margin-left:auto;font-size:11px;color:#555}
+.falta-item-body{display:flex;gap:10px;flex-wrap:wrap}
+.falta-item-body select{padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:12px;min-width:210px}
+.falta-item-body select:focus{outline:none;border-color:#3949ab}
+.falta-item-body textarea{flex:1;min-width:220px;min-height:36px;padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:12px;font-family:inherit;resize:vertical}
+.falta-item-body textarea:focus{outline:none;border-color:#3949ab}
+.syncbar{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.sync-status{font-size:11.5px;font-weight:bold;padding:4px 10px;border-radius:12px;background:#f0f2f5}
+.sync-status.ok{background:#e8f5e9;color:#2e7d32}
+.sync-status.busy{background:#fff8e1;color:#8d6e00}
+.sync-status.err{background:#fdecea;color:#c62828}
+.sync-status.off{background:#eee;color:#777}
+.sync-panel{display:none;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;background:#f7f8fc;border-radius:8px;padding:10px 14px}
+.sync-panel.open{display:flex}
+.sync-panel label{font-size:11px;font-weight:bold;color:#555}
+.sync-panel input{padding:6px 8px;border:1px solid #ccc;border-radius:4px;font-size:11.5px}
+.sync-panel input#sync-url-input{width:340px}
+.sync-panel input#sync-user-input{width:140px}
+.sync-note{font-size:10.5px;color:#999;width:100%}
+@media print{.tabs,.filters,.enc-filters,.backup-btns,.syncbar,.sync-panel{display:none!important}.section{display:block!important;box-shadow:none;page-break-after:always}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div>
+    <h1>🧵 Leve Sonho — Plano de Produção, Lista de Compras &amp; Encaixe de Corte</h1>
+    <div class="subtitle">Setembro/2026 · Baseado na curva ABC do Bling (vendas 30 dias · 05/07–04/08 · Nuvemshop excluída) + estoque atual + corte de agosto · 139 combinações · 769 peças a fabricar</div>
+  </div>
+  <div class="backup-btns">
+    <button class="bkbtn" onclick="exportState()">💾 Baixar backup (JSON)</button>
+    <button class="bkbtn secondary" onclick="document.getElementById('import-file').click()">📂 Carregar backup</button>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importState(this.files[0])">
+  </div>
+</div>
+<div class="syncbar">
+  <span class="sync-status off" id="sync-status">⚪ Sincronização não configurada</span>
+  <button class="bkbtn secondary" onclick="toggleSyncPanel()">⚙️ Sincronização em tempo real</button>
+</div>
+<div class="sync-panel" id="sync-panel">
+  <label>Link de sincronização (Apps Script):</label>
+  <input type="text" id="sync-url-input" placeholder="https://script.google.com/macros/s/.../exec">
+  <label>Seu nome:</label>
+  <input type="text" id="sync-user-input" placeholder="Ex: Karolyne">
+  <button class="bkbtn" onclick="saveSyncConfig()">Salvar</button>
+  <span class="sync-note">Configure uma vez em cada computador (os 3 usam o mesmo link, cada um com seu próprio nome). O link vem da planilha Google Sheets compartilhada — veja o guia de configuração.</span>
+</div>
+<div class="banner">
+  <b>Escopo:</b> produção PARA ESTOQUE nos canais Mercado Livre, Shopee, Shein e TikTok Shop. Nuvemshop é sob demanda e fica de fora (curva separada).
+  Marque o que já tem em estoque em cada aba de insumo para ver o que falta comprar. Use os botões acima para salvar/recarregar seu progresso (checkboxes e quantidades) entre sessões.
+</div>
+<div class="banner warn2">
+  <b>✔️ Base de setembro:</b> curva ABC das vendas dos últimos 30 dias no Bling (1.068 pedidos, 05/07–04/08), com <b>Nuvemshop já excluída</b> (é sob demanda). Recomendado a fabricar = <b>36 dias de cobertura × venda/dia − estoque atual − o que já cortamos em agosto</b> (561 peças entrando na costura). Inverno praticamente zerado: virada para o verão.
+</div>
+<div class="tabs">
+  <button class="tab active" onclick="showTab('plano',this)">📋 Plano</button>
+  <button class="tab" onclick="showTab('enc',this)">✂️ Encaixe de Corte</button>
+  <button class="tab" onclick="showTab('falta',this)">📝 Cortes que Faltaram</button>
+  <button class="tab" onclick="showTab('pol',this)">🧶 Cetim Poliéster</button>
+  <button class="tab" onclick="showTab('ela',this)">🧶 Cetim Elastano</button>
+  <button class="tab" onclick="showTab('viv',this)">🎀 Vivo</button>
+  <button class="tab" onclick="showTab('elas',this)">🔵 Elástico</button>
+  <button class="tab" onclick="showTab('bot',this)">🔘 Botões</button>
+  <button class="tab" onclick="showTab('compras',this)">🛒 Lista de Compras</button>
+</div>
+
+<!-- PLANO -->
+<div id="plano" class="section active">
+  <h2>Plano de Produção — Setembro/2026</h2>
+  <div class="filters">
+    <label>Filtrar:</label>
+    <button class="fbtn fbtn-all" onclick="filt('all',this)">Todos</button>
+    <button class="fbtn fbtn-rmc" onclick="filt('RMC',this)">Robe Manga Curta</button>
+    <button class="fbtn fbtn-rif" onclick="filt('RIF',this)">Robe Infantil</button>
+    <button class="fbtn fbtn-pmc" onclick="filt('PMC',this)">Pijama Verão</button>
+    <button class="fbtn fbtn-pmi" onclick="filt('PMI',this)">Pijama Inverno</button>
+    <input class="search" type="text" placeholder="🔍 SKU, cor, produto..." oninput="busca(this.value)">
+  </div>
+  <div class="sgrid" id="plan-cards"></div>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2">SKU</th><th rowspan="2">Produto</th><th rowspan="2">Tam.</th>
+        <th rowspan="2">Cor</th>
+        <th rowspan="2" class="r">Estoque</th><th rowspan="2" class="r">Em Prod.</th>
+        <th rowspan="2">Vendas / Demanda</th>
+        <th rowspan="2" class="r">Recomendado</th>
+        <th colspan="2" class="grp">TECIDO</th>
+        <th colspan="4" class="grp" style="background:#7f1d1d">AVIAMENTOS (Pijama Verão + Inverno)</th>
+      </tr>
+      <tr>
+        <th class="r">m/pç</th><th class="r">Total (m)</th>
+        <th class="r" style="background:#991b1b">Vivo m/pç</th>
+        <th class="r" style="background:#991b1b">Total Vivo</th>
+        <th class="r" style="background:#991b1b">Elást. m/pç</th>
+        <th class="r" style="background:#991b1b">Total Elást.</th>
+      </tr>
+    </thead>
+    <tbody id="plan-body"></tbody>
+    <tfoot id="plan-foot"></tfoot>
+  </table>
+  </div>
+</div>
+
+<!-- ENCAIXE -->
+<div id="enc" class="section">
+  <h2>✂️ Encaixe de Corte — Setembro/2026</h2>
+  <div class="sgrid" id="enc-cards"></div>
+  <div class="enc-filters">
+    <button class="efbtn active" onclick="encFilt('todos',this)">Todos</button>
+    <button class="efbtn" onclick="encFilt('RMC',this)"><span style="color:#6a5acd">■</span> Robe Manga Curta</button>
+    <button class="efbtn" onclick="encFilt('RIF',this)"><span style="color:#2e8b57">■</span> Robe Infantil</button>
+    <button class="efbtn" onclick="encFilt('PMC',this)"><span style="color:#c0392b">■</span> Pijama Verão</button>
+    <button class="efbtn" onclick="encFilt('PMI',this)"><span style="color:#1565c0">■</span> Pijama Inverno</button>
+    <button class="efbtn" onclick="encFilt('pendentes',this)">⏳ Pendentes</button>
+    <button class="efbtn" onclick="encFilt('cortados',this)">✅ Cortados</button>
+    <input class="search" type="text" placeholder="🔍 Buscar por cor..." oninput="encBusca(this.value)" style="margin-left:4px">
+  </div>
+  <div class="enc-busca-res" id="enc-busca-res"></div>
+  <div id="enc-body"></div>
+</div>
+
+<!-- CORTES QUE FALTARAM -->
+<div id="falta" class="section">
+  <h2>📝 Cortes que Faltaram — Justificativas</h2>
+  <div class="banner" style="margin-bottom:14px">
+    Preenchido automaticamente quando a quantidade cortada (aba Encaixe de Corte) fica abaixo da quantidade sugerida. Escolha o motivo e, se quiser, adicione uma observação — fica registrado pra sempre com data, quantidade e quem preencheu.
+  </div>
+  <div class="sgrid" id="falta-cards"></div>
+  <div id="falta-body"></div>
+</div>
+
+<!-- CETIM POLIÉSTER -->
+<div id="pol" class="section">
+  <h2>🧶 Cetim 100% Poliéster — Robe Manga Curta + Robe Infantil</h2>
+  <div class="sgrid" id="pol-cards"></div>
+  <table id="pol-tbl">
+    <thead><tr>
+      <th style="width:30px">✓</th>
+      <th>Cor</th>
+      <th class="r">Necessário (m)</th>
+      <th class="r">Rolos 60m</th>
+      <th class="r">Temos (rolos)</th>
+      <th class="r">Falta (rolos)</th>
+    </tr></thead>
+    <tbody id="pol-body"></tbody>
+    <tfoot id="pol-foot"></tfoot>
+  </table>
+  <p class="note">* Cada rolo = 60m. Marque ✓ e informe quantos rolos FECHADOS já tem em estoque (não conte rolos abertos) — o "Falta" recalcula na hora e vai para a Lista de Compras.</p>
+</div>
+
+<!-- CETIM ELASTANO -->
+<div id="ela" class="section">
+  <h2>🧶 Cetim com Elastano — Pijama Verão + Inverno</h2>
+  <div class="sgrid" id="ela-cards"></div>
+  <table id="ela-tbl">
+    <thead><tr>
+      <th style="width:30px">✓</th>
+      <th>Cor</th>
+      <th>Vivo/Botão</th>
+      <th class="r">Necessário (m)</th>
+      <th class="r">Rolos 60m</th>
+      <th class="r">Temos (rolos)</th>
+      <th class="r">Falta (rolos)</th>
+    </tr></thead>
+    <tbody id="ela-body"></tbody>
+    <tfoot id="ela-foot"></tfoot>
+  </table>
+  <p class="note">* Escuro (Preto/Azul Marinho/Marsala) → vivo e botão Branco. Claro → vivo e botão Preto. Inclui Pijama Verão + Pijama Inverno (mesmo tecido: cetim com elastano). Informe rolos FECHADOS em estoque.</p>
+</div>
+
+<!-- VIVO -->
+<div id="viv" class="section">
+  <h2>🎀 Vivo — Pijama Verão + Inverno</h2>
+  <div class="legend">
+    <div class="leg">🌑 Escuros (Preto, Azul Marinho, Marsala) → <strong>Vivo Branco</strong></div>
+    <div class="leg">🌕 Claros (demais cores) → <strong>Vivo Preto</strong></div>
+  </div>
+  <table id="viv-tbl">
+    <thead><tr>
+      <th style="width:30px">✓</th>
+      <th>Cor Vivo</th>
+      <th class="r">Necessário (m)</th>
+      <th class="r">Rolos 50m</th>
+      <th class="r">Temos (rolos)</th>
+      <th class="r">Falta (rolos)</th>
+    </tr></thead>
+    <tbody id="viv-body"></tbody>
+    <tfoot id="viv-foot"></tfoot>
+  </table>
+  <p class="note">* Rolo = 50m. Consolidado por cor de vivo. Inclui Pijama Verão + Pijama Inverno (rendimento do inverno: soma de componentes em cm ÷ 100, confirmado com a Karolyne). Informe rolos FECHADOS em estoque.</p>
+</div>
+
+<!-- ELÁSTICO -->
+<div id="elas" class="section">
+  <h2>🔵 Elástico — Pijama Verão + Inverno</h2>
+  <div class="sgrid" id="elas-cards"></div>
+  <table id="elas-tbl">
+    <thead><tr>
+      <th style="width:30px">✓</th>
+      <th>Tamanho</th>
+      <th class="r">Peças</th>
+      <th class="r">m/peça</th>
+      <th class="r">Necessário (m)</th>
+      <th class="r">Temos (rolos)</th>
+      <th class="r">Falta (rolos)</th>
+    </tr></thead>
+    <tbody id="elas-body"></tbody>
+    <tfoot id="elas-foot"></tfoot>
+  </table>
+  <p class="note">* Sem distinção de cor. Rolos de 25m. Elástico do Pijama Inverno usa a mesma taxa m/peça do Pijama Verão (mesmo padrão de "short"). Informe rolos FECHADOS em estoque.</p>
+</div>
+
+<!-- BOTÕES -->
+<div id="bot" class="section">
+  <h2>🔘 Botões — Pijama Verão + Inverno (5 por peça)</h2>
+  <div class="legend">
+    <div class="leg">🌑 Escuros → <strong>Botão Branco</strong></div>
+    <div class="leg">🌕 Claros → <strong>Botão Preto</strong></div>
+  </div>
+  <table id="bot-tbl">
+    <thead><tr>
+      <th style="width:30px">✓</th>
+      <th>Cor Botão</th>
+      <th class="r">Necessário (un)</th>
+      <th class="r">Pacotes (50un)</th>
+      <th class="r">Temos (pacotes)</th>
+      <th class="r">Falta (pacotes)</th>
+    </tr></thead>
+    <tbody id="bot-body"></tbody>
+    <tfoot id="bot-foot"></tfoot>
+  </table>
+  <p class="note">* Consolidado por cor de botão. Inclui Pijama Verão + Pijama Inverno (mesmo padrão de cor contrastante). Informe pacotes FECHADOS (50un) em estoque, não botões avulsos.</p>
+</div>
+
+<!-- LISTA DE COMPRAS -->
+<div id="compras" class="section">
+  <h2>🛒 Lista de Compras</h2>
+  <div class="banner" style="margin-bottom:14px">
+    Preenchida automaticamente: todo item marcado (✓) nas abas de insumo cuja quantidade em estoque (rolos/pacotes fechados) fica abaixo do necessário aparece aqui com a diferença a comprar.
+  </div>
+  <div class="sgrid" id="compras-cards"></div>
+  <div id="compras-body"></div>
+</div>
+
+<script>
+// ─── DADOS (Plano Setembro/2026 — planilha "curva_ABC_Bling_Setembro2026") ──
+const rows = [
+  {sku:"RMC-M-BRANCO",prod:"Robe Manga Curta",tam:"M",cor:"Branco",qtd:53,tec:1.43,vivo:null,elas:null,estoqueAtual:17,emProducao:0,vendas7d:14,vendaDia:1.93},
+  {sku:"RMC-G-ROSE",prod:"Robe Manga Curta",tam:"G",cor:"Rose",qtd:45,tec:1.53,vivo:null,elas:null,estoqueAtual:-1,emProducao:16,vendas7d:12,vendaDia:1.67},
+  {sku:"RMC-G1-ROSE",prod:"Robe Manga Curta",tam:"G1",cor:"Rose",qtd:38,tec:2.18,vivo:null,elas:null,estoqueAtual:5,emProducao:0,vendas7d:8,vendaDia:1.2},
+  {sku:"RMC-M-MARSALA",prod:"Robe Manga Curta",tam:"M",cor:"Marsala",qtd:24,tec:1.43,vivo:null,elas:null,estoqueAtual:5,emProducao:0,vendas7d:6,vendaDia:0.8},
+  {sku:"RMC-GG-ROSE",prod:"Robe Manga Curta",tam:"GG",cor:"Rose",qtd:24,tec:1.6,vivo:null,elas:null,estoqueAtual:0,emProducao:10,vendas7d:7,vendaDia:0.93},
+  {sku:"RMC-G-MARSALA",prod:"Robe Manga Curta",tam:"G",cor:"Marsala",qtd:23,tec:1.53,vivo:null,elas:null,estoqueAtual:6,emProducao:0,vendas7d:6,vendaDia:0.8},
+  {sku:"RMC-GG-AZULCLA",prod:"Robe Manga Curta",tam:"GG",cor:"Azul Claro",qtd:18,tec:1.6,vivo:null,elas:null,estoqueAtual:0,emProducao:6,vendas7d:5,vendaDia:0.67},
+  {sku:"RMC-G1-BRANCO",prod:"Robe Manga Curta",tam:"G1",cor:"Branco",qtd:18,tec:2.18,vivo:null,elas:null,estoqueAtual:6,emProducao:1,vendas7d:5,vendaDia:0.7},
+  {sku:"RMC-P-BRANCO",prod:"Robe Manga Curta",tam:"P",cor:"Branco",qtd:18,tec:1.28,vivo:null,elas:null,estoqueAtual:7,emProducao:4,vendas7d:6,vendaDia:0.8},
+  {sku:"RMC-GG-MARSALA",prod:"Robe Manga Curta",tam:"GG",cor:"Marsala",qtd:18,tec:1.6,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:4,vendaDia:0.5},
+  {sku:"RMC-M-PRETO",prod:"Robe Manga Curta",tam:"M",cor:"Preto",qtd:17,tec:1.43,vivo:null,elas:null,estoqueAtual:0,emProducao:6,vendas7d:4,vendaDia:0.63},
+  {sku:"RMC-G3-ROSE",prod:"Robe Manga Curta",tam:"G3",cor:"Rose",qtd:17,tec:2.26,vivo:null,elas:null,estoqueAtual:7,emProducao:0,vendas7d:5,vendaDia:0.67},
+  {sku:"RMC-P-LILAS",prod:"Robe Manga Curta",tam:"P",cor:"Lilás",qtd:17,tec:1.28,vivo:null,elas:null,estoqueAtual:2,emProducao:0,vendas7d:4,vendaDia:0.53},
+  {sku:"RMC-GG-BRANCO",prod:"Robe Manga Curta",tam:"GG",cor:"Branco",qtd:16,tec:1.6,vivo:null,elas:null,estoqueAtual:20,emProducao:0,vendas7d:7,vendaDia:1},
+  {sku:"RMC-GG-ROSACLA",prod:"Robe Manga Curta",tam:"GG",cor:"Rosa Claro",qtd:16,tec:1.6,vivo:null,elas:null,estoqueAtual:2,emProducao:4,vendas7d:4,vendaDia:0.6},
+  {sku:"RMC-G3-BRANCO",prod:"Robe Manga Curta",tam:"G3",cor:"Branco",qtd:16,tec:2.26,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:3,vendaDia:0.43},
+  {sku:"RMC-M-PINK",prod:"Robe Manga Curta",tam:"M",cor:"Pink",qtd:16,tec:1.43,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:3,vendaDia:0.43},
+  {sku:"RMC-GG-LILAS",prod:"Robe Manga Curta",tam:"GG",cor:"Lilás",qtd:13,tec:1.6,vivo:null,elas:null,estoqueAtual:0,emProducao:4,vendas7d:3,vendaDia:0.47},
+  {sku:"RMC-GG-PRETO",prod:"Robe Manga Curta",tam:"GG",cor:"Preto",qtd:12,tec:1.6,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:3,vendaDia:0.37},
+  {sku:"RMC-P-ROSE",prod:"Robe Manga Curta",tam:"P",cor:"Rose",qtd:11,tec:1.28,vivo:null,elas:null,estoqueAtual:31,emProducao:4,vendas7d:9,vendaDia:1.27},
+  {sku:"RMC-G2-PRETO",prod:"Robe Manga Curta",tam:"G2",cor:"Preto",qtd:11,tec:2.2,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:2,vendaDia:0.3},
+  {sku:"RMC-G1-AZULCLA",prod:"Robe Manga Curta",tam:"G1",cor:"Azul Claro",qtd:10,tec:2.18,vivo:null,elas:null,estoqueAtual:0,emProducao:6,vendas7d:3,vendaDia:0.43},
+  {sku:"RMC-P-PRETO",prod:"Robe Manga Curta",tam:"P",cor:"Preto",qtd:10,tec:1.28,vivo:null,elas:null,estoqueAtual:0,emProducao:7,vendas7d:3,vendaDia:0.47},
+  {sku:"RMC-G-LILAS",prod:"Robe Manga Curta",tam:"G",cor:"Lilás",qtd:9,tec:1.53,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:4,vendaDia:0.5},
+  {sku:"RMC-G2-MARSALA",prod:"Robe Manga Curta",tam:"G2",cor:"Marsala",qtd:9,tec:2.2,vivo:null,elas:null,estoqueAtual:0,emProducao:5,vendas7d:3,vendaDia:0.4},
+  {sku:"RMC-G-PRETO",prod:"Robe Manga Curta",tam:"G",cor:"Preto",qtd:8,tec:1.53,vivo:null,elas:null,estoqueAtual:8,emProducao:6,vendas7d:4,vendaDia:0.6},
+  {sku:"RMC-G-PINK",prod:"Robe Manga Curta",tam:"G",cor:"Pink",qtd:8,tec:1.53,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:2,vendaDia:0.3},
+  {sku:"RMC-G-AZULCLA",prod:"Robe Manga Curta",tam:"G",cor:"Azul Claro",qtd:7,tec:1.53,vivo:null,elas:null,estoqueAtual:0,emProducao:40,vendas7d:9,vendaDia:1.3},
+  {sku:"RMC-G-VERDEAG",prod:"Robe Manga Curta",tam:"G",cor:"Verde Água",qtd:7,tec:1.53,vivo:null,elas:null,estoqueAtual:2,emProducao:2,vendas7d:2,vendaDia:0.3},
+  {sku:"RMC-GG-PINK",prod:"Robe Manga Curta",tam:"GG",cor:"Pink",qtd:6,tec:1.6,vivo:null,elas:null,estoqueAtual:1,emProducao:4,vendas7d:2,vendaDia:0.3},
+  {sku:"RMC-G3-AZULCLA",prod:"Robe Manga Curta",tam:"G3",cor:"Azul Claro",qtd:4,tec:2.26,vivo:null,elas:null,estoqueAtual:0,emProducao:10,vendas7d:3,vendaDia:0.4},
+  {sku:"RMC-P-MARSALA",prod:"Robe Manga Curta",tam:"P",cor:"Marsala",qtd:3,tec:1.28,vivo:null,elas:null,estoqueAtual:2,emProducao:6,vendas7d:2,vendaDia:0.3},
+  {sku:"RMC-G3-PRETO",prod:"Robe Manga Curta",tam:"G3",cor:"Preto",qtd:3,tec:2.26,vivo:null,elas:null,estoqueAtual:0,emProducao:7,vendas7d:2,vendaDia:0.27},
+  {sku:"RMC-M-LILAS",prod:"Robe Manga Curta",tam:"M",cor:"Lilás",qtd:3,tec:1.43,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:1,vendaDia:0.17},
+  {sku:"RMC-G3-LILAS",prod:"Robe Manga Curta",tam:"G3",cor:"Lilás",qtd:2,tec:2.26,vivo:null,elas:null,estoqueAtual:0,emProducao:4,vendas7d:1,vendaDia:0.17},
+  {sku:"RMC-G2-PINK",prod:"Robe Manga Curta",tam:"G2",cor:"Pink",qtd:2,tec:2.2,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"RMC-G3-PINK",prod:"Robe Manga Curta",tam:"G3",cor:"Pink",qtd:2,tec:2.26,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"RMC-G1-LILAS",prod:"Robe Manga Curta",tam:"G1",cor:"Lilás",qtd:1,tec:2.18,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"RMC-M-ROSE",prod:"Robe Manga Curta",tam:"M",cor:"Rose",qtd:0,tec:1.43,vivo:null,elas:null,estoqueAtual:46,emProducao:46,vendas7d:16,vendaDia:2.3},
+  {sku:"RMC-M-AZULCLA",prod:"Robe Manga Curta",tam:"M",cor:"Azul Claro",qtd:0,tec:1.43,vivo:null,elas:null,estoqueAtual:26,emProducao:32,vendas7d:8,vendaDia:1.13},
+  {sku:"RMC-G-BRANCO",prod:"Robe Manga Curta",tam:"G",cor:"Branco",qtd:0,tec:1.53,vivo:null,elas:null,estoqueAtual:31,emProducao:10,vendas7d:7,vendaDia:0.93},
+  {sku:"RMC-P-AZULCLA",prod:"Robe Manga Curta",tam:"P",cor:"Azul Claro",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:0,emProducao:22,vendas7d:4,vendaDia:0.57},
+  {sku:"RMC-M-VERDEAG",prod:"Robe Manga Curta",tam:"M",cor:"Verde Água",qtd:0,tec:1.43,vivo:null,elas:null,estoqueAtual:14,emProducao:12,vendas7d:4,vendaDia:0.6},
+  {sku:"RMC-G1-MARSALA",prod:"Robe Manga Curta",tam:"G1",cor:"Marsala",qtd:0,tec:2.18,vivo:null,elas:null,estoqueAtual:0,emProducao:19,vendas7d:4,vendaDia:0.5},
+  {sku:"RMC-P-VERDEAG",prod:"Robe Manga Curta",tam:"P",cor:"Verde Água",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:17,emProducao:0,vendas7d:2,vendaDia:0.3},
+  {sku:"RMC-G3-MARSALA",prod:"Robe Manga Curta",tam:"G3",cor:"Marsala",qtd:0,tec:2.26,vivo:null,elas:null,estoqueAtual:0,emProducao:13,vendas7d:2,vendaDia:0.33},
+  {sku:"RMC-G3-VERDEAG",prod:"Robe Manga Curta",tam:"G3",cor:"Verde Água",qtd:0,tec:2.26,vivo:null,elas:null,estoqueAtual:19,emProducao:0,vendas7d:3,vendaDia:0.37},
+  {sku:"RMC-P-ROSACLA",prod:"Robe Manga Curta",tam:"P",cor:"Rosa Claro",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:0,emProducao:22,vendas7d:1,vendaDia:0.2},
+  {sku:"RMC-GG-VERDEAG",prod:"Robe Manga Curta",tam:"GG",cor:"Verde Água",qtd:0,tec:1.6,vivo:null,elas:null,estoqueAtual:2,emProducao:6,vendas7d:2,vendaDia:0.23},
+  {sku:"RMC-G2-BRANCO",prod:"Robe Manga Curta",tam:"G2",cor:"Branco",qtd:0,tec:2.2,vivo:null,elas:null,estoqueAtual:13,emProducao:5,vendas7d:2,vendaDia:0.23},
+  {sku:"RMC-G-ROSACLA",prod:"Robe Manga Curta",tam:"G",cor:"Rosa Claro",qtd:0,tec:1.53,vivo:null,elas:null,estoqueAtual:1,emProducao:10,vendas7d:2,vendaDia:0.23},
+  {sku:"RMC-P-PINK",prod:"Robe Manga Curta",tam:"P",cor:"Pink",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:5,emProducao:10,vendas7d:2,vendaDia:0.23},
+  {sku:"RMC-G2-ROSE",prod:"Robe Manga Curta",tam:"G2",cor:"Rose",qtd:0,tec:2.2,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:1,vendaDia:0.1},
+  {sku:"RMC-G2-VERDEAG",prod:"Robe Manga Curta",tam:"G2",cor:"Verde Água",qtd:0,tec:2.2,vivo:null,elas:null,estoqueAtual:13,emProducao:0,vendas7d:1,vendaDia:0.1},
+  {sku:"RMC-G2-AZULCLA",prod:"Robe Manga Curta",tam:"G2",cor:"Azul Claro",qtd:0,tec:2.2,vivo:null,elas:null,estoqueAtual:2,emProducao:6,vendas7d:0,vendaDia:0.07},
+  {sku:"RMC-G1-PRETO",prod:"Robe Manga Curta",tam:"G1",cor:"Preto",qtd:0,tec:2.18,vivo:null,elas:null,estoqueAtual:0,emProducao:7,vendas7d:0,vendaDia:0.07},
+  {sku:"RMC-G1-VERDEAG",prod:"Robe Manga Curta",tam:"G1",cor:"Verde Água",qtd:0,tec:2.18,vivo:null,elas:null,estoqueAtual:26,emProducao:0,vendas7d:0,vendaDia:0.03},
+  {sku:"RMC-M-ROSACLA",prod:"Robe Manga Curta",tam:"M",cor:"Rosa Claro",qtd:0,tec:1.43,vivo:null,elas:null,estoqueAtual:6,emProducao:6,vendas7d:0,vendaDia:0.03},
+  {sku:"RIF-12-BRANCO",prod:"Robe Infantil",tam:"12",cor:"Branco",qtd:20,tec:1.24,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:4,vendaDia:0.57},
+  {sku:"RIF-4-LILAS",prod:"Robe Infantil",tam:"4",cor:"Lilás",qtd:15,tec:0.94,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:4,vendaDia:0.5},
+  {sku:"RIF-12-LILAS",prod:"Robe Infantil",tam:"12",cor:"Lilás",qtd:14,tec:1.24,vivo:null,elas:null,estoqueAtual:0,emProducao:2,vendas7d:3,vendaDia:0.43},
+  {sku:"RIF-14-VERDEAG",prod:"Robe Infantil",tam:"14",cor:"Verde Água",qtd:13,tec:1.28,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:3,vendaDia:0.4},
+  {sku:"RIF-2-PINK",prod:"Robe Infantil",tam:"2",cor:"Pink",qtd:12,tec:1.03,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:3,vendaDia:0.37},
+  {sku:"RIF-8-VERDEAG",prod:"Robe Infantil",tam:"8",cor:"Verde Água",qtd:8,tec:0.92,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:2,vendaDia:0.23},
+  {sku:"RIF-14-ROSE",prod:"Robe Infantil",tam:"14",cor:"Rose",qtd:7,tec:1.28,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.2},
+  {sku:"RIF-10-BRANCO",prod:"Robe Infantil",tam:"10",cor:"Branco",qtd:5,tec:1.1,vivo:null,elas:null,estoqueAtual:6,emProducao:0,vendas7d:2,vendaDia:0.3},
+  {sku:"RIF-6-PINK",prod:"Robe Infantil",tam:"6",cor:"Pink",qtd:5,tec:0.94,vivo:null,elas:null,estoqueAtual:5,emProducao:0,vendas7d:2,vendaDia:0.27},
+  {sku:"RIF-12-MARSALA",prod:"Robe Infantil",tam:"12",cor:"Marsala",qtd:4,tec:1.24,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:1,vendaDia:0.2},
+  {sku:"RIF-10-ROSACLA",prod:"Robe Infantil",tam:"10",cor:"Rosa Claro",qtd:4,tec:1.1,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:1,vendaDia:0.13},
+  {sku:"RIF-4-ROSE",prod:"Robe Infantil",tam:"4",cor:"Rose",qtd:4,tec:0.94,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:1,vendaDia:0.13},
+  {sku:"RIF-12-ROSE",prod:"Robe Infantil",tam:"12",cor:"Rose",qtd:4,tec:1.24,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.1},
+  {sku:"RIF-12-ROSACLA",prod:"Robe Infantil",tam:"12",cor:"Rosa Claro",qtd:4,tec:1.24,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.1},
+  {sku:"RIF-6-LILAS",prod:"Robe Infantil",tam:"6",cor:"Lilás",qtd:3,tec:0.94,vivo:null,elas:null,estoqueAtual:8,emProducao:2,vendas7d:3,vendaDia:0.37},
+  {sku:"RIF-10-AZULCLA",prod:"Robe Infantil",tam:"10",cor:"Azul Claro",qtd:3,tec:1.1,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:1,vendaDia:0.17},
+  {sku:"RIF-8-PINK",prod:"Robe Infantil",tam:"8",cor:"Pink",qtd:3,tec:0.92,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:1,vendaDia:0.17},
+  {sku:"RIF-8-ROSE",prod:"Robe Infantil",tam:"8",cor:"Rose",qtd:3,tec:0.92,vivo:null,elas:null,estoqueAtual:0,emProducao:2,vendas7d:1,vendaDia:0.13},
+  {sku:"RIF-14-AZULCLA",prod:"Robe Infantil",tam:"14",cor:"Azul Claro",qtd:3,tec:1.28,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:1,vendaDia:0.1},
+  {sku:"RIF-2-VERDEAG",prod:"Robe Infantil",tam:"2",cor:"Verde Água",qtd:3,tec:1.03,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:1,vendaDia:0.1},
+  {sku:"RIF-2-ROSE",prod:"Robe Infantil",tam:"2",cor:"Rose",qtd:3,tec:1.03,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:1,vendaDia:0.1},
+  {sku:"RIF-8-ROSACLA",prod:"Robe Infantil",tam:"8",cor:"Rosa Claro",qtd:2,tec:0.92,vivo:null,elas:null,estoqueAtual:2,emProducao:2,vendas7d:1,vendaDia:0.17},
+  {sku:"RIF-4-ROSACLA",prod:"Robe Infantil",tam:"4",cor:"Rosa Claro",qtd:2,tec:0.94,vivo:null,elas:null,estoqueAtual:0,emProducao:2,vendas7d:1,vendaDia:0.1},
+  {sku:"RIF-4-BRANCO",prod:"Robe Infantil",tam:"4",cor:"Branco",qtd:2,tec:0.94,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"RIF-14-ROSACLA",prod:"Robe Infantil",tam:"14",cor:"Rosa Claro",qtd:2,tec:1.28,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"RIF-4-MARSALA",prod:"Robe Infantil",tam:"4",cor:"Marsala",qtd:1,tec:0.94,vivo:null,elas:null,estoqueAtual:0,emProducao:4,vendas7d:1,vendaDia:0.13},
+  {sku:"RIF-8-AZULCLA",prod:"Robe Infantil",tam:"8",cor:"Azul Claro",qtd:1,tec:0.92,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"RIF-14-BRANCO",prod:"Robe Infantil",tam:"14",cor:"Branco",qtd:1,tec:1.28,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.03},
+  {sku:"RIF-2-BRANCO",prod:"Robe Infantil",tam:"2",cor:"Branco",qtd:1,tec:1.03,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.03},
+  {sku:"RIF-10-LILAS",prod:"Robe Infantil",tam:"10",cor:"Lilás",qtd:0,tec:1.1,vivo:null,elas:null,estoqueAtual:2,emProducao:14,vendas7d:2,vendaDia:0.3},
+  {sku:"RIF-6-ROSE",prod:"Robe Infantil",tam:"6",cor:"Rose",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:1,emProducao:6,vendas7d:1,vendaDia:0.2},
+  {sku:"RIF-8-LILAS",prod:"Robe Infantil",tam:"8",cor:"Lilás",qtd:0,tec:0.92,vivo:null,elas:null,estoqueAtual:2,emProducao:8,vendas7d:1,vendaDia:0.2},
+  {sku:"RIF-6-MARSALA",prod:"Robe Infantil",tam:"6",cor:"Marsala",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:10,emProducao:0,vendas7d:1,vendaDia:0.13},
+  {sku:"RIF-10-PINK",prod:"Robe Infantil",tam:"10",cor:"Pink",qtd:0,tec:1.1,vivo:null,elas:null,estoqueAtual:4,emProducao:2,vendas7d:1,vendaDia:0.13},
+  {sku:"RIF-6-AZULCLA",prod:"Robe Infantil",tam:"6",cor:"Azul Claro",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:6,emProducao:0,vendas7d:1,vendaDia:0.13},
+  {sku:"RIF-10-MARSALA",prod:"Robe Infantil",tam:"10",cor:"Marsala",qtd:0,tec:1.1,vivo:null,elas:null,estoqueAtual:0,emProducao:4,vendas7d:1,vendaDia:0.1},
+  {sku:"RIF-4-AZULCLA",prod:"Robe Infantil",tam:"4",cor:"Azul Claro",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:2,emProducao:4,vendas7d:1,vendaDia:0.1},
+  {sku:"RIF-12-AZULCLA",prod:"Robe Infantil",tam:"12",cor:"Azul Claro",qtd:0,tec:1.24,vivo:null,elas:null,estoqueAtual:1,emProducao:4,vendas7d:1,vendaDia:0.1},
+  {sku:"RIF-6-BRANCO",prod:"Robe Infantil",tam:"6",cor:"Branco",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:5,emProducao:0,vendas7d:1,vendaDia:0.1},
+  {sku:"RIF-8-MARSALA",prod:"Robe Infantil",tam:"8",cor:"Marsala",qtd:0,tec:0.92,vivo:null,elas:null,estoqueAtual:7,emProducao:2,vendas7d:1,vendaDia:0.1},
+  {sku:"RIF-12-PINK",prod:"Robe Infantil",tam:"12",cor:"Pink",qtd:0,tec:1.24,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"RIF-14-LILAS",prod:"Robe Infantil",tam:"14",cor:"Lilás",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:10,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"RIF-6-VERDEAG",prod:"Robe Infantil",tam:"6",cor:"Verde Água",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:2,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"RIF-6-ROSACLA",prod:"Robe Infantil",tam:"6",cor:"Rosa Claro",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:1,emProducao:2,vendas7d:0,vendaDia:0.07},
+  {sku:"RIF-14-PINK",prod:"Robe Infantil",tam:"14",cor:"Pink",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"RIF-2-MARSALA",prod:"Robe Infantil",tam:"2",cor:"Marsala",qtd:0,tec:1.03,vivo:null,elas:null,estoqueAtual:4,emProducao:0,vendas7d:0,vendaDia:0.03},
+  {sku:"RIF-14-MARSALA",prod:"Robe Infantil",tam:"14",cor:"Marsala",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:2,emProducao:4,vendas7d:0,vendaDia:0.03},
+  {sku:"RIF-10-ROSE",prod:"Robe Infantil",tam:"10",cor:"Rose",qtd:0,tec:1.1,vivo:null,elas:null,estoqueAtual:2,emProducao:0,vendas7d:0,vendaDia:0.03},
+  {sku:"RIF-2-LILAS",prod:"Robe Infantil",tam:"2",cor:"Lilás",qtd:0,tec:1.03,vivo:null,elas:null,estoqueAtual:8,emProducao:0,vendas7d:0,vendaDia:0.03},
+  {sku:"PMC-G-BRANCO",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Branco",qtd:16,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:7,emProducao:0,vendas7d:4,vendaDia:0.63},
+  {sku:"PMC-GG-PRETO",prod:"Pijama Manga Curta (Verão)",tam:"GG",cor:"Preto",qtd:11,tec:1.92,vivo:4.5,elas:0.72,estoqueAtual:1,emProducao:0,vendas7d:2,vendaDia:0.33},
+  {sku:"PMC-M-ROSACLA",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Rosa Claro",qtd:10,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:3,emProducao:0,vendas7d:3,vendaDia:0.37},
+  {sku:"PMC-P-BRANCO",prod:"Pijama Manga Curta (Verão)",tam:"P",cor:"Branco",qtd:10,tec:1.51,vivo:3.75,elas:0.64,estoqueAtual:3,emProducao:0,vendas7d:3,vendaDia:0.37},
+  {sku:"PMC-M-BRANCO",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Branco",qtd:9,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:0,emProducao:20,vendas7d:6,vendaDia:0.8},
+  {sku:"PMC-GG-ROSACLA",prod:"Pijama Manga Curta (Verão)",tam:"GG",cor:"Rosa Claro",qtd:6,tec:1.92,vivo:4.5,elas:0.72,estoqueAtual:5,emProducao:2,vendas7d:3,vendaDia:0.37},
+  {sku:"PMC-P-ROSACLA",prod:"Pijama Manga Curta (Verão)",tam:"P",cor:"Rosa Claro",qtd:6,tec:1.51,vivo:3.75,elas:0.64,estoqueAtual:1,emProducao:0,vendas7d:1,vendaDia:0.2},
+  {sku:"PMC-P-PRETO",prod:"Pijama Manga Curta (Verão)",tam:"P",cor:"Preto",qtd:5,tec:1.51,vivo:3.75,elas:0.64,estoqueAtual:3,emProducao:0,vendas7d:2,vendaDia:0.23},
+  {sku:"PMC-G-PINK",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Pink",qtd:3,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:3,emProducao:0,vendas7d:1,vendaDia:0.17},
+  {sku:"PMC-G-PRETO",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Preto",qtd:2,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:0,emProducao:14,vendas7d:3,vendaDia:0.43},
+  {sku:"PMC-G-AZULMAR",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Azul Marinho",qtd:1,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:11,emProducao:0,vendas7d:2,vendaDia:0.33},
+  {sku:"PMC-GG-ROSE",prod:"Pijama Manga Curta (Verão)",tam:"GG",cor:"Rose",qtd:0,tec:1.92,vivo:4.5,elas:0.72,estoqueAtual:15,emProducao:0,vendas7d:2,vendaDia:0.33},
+  {sku:"PMC-M-ROSE",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Rose",qtd:0,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:37,emProducao:0,vendas7d:3,vendaDia:0.37},
+  {sku:"PMC-G-ROSE",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Rose",qtd:0,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:15,emProducao:0,vendas7d:3,vendaDia:0.37},
+  {sku:"PMC-P-ROSE",prod:"Pijama Manga Curta (Verão)",tam:"P",cor:"Rose",qtd:0,tec:1.51,vivo:3.75,elas:0.64,estoqueAtual:16,emProducao:0,vendas7d:2,vendaDia:0.23},
+  {sku:"PMC-M-AZULMAR",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Azul Marinho",qtd:0,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:17,emProducao:0,vendas7d:2,vendaDia:0.23},
+  {sku:"PMC-M-PRETO",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Preto",qtd:0,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:21,emProducao:0,vendas7d:2,vendaDia:0.23},
+  {sku:"PMC-GG-AZULMAR",prod:"Pijama Manga Curta (Verão)",tam:"GG",cor:"Azul Marinho",qtd:0,tec:1.92,vivo:4.5,elas:0.72,estoqueAtual:6,emProducao:2,vendas7d:1,vendaDia:0.2},
+  {sku:"PMC-P-AZULMAR",prod:"Pijama Manga Curta (Verão)",tam:"P",cor:"Azul Marinho",qtd:0,tec:1.51,vivo:3.75,elas:0.64,estoqueAtual:10,emProducao:0,vendas7d:1,vendaDia:0.2},
+  {sku:"PMC-GG-BRANCO",prod:"Pijama Manga Curta (Verão)",tam:"GG",cor:"Branco",qtd:0,tec:1.92,vivo:4.5,elas:0.72,estoqueAtual:7,emProducao:4,vendas7d:1,vendaDia:0.2},
+  {sku:"PMC-M-MARSALA",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Marsala",qtd:0,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:26,emProducao:0,vendas7d:1,vendaDia:0.17},
+  {sku:"PMC-M-PINK",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Pink",qtd:0,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:10,emProducao:0,vendas7d:1,vendaDia:0.13},
+  {sku:"PMC-G-ROSACLA",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Rosa Claro",qtd:0,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:5,emProducao:0,vendas7d:1,vendaDia:0.13},
+  {sku:"PMC-G-MARSALA",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Marsala",qtd:0,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:17,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"PMC-P-MARSALA",prod:"Pijama Manga Curta (Verão)",tam:"P",cor:"Marsala",qtd:0,tec:1.51,vivo:3.75,elas:0.64,estoqueAtual:20,emProducao:0,vendas7d:0,vendaDia:0.07},
+  {sku:"PMI-P-PRETO",prod:"Pijama Manga Longa (Inverno)",tam:"P",cor:"Preto",qtd:1,tec:2.34,vivo:1.1971,elas:0.64,estoqueAtual:3,emProducao:0,vendas7d:1,vendaDia:0.1},
+  {sku:"PMI-M-PRETO",prod:"Pijama Manga Longa (Inverno)",tam:"M",cor:"Preto",qtd:1,tec:2.46,vivo:1.2974,elas:0.66,estoqueAtual:2,emProducao:1,vendas7d:1,vendaDia:0.1},
+  {sku:"PMI-P-ROSACLA",prod:"Pijama Manga Longa (Inverno)",tam:"P",cor:"Rosa Claro",qtd:1,tec:2.34,vivo:1.197,elas:0.64,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.03},
+  {sku:"PMI-G-PRETO",prod:"Pijama Manga Longa (Inverno)",tam:"G",cor:"Preto",qtd:0,tec:2.58,vivo:1.3786,elas:0.68,estoqueAtual:1,emProducao:6,vendas7d:1,vendaDia:0.17},
+  {sku:"PMI-GG-PRETO",prod:"Pijama Manga Longa (Inverno)",tam:"GG",cor:"Preto",qtd:0,tec:2.78,vivo:1.468,elas:0.72,estoqueAtual:3,emProducao:2,vendas7d:0,vendaDia:0.07},
+  {sku:"PMI-M-ROSACLA",prod:"Pijama Manga Longa (Inverno)",tam:"M",cor:"Rosa Claro",qtd:0,tec:2.46,vivo:1.297,elas:0.66,estoqueAtual:1,emProducao:0,vendas7d:0,vendaDia:0.03},
+  {sku:"PMI-G-ROSACLA",prod:"Pijama Manga Longa (Inverno)",tam:"G",cor:"Rosa Claro",qtd:0,tec:2.58,vivo:1.379,elas:0.68,estoqueAtual:1,emProducao:0,vendas7d:0,vendaDia:0.03}
+];
+
+// ─── HELPERS ─────────────────────────────────────────────
+const COR_HEX={'Azul Claro':'#90caf9','Azul Marinho':'#1a237e','Azul Royal':'#1565c0','Azul':'#64b5f6','Branco':'#f5f5f5','Lilás':'#ce93d8','Marsala':'#6d1f2e','Pink':'#f48fb1','Preto':'#333','Rosa Claro':'#f8bbd0','Rosa':'#f48fb1','Rosê':'#f06292','Rose':'#f06292','Verde Água':'#80cbc4','Verde Menta':'#80cbc4','Roxo':'#8e24aa','Vermelho':'#c0392b'};
+const ESCUROS=['Preto','Azul Marinho','Marsala'];
+const TAMS_G={G1:true,G2:true,G3:true};
+const tip=r=>r.sku.split('-')[0];
+const f2=n=>n.toFixed(2).replace('.',',');
+const rl=(t,s)=>Math.ceil(t/s);
+const dot=c=>`<span class="dot" style="background:${COR_HEX[c]||'#aaa'}"></span>${c}`;
+const vbadge=v=>v==='Branco'?`<span class="badge b-wh">⬜ Branco</span>`:`<span class="badge b-bk">⬛ Preto</span>`;
+
+// ─── ESTADO DE ESTOQUE (checkbox + quantidade) ────────────
+// st[tabela][chave] = {ok: bool, qty: number|''}
+const st = {pol:{}, ela:{}, viv:{}, elas:{}, bot:{}};
+
+function stKey(label){ return label.replace(/\s/g,'_'); }
+
+// ─── SINCRONIZAÇÃO EM TEMPO REAL (Google Sheets via Apps Script) ──
+const DEFAULT_SYNC_URL='https://script.google.com/macros/s/AKfycbx3CT7Qd1mmIKV7k9EyUCAwyazeHEbMzOJRvBRmYgkERe5B4fgvLdJ9XR2CCVotIrG9/exec';
+const SYNC_URL_KEY='ls_sync_url', SYNC_USER_KEY='ls_sync_user', SYNC_POLL_MS=15000;
+const SYNC_NS='SET26_';
+let syncUrl=localStorage.getItem(SYNC_URL_KEY)||DEFAULT_SYNC_URL;
+let syncUser=localStorage.getItem(SYNC_USER_KEY)||'';
+let syncTimer=null, syncInFlight=false;
+
+function toggleSyncPanel(){
+  const p=document.getElementById('sync-panel');
+  document.getElementById('sync-url-input').value=syncUrl;
+  document.getElementById('sync-user-input').value=syncUser;
+  p.classList.toggle('open');
+}
+function saveSyncConfig(){
+  syncUrl=document.getElementById('sync-url-input').value.trim();
+  syncUser=document.getElementById('sync-user-input').value.trim();
+  localStorage.setItem(SYNC_URL_KEY,syncUrl);
+  localStorage.setItem(SYNC_USER_KEY,syncUser);
+  document.getElementById('sync-panel').classList.remove('open');
+  if(syncTimer) clearInterval(syncTimer);
+  if(syncUrl){
+    setSyncStatus('busy','Conectando...');
+    syncPull().then(()=>startSyncPolling());
+  } else {
+    setSyncStatus('off','Sincronização desligada (só neste navegador)');
+  }
+}
+function setSyncStatus(state,msg){
+  const el=document.getElementById('sync-status');
+  if(!el) return;
+  el.className='sync-status '+state;
+  const icon={ok:'🟢',busy:'🟡',err:'🔴',off:'⚪'}[state]||'⚪';
+  el.textContent=`${icon} ${msg}`;
+}
+function startSyncPolling(){
+  if(syncTimer) clearInterval(syncTimer);
+  syncTimer=setInterval(()=>{
+    const ae=document.activeElement;
+    if(ae && (ae.tagName==='INPUT')) return; // não atrapalha quem está digitando
+    syncPull();
+  }, SYNC_POLL_MS);
+}
+async function syncPull(){
+  if(!syncUrl) return;
+  if(syncInFlight) return;
+  syncInFlight=true;
+  setSyncStatus('busy','Sincronizando...');
+  try{
+    const res=await fetch(syncUrl+(syncUrl.includes('?')?'&':'?')+'t='+Date.now());
+    const data=await res.json();
+    applyRemoteState(data.rows||[]);
+    setSyncStatus('ok','Sincronizado às '+new Date().toLocaleTimeString('pt-BR'));
+  }catch(err){
+    setSyncStatus('err','Sem conexão — usando dados locais');
+  }finally{
+    syncInFlight=false;
+  }
+}
+function applyRemoteState(rowsIn){
+  let changed=false;
+  rowsIn.forEach(r=>{
+    let aba=r.aba; const chave=r.chave;
+    if(!aba||!chave||aba.indexOf(SYNC_NS)!==0) return;
+    aba=aba.slice(SYNC_NS.length);
+    const ok=(r.campo1===true||r.campo1==='TRUE'||r.campo1==='true');
+    const campo2=(r.campo2===undefined||r.campo2===null)?'':r.campo2;
+    const by=r.atualizado_por||'', at=r.atualizado_em||'';
+    if(aba==='enc'){
+      let parsed={date:'',qtd:'',motivo:'',obs:''};
+      if(campo2){
+        try{
+          const p=JSON.parse(campo2);
+          if(p&&typeof p==='object'){
+            parsed={date:p.date||'',qtd:(p.qtd===undefined||p.qtd===null)?'':p.qtd,motivo:p.motivo||'',obs:p.obs||''};
+          } else {
+            parsed.date=String(campo2).slice(0,10);
+          }
+        }catch(e){
+          parsed.date=String(campo2).slice(0,10); // formato antigo (só data, antes desta atualização)
+        }
+      }
+      const cur=encSt[chave];
+      const diff=!cur||cur.chk!==ok||cur.date!==parsed.date||String(cur.qtd??'')!==String(parsed.qtd)||cur.motivo!==parsed.motivo||cur.obs!==parsed.obs||cur.by!==by;
+      if(diff){
+        encSt[chave]={chk:ok,date:parsed.date,qtd:parsed.qtd,motivo:parsed.motivo,obs:parsed.obs,by,at};
+        changed=true;
+      }
+    } else {
+      if(!st[aba]) return;
+      const cur=st[aba][chave];
+      if(!cur||cur.ok!==ok||String(cur.qty??'')!==String(campo2)||cur.by!==by){
+        st[aba][chave]={ok,qty:campo2===''?'':campo2,by,at};
+        changed=true;
+      }
+    }
+  });
+  if(changed) rerenderAll();
+}
+function syncPush(aba,chave,campo1,campo2){
+  if(!syncUrl) return;
+  const payload={aba:SYNC_NS+aba,chave,campo1:!!campo1,campo2:(campo2===undefined||campo2===null)?'':campo2,usuario:syncUser||'(sem nome)'};
+  setSyncStatus('busy','Enviando...');
+  fetch(syncUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
+    .then(r=>r.json()).then(()=>{
+      setSyncStatus('ok','Sincronizado às '+new Date().toLocaleTimeString('pt-BR'));
+    }).catch(()=>{
+      setSyncStatus('err','Falha ao enviar — verifique a internet');
+    });
+}
+function rerenderAll(){
+  buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderEnc(); renderFaltaram(); renderListaCompras();
+}
+function pushEnc(k){
+  const s=encSt[k]||{};
+  syncPush('enc',k,!!s.chk,JSON.stringify({date:s.date||'',qtd:(s.qtd===undefined||s.qtd===null)?'':s.qtd,motivo:s.motivo||'',obs:s.obs||''}));
+}
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function mkCkInput(tab, key, checked, onchange){
+  return `<input type="checkbox" class="ck-ok" ${checked?'checked':''} onchange="${onchange}">`;
+}
+function mkQtyInput(tab, key, val, oninput, disabled){
+  return `<input class="inp-estq" type="number" min="0" step="1" placeholder="—" value="${val}" ${disabled?'disabled':''} oninput="${oninput}">`;
+}
+function syncTip(entry){
+  if(!entry || !entry.by) return '';
+  return ` title="Marcado por ${entry.by}${entry.at?' em '+fmtWhen(entry.at):''}"`;
+}
+function fmtWhen(at){
+  try{ const d=new Date(at); if(isNaN(d)) return String(at); return d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){ return String(at); }
+}
+function faltaCell(necessario, temosVal, isOk){
+  if(isOk && (temosVal===''||temosVal===null||temosVal===undefined)){
+    return `<span class="falta-zero">✅ OK</span>`;
+  }
+  if(temosVal===''||temosVal===null||temosVal===undefined){
+    return `<span class="na">—</span>`;
+  }
+  const diff = necessario - parseFloat(temosVal);
+  if(diff<=0) return `<span class="falta-zero">✅ OK</span>`;
+  return `<span class="falta-pos">▲ ${Math.round(diff)}</span>`;
+}
+
+// ─── CETIM POLIÉSTER (RMC + RIF) ─────────────────────────
+function buildPol(){
+  const m={};
+  rows.filter(r=>tip(r)==='RMC'||tip(r)==='RIF').forEach(r=>{
+    const c=r.cor; if(!m[c])m[c]={p:0,mt:0}; m[c].p+=r.qtd; m[c].mt+=r.qtd*r.tec;
+  });
+  const e=Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]));
+  const tM=e.reduce((a,[,v])=>a+v.mt,0);
+  document.getElementById('pol-body').innerHTML=e.map(([c,v])=>{
+    const k=stKey(c), s=st.pol[k]||{ok:false,qty:''};
+    const dis=s.ok&&s.qty==='';
+    const rolosNec=rl(v.mt,60);
+    return `<tr id="pol-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=rolosNec)?'row-ok':''}"${syncTip(s)}>
+      <td class="ok-cell">${mkCkInput('pol',k,s.ok,`togSt('pol','${k}',${rolosNec},this)`)}</td>
+      <td>${dot(c)}</td>
+      <td class="r">${f2(v.mt)}</td>
+      <td class="r"><span class="badge b-blu">${rolosNec}</span></td>
+      <td class="r">${mkQtyInput('pol',k,s.qty,`updSt('pol','${k}',${rolosNec},this)`,dis)}</td>
+      <td class="r" id="pol-falta-${k}">${faltaCell(rolosNec,s.qty,s.ok)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('pol-foot').innerHTML=`<tr><td></td><td>TOTAL</td><td class="r">${f2(tM)}</td><td class="r">${rl(tM,60)} rolos</td><td></td><td></td></tr>`;
+  const tP=e.reduce((a,[,v])=>a+v.p,0);
+  document.getElementById('pol-cards').innerHTML=
+    `<div class="scard"><div class="v">${tP}</div><div class="l">Total peças</div></div>`+
+    `<div class="scard red"><div class="v">${f2(tM)} m</div><div class="l">Total metros</div></div>`+
+    `<div class="scard grn"><div class="v">${e.length} cores</div><div class="l">Cores distintas</div></div>`;
+}
+
+// ─── CETIM ELASTANO (PMC) ────────────────────────────────
+function buildEla(){
+  const m={};
+  rows.filter(r=>tip(r)==='PMC'||tip(r)==='PMI').forEach(r=>{
+    const c=r.cor; if(!m[c])m[c]={p:0,mt:0,t:ESCUROS.includes(c)?'e':'c'};
+    m[c].p+=r.qtd; m[c].mt+=r.qtd*r.tec;
+  });
+  const e=Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]));
+  const tM=e.reduce((a,[,v])=>a+v.mt,0);
+  document.getElementById('ela-body').innerHTML=e.map(([c,v])=>{
+    const k=stKey(c), s=st.ela[k]||{ok:false,qty:''};
+    const vc=v.t==='e'?'Branco':'Preto', dis=s.ok&&s.qty==='';
+    const rolosNec=rl(v.mt,60);
+    return `<tr id="ela-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=rolosNec)?'row-ok':''}"${syncTip(s)}>
+      <td class="ok-cell">${mkCkInput('ela',k,s.ok,`togSt('ela','${k}',${rolosNec},this)`)}</td>
+      <td>${dot(c)}</td><td>${vbadge(vc)}</td>
+      <td class="r">${f2(v.mt)}</td>
+      <td class="r"><span class="badge b-blu">${rolosNec}</span></td>
+      <td class="r">${mkQtyInput('ela',k,s.qty,`updSt('ela','${k}',${rolosNec},this)`,dis)}</td>
+      <td class="r" id="ela-falta-${k}">${faltaCell(rolosNec,s.qty,s.ok)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('ela-foot').innerHTML=`<tr><td></td><td colspan="2">TOTAL</td><td class="r">${f2(tM)}</td><td class="r">${rl(tM,60)} rolos</td><td></td><td></td></tr>`;
+  const tP=e.reduce((a,[,v])=>a+v.p,0);
+  document.getElementById('ela-cards').innerHTML=
+    `<div class="scard"><div class="v">${tP}</div><div class="l">Total peças</div></div>`+
+    `<div class="scard red"><div class="v">${f2(tM)} m</div><div class="l">Total metros</div></div>`+
+    `<div class="scard grn"><div class="v">${e.length} cores</div><div class="l">Cores distintas</div></div>`;
+}
+
+// ─── VIVO (PMC) ──────────────────────────────────────────
+function buildViv(){
+  const m={};
+  rows.filter(r=>(tip(r)==='PMC'||tip(r)==='PMI')&&r.vivo).forEach(r=>{
+    const c=r.cor; if(!m[c])m[c]={p:0,mv:0,t:ESCUROS.includes(c)?'e':'c'};
+    m[c].p+=r.qtd; m[c].mv+=r.qtd*r.vivo;
+  });
+  const e=Object.entries(m).sort((a,b)=>a[0].localeCompare(b[0]));
+  const totB=e.filter(([,v])=>v.t==='e').reduce((a,[,v])=>a+v.mv,0);
+  const totP=e.filter(([,v])=>v.t==='c').reduce((a,[,v])=>a+v.mv,0);
+  const vivRows=[
+    {label:'Branco',necessario:totB,rolos:rl(totB,50)},
+    {label:'Preto', necessario:totP,rolos:rl(totP,50)},
+  ];
+  document.getElementById('viv-body').innerHTML=vivRows.map(v=>{
+    const k=stKey('Vivo_'+v.label), s=st.viv[k]||{ok:false,qty:''};
+    const dis=s.ok&&s.qty==='';
+    return `<tr id="viv-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=v.rolos)?'row-ok':''}"${syncTip(s)}>
+      <td class="ok-cell">${mkCkInput('viv',k,s.ok,`togSt('viv','${k}',${v.rolos},this)`)}</td>
+      <td>${vbadge(v.label)} Vivo ${v.label}</td>
+      <td class="r">${f2(v.necessario)}</td>
+      <td class="r"><span class="${v.label==='Branco'?'badge b-wh':'badge b-bk'}">${v.rolos} rolos</span></td>
+      <td class="r">${mkQtyInput('viv',k,s.qty,`updSt('viv','${k}',${v.rolos},this)`,dis)}</td>
+      <td class="r" id="viv-falta-${k}">${faltaCell(v.rolos,s.qty,s.ok)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('viv-foot').innerHTML=`<tr><td></td><td><b>TOTAL</b></td><td class="r"><b>${f2(totB+totP)}</b></td><td class="r">${rl(totB,50)+rl(totP,50)} rolos</td><td></td><td></td></tr>`;
+}
+
+// ─── ELÁSTICO (PMC) ──────────────────────────────────────
+function buildElas(){
+  const tams=['P','M','G','GG'];
+  const d=tams.map(t=>{
+    const s=rows.filter(r=>(tip(r)==='PMC'||tip(r)==='PMI')&&r.tam===t&&r.elas);
+    const p=s.reduce((a,r)=>a+r.qtd,0);
+    const mpp=s.length?s[0].elas:0;
+    return{t,p,mpp,tot:p*mpp};
+  }).filter(x=>x.p>0);
+  const tM=d.reduce((a,x)=>a+x.tot,0);
+  const r=rl(tM,25);
+  const k='elastico_total'; const s=st.elas[k]||{ok:false,qty:''};
+  document.getElementById('elas-body').innerHTML=d.map(x=>`
+    <tr><td></td><td>${x.t}</td><td class="r">${x.p}</td><td class="r">${f2(x.mpp)}</td><td class="r">${f2(x.tot)}</td><td></td><td></td></tr>`
+  ).join('');
+  const dis=s.ok&&s.qty==='';
+  document.getElementById('elas-foot').innerHTML=`<tr id="elas-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=r)?'row-ok':''}"${syncTip(s)}>
+    <td class="ok-cell">${mkCkInput('elas',k,s.ok,`togSt('elas','${k}',${r},this)`)}</td>
+    <td><b>TOTAL</b></td><td class="r">${d.reduce((a,x)=>a+x.p,0)}</td><td class="r">—</td>
+    <td class="r"><b>${f2(tM)}</b></td>
+    <td class="r">${mkQtyInput('elas',k,s.qty,`updSt('elas','${k}',${r},this)`,dis)}</td>
+    <td class="r" id="elas-falta-${k}">${faltaCell(r,s.qty,s.ok)}</td>
+  </tr>`;
+  document.getElementById('elas-cards').innerHTML=
+    `<div class="scard"><div class="v">${d.reduce((a,x)=>a+x.p,0)}</div><div class="l">Pijamas</div></div>`+
+    `<div class="scard red"><div class="v">${f2(tM)} m</div><div class="l">Total necessário</div></div>`+
+    `<div class="scard grn"><div class="v">${r} rolos</div><div class="l">Rolos 25m · sobra ${f2(r*25-tM)}m</div></div>`;
+}
+
+// ─── BOTÕES (PMC) ────────────────────────────────────────
+function buildBot(){
+  const m={};
+  rows.filter(r=>tip(r)==='PMC'||tip(r)==='PMI').forEach(r=>{
+    const c=r.cor; if(!m[c])m[c]={p:0,t:ESCUROS.includes(c)?'e':'c'}; m[c].p+=r.qtd;
+  });
+  const e=Object.entries(m);
+  const tW=e.filter(([,v])=>v.t==='e').reduce((a,[,v])=>a+v.p*5,0);
+  const tP=e.filter(([,v])=>v.t==='c').reduce((a,[,v])=>a+v.p*5,0);
+  const botRows=[
+    {label:'Branco',necessario:tW,pacotes:Math.ceil(tW/50)},
+    {label:'Preto', necessario:tP,pacotes:Math.ceil(tP/50)},
+  ];
+  document.getElementById('bot-body').innerHTML=botRows.map(v=>{
+    const k=stKey('Bot_'+v.label), s=st.bot[k]||{ok:false,qty:''};
+    const dis=s.ok&&s.qty==='';
+    return `<tr id="bot-row-${k}" class="${s.ok&&(s.qty===''||parseFloat(s.qty||0)>=v.pacotes)?'row-ok':''}"${syncTip(s)}>
+      <td class="ok-cell">${mkCkInput('bot',k,s.ok,`togSt('bot','${k}',${v.pacotes},this)`)}</td>
+      <td>${vbadge(v.label)} Botão ${v.label}</td>
+      <td class="r">${v.necessario}</td>
+      <td class="r"><span class="${v.label==='Branco'?'badge b-wh':'badge b-bk'}">${v.pacotes} pacotes</span></td>
+      <td class="r">${mkQtyInput('bot',k,s.qty,`updSt('bot','${k}',${v.pacotes},this)`,dis)}</td>
+      <td class="r" id="bot-falta-${k}">${faltaCell(v.pacotes,s.qty,s.ok)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('bot-foot').innerHTML=`<tr><td></td><td><b>TOTAL</b></td><td class="r"><b>${tW+tP}</b></td><td class="r">${Math.ceil(tW/50)+Math.ceil(tP/50)} pacotes</td><td></td><td></td></tr>`;
+}
+
+// ─── LISTA DE COMPRAS (consolidada) ──────────────────────
+function calcListaCompras(){
+  const itens=[];
+  const addSe=(aba,label,item,unidade,nec,s)=>{
+    if(!s||!s.ok||s.qty===''||s.qty===undefined||s.qty===null) return;
+    const temos=parseFloat(s.qty);
+    if(isNaN(temos)) return;
+    const falta=nec-temos;
+    if(falta>0) itens.push({aba:label,item,unidade,necessario:nec,temos,falta:Math.round(falta)});
+  };
+  // Cetim Poliéster
+  (function(){
+    const m={};
+    rows.filter(r=>tip(r)==='RMC'||tip(r)==='RIF').forEach(r=>{
+      const c=r.cor; if(!m[c])m[c]={mt:0}; m[c].mt+=r.qtd*r.tec;
+    });
+    Object.entries(m).forEach(([c,v])=>{
+      const k=stKey(c);
+      addSe('pol','Cetim Poliéster',c,'rolos',rl(v.mt,60),st.pol[k]);
+    });
+  })();
+  // Cetim Elastano
+  (function(){
+    const m={};
+    rows.filter(r=>tip(r)==='PMC'||tip(r)==='PMI').forEach(r=>{
+      const c=r.cor; if(!m[c])m[c]={mt:0}; m[c].mt+=r.qtd*r.tec;
+    });
+    Object.entries(m).forEach(([c,v])=>{
+      const k=stKey(c);
+      addSe('ela','Cetim Elastano',c,'rolos',rl(v.mt,60),st.ela[k]);
+    });
+  })();
+  // Vivo
+  (function(){
+    const m={};
+    rows.filter(r=>(tip(r)==='PMC'||tip(r)==='PMI')&&r.vivo).forEach(r=>{
+      const c=r.cor; if(!m[c])m[c]={mv:0,t:ESCUROS.includes(c)?'e':'c'}; m[c].mv+=r.qtd*r.vivo;
+    });
+    const e=Object.entries(m);
+    const totB=e.filter(([,v])=>v.t==='e').reduce((a,[,v])=>a+v.mv,0);
+    const totP=e.filter(([,v])=>v.t==='c').reduce((a,[,v])=>a+v.mv,0);
+    addSe('viv','Vivo','Branco','rolos',rl(totB,50),st.viv[stKey('Vivo_Branco')]);
+    addSe('viv','Vivo','Preto','rolos',rl(totP,50),st.viv[stKey('Vivo_Preto')]);
+  })();
+  // Elástico
+  (function(){
+    const tams=['P','M','G','GG'];
+    const tM=tams.map(t=>{
+      const s=rows.filter(r=>(tip(r)==='PMC'||tip(r)==='PMI')&&r.tam===t&&r.elas);
+      const p=s.reduce((a,r)=>a+r.qtd,0), mpp=s.length?s[0].elas:0;
+      return p*mpp;
+    }).reduce((a,x)=>a+x,0);
+    addSe('elas','Elástico','Total','rolos',rl(tM,25),st.elas['elastico_total']);
+  })();
+  // Botões
+  (function(){
+    const m={};
+    rows.filter(r=>tip(r)==='PMC'||tip(r)==='PMI').forEach(r=>{
+      const c=r.cor; if(!m[c])m[c]={p:0,t:ESCUROS.includes(c)?'e':'c'}; m[c].p+=r.qtd;
+    });
+    const e=Object.entries(m);
+    const tW=e.filter(([,v])=>v.t==='e').reduce((a,[,v])=>a+v.p*5,0);
+    const tP=e.filter(([,v])=>v.t==='c').reduce((a,[,v])=>a+v.p*5,0);
+    addSe('bot','Botões','Branco','pacotes',Math.ceil(tW/50),st.bot[stKey('Bot_Branco')]);
+    addSe('bot','Botões','Preto','pacotes',Math.ceil(tP/50),st.bot[stKey('Bot_Preto')]);
+  })();
+  return itens;
+}
+function renderListaCompras(){
+  const cardsEl=document.getElementById('compras-cards'), bodyEl=document.getElementById('compras-body');
+  if(!cardsEl||!bodyEl) return;
+  const itens=calcListaCompras();
+  cardsEl.innerHTML=`<div class="scard ora"><div class="v">${itens.length}</div><div class="l">Itens para comprar</div></div>`;
+  if(!itens.length){
+    bodyEl.innerHTML='<p style="padding:16px;color:#999">Nada pendente de compra no momento — tudo conferido! ✅</p>';
+    return;
+  }
+  bodyEl.innerHTML=`<table><thead><tr>
+      <th>Insumo</th><th>Item</th><th class="r">Necessário</th><th class="r">Temos</th><th class="r">Falta (comprar)</th>
+    </tr></thead><tbody>`+
+    itens.map(i=>`<tr>
+      <td>${i.aba}</td><td>${dot(i.item)}</td>
+      <td class="r">${i.necessario} ${i.unidade}</td>
+      <td class="r">${i.temos} ${i.unidade}</td>
+      <td class="r"><span class="falta-pos">▲ ${i.falta} ${i.unidade}</span></td>
+    </tr>`).join('')+
+    `</tbody></table>`;
+}
+
+// ─── HANDLERS ESTOQUE ────────────────────────────────────
+function togSt(tab, key, nec, el){
+  if(!st[tab][key]) st[tab][key]={ok:false,qty:''};
+  st[tab][key].ok=el.checked;
+  const row=document.getElementById(`${tab}-row-${key}`);
+  if(row){
+    const inp=row.querySelector('.inp-estq');
+    if(inp) inp.disabled=(el.checked && st[tab][key].qty==='');
+    updFalta(tab,key,nec);
+    row.classList.toggle('row-ok', el.checked&&(st[tab][key].qty===''||parseFloat(st[tab][key].qty||0)>=nec));
+  }
+  renderListaCompras();
+  syncPush(tab,key,st[tab][key].ok,st[tab][key].qty);
+}
+function updSt(tab, key, nec, el){
+  if(!st[tab][key]) st[tab][key]={ok:false,qty:''};
+  st[tab][key].qty=el.value;
+  updFalta(tab,key,nec);
+  const row=document.getElementById(`${tab}-row-${key}`);
+  if(row){
+    const s=st[tab][key];
+    row.classList.toggle('row-ok', s.ok&&(s.qty===''||parseFloat(s.qty||0)>=nec));
+  }
+  renderListaCompras();
+  syncPush(tab,key,st[tab][key].ok,st[tab][key].qty);
+}
+function updFalta(tab,key,nec){
+  const el=document.getElementById(`${tab}-falta-${key}`);
+  if(!el) return;
+  const s=st[tab][key]||{ok:false,qty:''};
+  el.innerHTML=faltaCell(nec,s.qty,s.ok);
+}
+
+// ─── PLANO ───────────────────────────────────────────────
+let filtAt='all', buscoT='';
+function getVis(){
+  return rows.filter(r=>{
+    const ok=filtAt==='all'||tip(r)===filtAt;
+    const s=buscoT.toLowerCase();
+    return ok&&(!s||r.sku.toLowerCase().includes(s)||r.cor.toLowerCase().includes(s)||r.prod.toLowerCase().includes(s));
+  });
+}
+function vendasCtx(r){
+  if(r.vendas7d!==undefined){
+    return `${r.vendas7d} pç/7d <span class="na">(${f2(r.vendaDia)}/dia)</span>`;
+  }
+  if(r.pctMix!==undefined){
+    return `Mix Ago/25: ${(r.pctMix*100).toFixed(1)}% <span class="na">(proj. ${f2(r.demandaProj)} pç)</span>`;
+  }
+  return '<span class="na">—</span>';
+}
+function renderPlano(){
+  const vis=getVis();
+  document.getElementById('plan-body').innerHTML=vis.map(r=>{
+    const t=tip(r),tt=r.qtd*r.tec,tv=r.vivo?r.qtd*r.vivo:null,te=r.elas?r.qtd*r.elas:null;
+    const tc=t==='RMC'?'b-rmc':t==='RIF'?'b-rif':t==='PMC'?'b-pmc':'b-pmi';
+    const temDemanda=(r.vendas7d&&r.vendas7d>0)||(r.pctMix&&r.pctMix>0);
+    const urgente=r.estoqueAtual!==undefined&&r.estoqueAtual!==null&&r.estoqueAtual<=0&&temDemanda;
+    return `<tr${urgente?' style="background:#fff5f5"':''}>
+      <td class="mono">${urgente?'🔥 ':''}${r.sku}</td>
+      <td><span class="badge ${tc}">${t}</span> ${r.prod}</td>
+      <td><b>${r.tam}</b></td><td>${dot(r.cor)} ${r.cor}</td>
+      <td class="r">${urgente?`<span class="falta-pos" title="Estoque zerado/negativo com venda ativa">${r.estoqueAtual}</span>`:(r.estoqueAtual??'<span class="na">—</span>')}</td>
+      <td class="r">${r.emProducao??'<span class="na">—</span>'}</td>
+      <td>${vendasCtx(r)}</td>
+      <td class="r"><b>${r.qtd}</b></td>
+      <td class="r">${f2(r.tec)}</td><td class="r">${f2(tt)}</td>
+      <td class="r">${tv?f2(r.vivo):'<span class="na">—</span>'}</td>
+      <td class="r">${tv?f2(tv):'<span class="na">—</span>'}</td>
+      <td class="r">${te?f2(r.elas):'<span class="na">—</span>'}</td>
+      <td class="r">${te?f2(te):'<span class="na">—</span>'}</td>
+    </tr>`;
+  }).join('');
+  const tQ=vis.reduce((a,r)=>a+r.qtd,0),tT=vis.reduce((a,r)=>a+r.qtd*r.tec,0);
+  const pmc=vis.filter(r=>r.vivo);
+  const tV=pmc.reduce((a,r)=>a+r.qtd*r.vivo,0),tE=pmc.reduce((a,r)=>a+r.qtd*r.elas,0);
+  document.getElementById('plan-foot').innerHTML=`<tr>
+    <td colspan="6">TOTAL (${vis.length} combinações)</td><td></td><td class="r">${tQ} pç</td>
+    <td class="r">—</td><td class="r">${f2(tT)} m</td>
+    <td class="r">—</td><td class="r">${pmc.length?f2(tV)+' m':'—'}</td>
+    <td class="r">—</td><td class="r">${pmc.length?f2(tE)+' m':'—'}</td>
+  </tr>`;
+  const tipos=[{k:'RMC',l:'Robe Manga Curta',c:'rmc'},{k:'RIF',l:'Robe Infantil',c:'rif'},{k:'PMC',l:'Pijama Verão',c:'pmc'},{k:'PMI',l:'Pijama Inverno',c:'pmi'}];
+  document.getElementById('plan-cards').innerHTML=tipos.map(tp=>{
+    const s=vis.filter(r=>tip(r)===tp.k),q=s.reduce((a,r)=>a+r.qtd,0);
+    return `<div class="scard ${tp.c}"><div class="v">${q}</div><div class="l">${tp.l}<br>${s.length} combinações</div></div>`;
+  }).join('')+`<div class="scard"><div class="v">${tQ}</div><div class="l">Total geral<br>${vis.length} combinações</div></div>`;
+}
+function filt(t,btn){
+  filtAt=t;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('off'));
+  if(t!=='all') document.querySelectorAll('.fbtn').forEach(b=>{
+    if(!b.className.includes(t.toLowerCase())&&!b.className.includes('all')) b.classList.add('off');
+  });
+  renderPlano();
+}
+function busca(v){buscoT=v;renderPlano();}
+
+// ─── ENCAIXE ─────────────────────────────────────────────
+function calcEnc(){
+  const map={};
+  rows.forEach(r=>{
+    const t=tip(r),k=`${t}||${r.prod}||${r.tam}`;
+    if(!map[k])map[k]={tipo:t,prod:r.prod,tam:r.tam,tec:r.tec,cores:[]};
+    map[k].cores.push({cor:r.cor,qtd:r.qtd});
+  });
+  const res=[];
+  Object.values(map).forEach(g=>{
+    const isG=(g.tipo==='RMC'||g.tipo==='RIF')&&TAMS_G[g.tam];
+    const maxPec=isG?30:60, dobrado=!isG, medFolha=dobrado?g.tec*2:g.tec;
+    const infestos=[], pend=g.cores.map(c=>({cor:c.cor,rest:c.qtd}));
+    let inf={total:0,cores:[]};
+    while(pend.some(c=>c.rest>0)){
+      if(inf.total>=maxPec){infestos.push(inf);inf={total:0,cores:[]};}
+      let ok=false;
+      for(const c of pend){
+        if(c.rest<=0)continue;
+        const add=Math.min(c.rest,maxPec-inf.total);
+        if(add<=0)continue;
+        c.rest-=add;
+        const ex=inf.cores.find(x=>x.cor===c.cor);
+        if(ex)ex.qtd+=add; else inf.cores.push({cor:c.cor,qtd:add});
+        inf.total+=add; ok=true;
+      }
+      if(!ok)break;
+    }
+    if(inf.total>0)infestos.push(inf);
+    res.push({tipo:g.tipo,prod:g.prod,tam:g.tam,tec:g.tec,dobrado,maxPec,medFolha,infestos,totalPec:g.cores.reduce((a,c)=>a+c.qtd,0)});
+  });
+  const ot={RMC:0,RIF:1,PMC:2,PMI:3};
+  const otam=['P','M','G','GG','G1','G2','G3','02','04','06','08','10','12','14','2','4','6','8','10','12','14'];
+  res.sort((a,b)=>(ot[a.tipo]-ot[b.tipo])||otam.indexOf(a.tam)-otam.indexOf(b.tam));
+  return res;
+}
+
+const encSt={};
+const encKey=(prod,tam,ii,cor)=>`${prod}|${tam}|${ii}|${cor}`;
+let encFiltro='todos', encTermo='';
+
+function encFilt(f,btn){
+  encFiltro=f;
+  document.querySelectorAll('.efbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderEnc();
+}
+function encBusca(v){
+  encTermo=v.trim().toLowerCase();
+  renderEnc();
+  const el=document.getElementById('enc-busca-res');
+  if(!encTermo){el.style.display='none';return;}
+  const m=rows.filter(r=>r.cor.toLowerCase().includes(encTermo));
+  if(!m.length){el.style.display='none';return;}
+  const bt={};
+  m.forEach(r=>{const t=tip(r);if(!bt[t])bt[t]=0;bt[t]+=r.qtd;});
+  const total=m.reduce((a,r)=>a+r.qtd,0);
+  const partes=Object.entries(bt).map(([t,q])=>`<b>${t}</b>: ${q} pç`).join(' · ');
+  el.style.display='block';
+  el.innerHTML=`🔍 <b>${m[0].cor}</b> — Total: <b>${total} peças</b> · ${partes} · ${m.length} combinações`;
+}
+
+function encRowStatus(k,sug){
+  const s=encSt[k];
+  if(!s||!s.chk) return 'pendente';
+  const raw=s.qtd;
+  const cortada=(raw===''||raw===undefined||raw===null)?sug:parseFloat(raw);
+  if(isNaN(cortada)) return 'pendente';
+  return cortada>=sug?'completo':'parcial';
+}
+function updateEncRowVisual(k,rowId,sug){
+  const row=document.getElementById(rowId);
+  if(!row)return;
+  const status=encRowStatus(k,sug);
+  row.classList.toggle('cortado',status==='completo');
+  row.classList.toggle('parcial',status==='parcial');
+}
+function refreshEncCards(){
+  const grupos=calcEnc();
+  let tInf=0,tVar=0,tCompleto=0,tParcial=0;
+  grupos.forEach(g=>{
+    tInf+=g.infestos.length;
+    g.infestos.forEach((inf,ii)=>inf.cores.forEach(c=>{
+      tVar++;
+      const st_=encRowStatus(encKey(g.prod,g.tam,ii,c.cor),c.qtd);
+      if(st_==='completo')tCompleto++; else if(st_==='parcial')tParcial++;
+    }));
+  });
+  const pct=tVar?Math.round(tCompleto/tVar*100):0;
+  const cards=document.getElementById('enc-cards');
+  if(!cards)return;
+  const sc=cards.querySelectorAll('.scard');
+  if(sc[1]){sc[1].querySelector('.v').textContent=`${tCompleto}/${tVar}`;const pb=sc[1].querySelector('.prog-bar');if(pb)pb.style.width=pct+'%';}
+  if(sc[2])sc[2].querySelector('.v').textContent=tVar-tCompleto-tParcial;
+  if(sc[3])sc[3].querySelector('.v').textContent=tParcial;
+}
+
+function renderEnc(){
+  const grupos=calcEnc(), cont=document.getElementById('enc-body');
+  let tInf=0,tVar=0,tCompleto=0,tParcial=0;
+  grupos.forEach(g=>{
+    tInf+=g.infestos.length;
+    g.infestos.forEach((inf,ii)=>inf.cores.forEach(c=>{
+      tVar++;
+      const st_=encRowStatus(encKey(g.prod,g.tam,ii,c.cor),c.qtd);
+      if(st_==='completo')tCompleto++; else if(st_==='parcial')tParcial++;
+    }));
+  });
+  const pct=tVar?Math.round(tCompleto/tVar*100):0;
+  document.getElementById('enc-cards').innerHTML=
+    `<div class="scard"><div class="v">${tInf}</div><div class="l">Total de infestos</div></div>`+
+    `<div class="scard grn"><div class="v">${tCompleto}/${tVar}</div><div class="l">Variações cortadas</div><div class="prog-wrap"><div class="prog-bar" style="width:${pct}%"></div></div></div>`+
+    `<div class="scard ora"><div class="v">${tVar-tCompleto-tParcial}</div><div class="l">Pendentes</div></div>`+
+    `<div class="scard red"><div class="v">${tParcial}</div><div class="l">⚠️ Cortes incompletos</div></div>`+
+    `<div class="scard"><div class="v">6/dia</div><div class="l">Infestos por tam/dia (sugerido)</div></div>`;
+
+  let html='', lastTipo=null;
+  const tBadge={RMC:'b-rmc',RIF:'b-rif',PMC:'b-pmc',PMI:'b-pmi'};
+  const tCor={RMC:'#6a5acd',RIF:'#2e8b57',PMC:'#c0392b',PMI:'#1565c0'};
+
+  grupos.forEach(g=>{
+    if(encFiltro!=='todos'&&encFiltro!=='pendentes'&&encFiltro!=='cortados'&&g.tipo!==encFiltro)return;
+    let temVis=false;
+    g.infestos.forEach((inf,ii)=>inf.cores.forEach(c=>{
+      const k=encKey(g.prod,g.tam,ii,c.cor), status=encRowStatus(k,c.qtd);
+      const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
+      if(!mb)return;
+      if(encFiltro==='pendentes'&&status==='pendente')temVis=true;
+      if(encFiltro==='cortados'&&status==='completo')temVis=true;
+      if(encFiltro==='todos'||encFiltro===g.tipo)temVis=true;
+    }));
+    if(!temVis)return;
+    if(lastTipo!==g.tipo){html+=`<div class="enc-prod-sep" style="color:${tCor[g.tipo]}">${g.prod}</div>`;lastTipo=g.tipo;}
+    const totPec=g.infestos.reduce((a,i)=>a+i.total,0);
+    html+=`<div class="enc-bloco"><div class="enc-bloco-hdr"><span>
+      <span class="badge ${tBadge[g.tipo]}">${g.tipo}</span> Tam. <b>${g.tam}</b> — ${g.prod}
+      <span class="sub">${totPec} peças · ${g.infestos.length} infesto${g.infestos.length>1?'s':''} · ${g.dobrado?'Dobrado (folha = medida×2)':'Simples (folha = medida×1)'}</span>
+    </span><span style="font-size:11px;opacity:.8">📐 ${f2(g.medFolha)}m/folha</span></div>`;
+
+    g.infestos.forEach((inf,ii)=>{
+      let infVis=false;
+      inf.cores.forEach(c=>{
+        const k=encKey(g.prod,g.tam,ii,c.cor),status=encRowStatus(k,c.qtd);
+        const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
+        if(!mb)return;
+        if(encFiltro==='pendentes'&&status==='pendente')infVis=true;
+        if(encFiltro==='cortados'&&status==='completo')infVis=true;
+        if(encFiltro==='todos'||encFiltro===g.tipo)infVis=true;
+      });
+      if(!infVis)return;
+      const diaNum=Math.floor(ii/6)+1;
+      const nFolhasInf=g.dobrado?Math.ceil(inf.total/2):inf.total;
+      const todasCort=inf.cores.every(c=>encRowStatus(encKey(g.prod,g.tam,ii,c.cor),c.qtd)==='completo');
+      html+=`<div class="enc-infesto" style="border-bottom:1px solid #f0f0f0">
+        <div class="enc-inf-hdr">
+          <span class="inf-badge">Infesto ${ii+1}</span>
+          <span class="dia-badge">Dia ${diaNum}</span>
+          <span>${inf.total} pç · ${nFolhasInf} folhas · ${inf.cores.length} cor${inf.cores.length>1?'es':''} · ${f2(nFolhasInf*g.medFolha)}m tecido</span>
+          ${todasCort?'<span style="color:#2e7d32;margin-left:auto;font-size:11px">✅ Concluído</span>':''}
+        </div>
+        <div class="col-hdr">
+          <div class="c-chk"></div><div class="enc-cor">Cor</div>
+          <div class="c-qtd">Qtd pç</div><div class="c-fol">Nº folhas</div>
+          <div class="c-cortada">Qtd Cortada</div>
+          <div class="c-med">Medida folha</div><div class="c-dat">Data do corte</div>
+        </div>`;
+      inf.cores.forEach(c=>{
+        const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
+        if(!mb)return;
+        const k=encKey(g.prod,g.tam,ii,c.cor), s=encSt[k]||{};
+        const cort=!!s.chk, dataVal=s.date||'';
+        const cortadaVal=(s.qtd===''||s.qtd===undefined||s.qtd===null)?'':s.qtd;
+        const status=encRowStatus(k,c.qtd);
+        const nFol=g.dobrado?Math.ceil(c.qtd/2):c.qtd;
+        const rowId='r_'+k.replace(/[|]/g,'_').replace(/\s/g,'_');
+        html+=`<div class="enc-row${status==='completo'?' cortado':''}${status==='parcial'?' parcial':''}" id="${rowId}"${syncTip(s)}>
+          <div class="c-chk"><input type="checkbox" ${cort?'checked':''} onchange="togChk('${k}',this,'${rowId}',${c.qtd})"></div>
+          <div class="enc-cor">${dot(c.cor)}</div>
+          <div class="c-qtd">${c.qtd} pç</div>
+          <div class="c-fol">${nFol} folhas</div>
+          <div class="c-cortada"><input type="number" min="0" step="1" placeholder="—" value="${cortadaVal}" oninput="setQtdCortada('${k}',this.value,${c.qtd},'${rowId}')"></div>
+          <div class="c-med">${f2(g.medFolha)} m</div>
+          <div class="c-dat"><input type="date" value="${dataVal}" ${cort?'':'disabled'} onchange="setDat('${k}',this.value)"></div>
+        </div>`;
+      });
+      html+=`</div>`;
+    });
+    const totalM=g.infestos.reduce((a,inf)=>a+(g.dobrado?Math.ceil(inf.total/2):inf.total)*g.medFolha,0);
+    const dias=Math.ceil(g.infestos.length/6);
+    html+=`<div class="enc-resumo">
+      <span class="enc-tag">📐 ${f2(g.medFolha)}m/folha ${g.dobrado?'(dobrado)':'(simples)'}</span>
+      <span class="enc-tag">📦 ${g.infestos.length} infesto${g.infestos.length>1?'s':''}</span>
+      <span class="enc-tag">🧵 ${f2(totalM)}m tecido</span>
+      <span class="enc-tag ${dias>1?'warn':'ok'}">${dias>1?`⚠️ ${dias} dias`:'✅ 1 dia'}</span>
+    </div></div>`;
+  });
+  cont.innerHTML=html||'<p style="padding:16px;color:#999">Nenhum item encontrado.</p>';
+}
+
+function togChk(k,el,rowId,sug){
+  if(!encSt[k])encSt[k]={chk:false,date:'',qtd:'',motivo:'',obs:''};
+  encSt[k].chk=el.checked;
+  const row=document.getElementById(rowId);
+  if(row){
+    const di=row.querySelector('input[type=date]');
+    const qi=row.querySelector('.c-cortada input');
+    if(el.checked){
+      if(encSt[k].qtd===''||encSt[k].qtd===undefined||encSt[k].qtd===null){
+        encSt[k].qtd=sug;
+        if(qi)qi.value=sug;
+      }
+      if(di&&!di.value){const t=new Date().toISOString().split('T')[0];di.value=t;encSt[k].date=t;}
+    }
+    if(di)di.disabled=!el.checked;
+    updateEncRowVisual(k,rowId,sug);
+  }
+  refreshEncCards();
+  renderFaltaram();
+  pushEnc(k);
+}
+function setQtdCortada(k,val,sug,rowId){
+  if(!encSt[k])encSt[k]={chk:false,date:'',qtd:'',motivo:'',obs:''};
+  encSt[k].qtd=val;
+  updateEncRowVisual(k,rowId,sug);
+  refreshEncCards();
+  renderFaltaram();
+  pushEnc(k);
+}
+function setDat(k,v){
+  if(!encSt[k])encSt[k]={chk:true,date:'',qtd:'',motivo:'',obs:''};
+  encSt[k].date=v;
+  pushEnc(k);
+}
+
+// ─── CORTES QUE FALTARAM (justificativas) ────────────────
+const MOTIVOS_FALTA=['Falta de tecido','Mudança de estratégia','Problema na máquina','Falta de energia','Outro'];
+function setMotivo(k,val){
+  if(!encSt[k])encSt[k]={chk:true,date:'',qtd:'',motivo:'',obs:''};
+  encSt[k].motivo=val;
+  renderFaltaram();
+  pushEnc(k);
+}
+function setObs(k,val){
+  if(!encSt[k])encSt[k]={chk:true,date:'',qtd:'',motivo:'',obs:''};
+  encSt[k].obs=val;
+  pushEnc(k);
+}
+function renderFaltaram(){
+  const cardsEl=document.getElementById('falta-cards'), bodyEl=document.getElementById('falta-body');
+  if(!cardsEl||!bodyEl)return;
+  const grupos=calcEnc();
+  const itens=[];
+  grupos.forEach(g=>{
+    g.infestos.forEach((inf,ii)=>{
+      inf.cores.forEach(c=>{
+        const k=encKey(g.prod,g.tam,ii,c.cor);
+        if(encRowStatus(k,c.qtd)!=='parcial')return;
+        const s=encSt[k]||{};
+        const cortada=(s.qtd===''||s.qtd===undefined||s.qtd===null)?0:parseFloat(s.qtd);
+        itens.push({k,g,ii,c,sug:c.qtd,cortada,falta:c.qtd-cortada,date:s.date||'',motivo:s.motivo||'',obs:s.obs||''});
+      });
+    });
+  });
+  const semJust=itens.filter(i=>!i.motivo).length;
+  cardsEl.innerHTML=
+    `<div class="scard ora"><div class="v">${itens.length}</div><div class="l">Cortes incompletos</div></div>`+
+    `<div class="scard red"><div class="v">${semJust}</div><div class="l">Sem justificativa ainda</div></div>`+
+    `<div class="scard grn"><div class="v">${itens.length-semJust}</div><div class="l">Já justificados</div></div>`;
+  if(!itens.length){bodyEl.innerHTML='<p style="padding:16px;color:#999">Nenhum corte incompleto no momento — tudo em dia! ✅</p>';return;}
+  const tBadge={RMC:'b-rmc',RIF:'b-rif',PMC:'b-pmc',PMI:'b-pmi'};
+  bodyEl.innerHTML=itens.map(i=>{
+    const opts=MOTIVOS_FALTA.map(m=>`<option value="${m}" ${i.motivo===m?'selected':''}>${m}</option>`).join('');
+    return `<div class="falta-item${i.motivo?'':' falta-pendente'}">
+      <div class="falta-item-hdr">
+        <span class="badge ${tBadge[i.g.tipo]}">${i.g.tipo}</span>
+        <b>${dot(i.c.cor)}</b> — ${i.g.prod} Tam. ${i.g.tam} <span class="na">(Infesto ${i.ii+1}${i.date?' · cortado em '+i.date.split('-').reverse().join('/'):''})</span>
+        <span class="falta-qtd">Sugerido: <b>${i.sug}</b> pç · Cortado: <b>${i.cortada}</b> pç · <span class="falta-pos">Faltou: ${i.falta} pç</span></span>
+      </div>
+      <div class="falta-item-body">
+        <select onchange="setMotivo('${i.k}',this.value)">
+          <option value="">Selecione o motivo...</option>
+          ${opts}
+        </select>
+        <textarea placeholder="Observações (opcional)" oninput="setObs('${i.k}',this.value)">${esc(i.obs)}</textarea>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── BACKUP / RESTORE (export/import JSON — sem localStorage) ──
+function exportState(){
+  const data = {savedAt: new Date().toISOString(), st, encSt};
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='leve_sonho_dashboard_estado_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function importState(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      if(data.st){ Object.keys(st).forEach(k=>{ if(data.st[k]) st[k]=data.st[k]; }); }
+      if(data.encSt){ Object.keys(encSt).forEach(k=>delete encSt[k]); Object.assign(encSt, data.encSt); }
+      renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras();
+      alert('Backup carregado! (salvo em '+(data.savedAt||'').slice(0,10)+')');
+    }catch(err){ alert('Não consegui ler esse arquivo: '+err.message); }
+  };
+  reader.readAsText(file);
+}
+
+renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras();
+if(syncUrl){
+  setSyncStatus('busy','Conectando...');
+  syncPull().then(()=>{ renderPlano(); startSyncPolling(); });
+  if(!syncUser) toggleSyncPanel();
+} else {
+  setSyncStatus('off','Sincronização não configurada — clique em ⚙️ para ligar');
+}
+</script>
+</body>
+</html>
