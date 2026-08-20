@@ -59,6 +59,26 @@ tfoot td.r{text-align:right}
 .fbtn.off{opacity:.3}
 .mes-btn{padding:6px 14px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;background:#3949ab;color:#fff;opacity:.5}
 .mes-btn.active{opacity:1;box-shadow:0 0 0 2px #1a1a2e inset}
+.an-grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+@media(max-width:900px){.an-grid2{grid-template-columns:1fr}}
+.an-card-box{background:#f7f8fc;border-radius:8px;padding:14px}
+.an-card-box h3{font-size:12px;color:#1a1a2e;margin-bottom:10px}
+.an-linha-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:11.5px}
+.an-linha-label{width:110px;color:#333;font-weight:bold}
+.an-linha-track{flex:1;background:#e0e0e0;border-radius:3px;height:14px;overflow:hidden;position:relative}
+.an-linha-fill{height:100%;background:#2e7d32;border-radius:3px}
+.an-linha-fill.over{background:#1565c0}
+.an-linha-val{width:120px;text-align:right;color:#555;white-space:nowrap}
+.an-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:11px}
+.an-bar-label{width:56px;color:#777}
+.an-bar-track{flex:1;background:#e0e0e0;border-radius:3px;height:12px;overflow:hidden}
+.an-bar-fill{height:100%;background:#3949ab;border-radius:3px}
+.an-bar-val{width:50px;text-align:right;font-weight:bold;color:#1a1a2e}
+.an-tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.an-tbl th{text-align:left;padding:5px 6px;color:#777;font-weight:bold;border-bottom:1px solid #ddd}
+.an-tbl td{padding:5px 6px;border-bottom:1px solid #eee}
+.an-tbl td.r{text-align:right}
+.an-pill{display:inline-block;background:#e8eaf6;color:#3949ab;border-radius:10px;padding:1px 8px;font-size:10.5px}
 .search{padding:6px 10px;border:1px solid #ccc;border-radius:4px;font-size:12px;width:180px}
 .na{color:#bbb}.mono{font-family:monospace;font-size:11px}.tbl-wrap{overflow-x:auto}
 td.ok-cell{text-align:center}
@@ -163,6 +183,7 @@ tr.row-ok td{color:#555}
   <b>✔️ Atualizado em 17/08:</b> curva ABC das vendas de 18/07–17/08 no Bling, com <b>Nuvemshop já excluída</b> (é sob demanda). Recomendado a fabricar = <b>(36 dias de cobertura + lead time de costura (7 dias) = efetivo) × venda/dia − estoque atual (17/08) − o que já foi cortado para setembro até agora</b> (8 peças). Estoque muda rápido — refresh automático toda sexta-feira.
 </div>
 <div class="tabs">
+  <button class="tab" onclick="showTab('analises',this)">📊 Análises</button>
   <button class="tab active" onclick="showTab('plano',this)">📋 Plano</button>
   <button class="tab" onclick="showTab('enc',this)">✂️ Encaixe de Corte</button>
   <button class="tab" onclick="showTab('falta',this)">📝 Cortes que Faltaram</button>
@@ -172,6 +193,44 @@ tr.row-ok td{color:#555}
   <button class="tab" onclick="showTab('elas',this)">🔵 Elástico</button>
   <button class="tab" onclick="showTab('bot',this)">🔘 Botões</button>
   <button class="tab" onclick="showTab('compras',this)">🛒 Lista de Compras</button>
+</div>
+
+<!-- ANÁLISES -->
+<div id="analises" class="section">
+  <h2>📊 Análises — Projetado × Realizado</h2>
+  <div class="banner" style="margin-bottom:14px">
+    Relatório fechado do mês de <b>Agosto/2026</b> (primeiro ciclo com o dashboard) — comparando o que foi planejado com o que realmente saiu da mesa de corte, com base nas datas e quantidades registradas na aba Encaixe de Corte daquele mês.
+  </div>
+  <div class="sgrid" id="an-cards-totais"></div>
+  <div class="an-grid2">
+    <div class="an-card-box">
+      <h3>Por linha</h3>
+      <div id="an-por-linha"></div>
+    </div>
+    <div class="an-card-box">
+      <h3>Linha do tempo</h3>
+      <div id="an-timeline-resumo"></div>
+      <div id="an-por-dia"></div>
+    </div>
+  </div>
+  <div class="an-grid2">
+    <div class="an-card-box">
+      <h3>⏱️ Corte mais demorado (maior intervalo até terminar)</h3>
+      <div id="an-grupos-lentos"></div>
+    </div>
+    <div class="an-card-box">
+      <h3>🙋 Quem cortou</h3>
+      <div id="an-por-pessoa"></div>
+    </div>
+  </div>
+  <div class="an-card-box" style="margin-top:14px">
+    <h3>⚠️ Nunca chegaram a ser cortados (maiores planejados)</h3>
+    <div id="an-nao-iniciados"></div>
+  </div>
+  <div class="an-card-box" style="margin-top:14px">
+    <h3>📝 Cortados parcialmente (com motivo)</h3>
+    <div id="an-parciais"></div>
+  </div>
 </div>
 
 <!-- PLANO -->
@@ -620,6 +679,416 @@ function selecionarMesPlano(mes,btn){
   if(aviso) aviso.style.display = info.arquivado ? 'block' : 'none';
   renderMesSeletor();
   renderPlano();
+}
+const ANALISE_AGOSTO = {
+ "mes": "Agosto/2026",
+ "totais": {
+  "planejado": 727,
+  "realizado": 561,
+  "pct": 77.2,
+  "combosPlanejados": 74,
+  "combosComCorte": 65,
+  "combosCompletos": 53,
+  "combosParciais": 12,
+  "combosNaoIniciados": 9
+ },
+ "porLinha": [
+  {
+   "linha": "RMC",
+   "label": "Robe Manga Curta",
+   "planejado": 360,
+   "realizado": 378,
+   "pct": 105.0
+  },
+  {
+   "linha": "RIF",
+   "label": "Robe Infantil",
+   "planejado": 69,
+   "realizado": 64,
+   "pct": 92.8
+  },
+  {
+   "linha": "PMC",
+   "label": "Pijama Verão",
+   "planejado": 43,
+   "realizado": 42,
+   "pct": 97.7
+  },
+  {
+   "linha": "PMI",
+   "label": "Pijama Inverno",
+   "planejado": 255,
+   "realizado": 77,
+   "pct": 30.2
+  }
+ ],
+ "timeline": {
+  "inicio": "2026-07-25",
+  "fim": "2026-08-04",
+  "diasCorridos": 11,
+  "diasComCorte": 8,
+  "mediaPcsDiaAtivo": 70.1,
+  "porDia": [
+   {
+    "data": "2026-07-25",
+    "qtd": 10
+   },
+   {
+    "data": "2026-07-27",
+    "qtd": 202
+   },
+   {
+    "data": "2026-07-28",
+    "qtd": 24
+   },
+   {
+    "data": "2026-07-29",
+    "qtd": 95
+   },
+   {
+    "data": "2026-07-30",
+    "qtd": 33
+   },
+   {
+    "data": "2026-08-01",
+    "qtd": 156
+   },
+   {
+    "data": "2026-08-03",
+    "qtd": 4
+   },
+   {
+    "data": "2026-08-04",
+    "qtd": 37
+   }
+  ],
+  "diaMaisForte": {
+   "data": "2026-07-27",
+   "qtd": 202
+  },
+  "diaMaisFraco": {
+   "data": "2026-08-03",
+   "qtd": 4
+  }
+ },
+ "gruposMaisLentos": [
+  {
+   "linha": "PMI",
+   "label": "Pijama Inverno",
+   "tam": "P",
+   "spanDias": 11,
+   "primeira": "2026-07-25",
+   "ultima": "2026-08-04",
+   "registros": 4,
+   "pecas": 20
+  },
+  {
+   "linha": "PMI",
+   "label": "Pijama Inverno",
+   "tam": "GG",
+   "spanDias": 9,
+   "primeira": "2026-07-27",
+   "ultima": "2026-08-04",
+   "registros": 4,
+   "pecas": 30
+  },
+  {
+   "linha": "PMI",
+   "label": "Pijama Inverno",
+   "tam": "G",
+   "spanDias": 9,
+   "primeira": "2026-07-27",
+   "ultima": "2026-08-04",
+   "registros": 2,
+   "pecas": 16
+  },
+  {
+   "linha": "PMI",
+   "label": "Pijama Inverno",
+   "tam": "M",
+   "spanDias": 9,
+   "primeira": "2026-07-27",
+   "ultima": "2026-08-04",
+   "registros": 4,
+   "pecas": 11
+  },
+  {
+   "linha": "RMC",
+   "label": "Robe Manga Curta",
+   "tam": "G",
+   "spanDias": 6,
+   "primeira": "2026-07-27",
+   "ultima": "2026-08-01",
+   "registros": 7,
+   "pecas": 84
+  },
+  {
+   "linha": "RMC",
+   "label": "Robe Manga Curta",
+   "tam": "GG",
+   "spanDias": 5,
+   "primeira": "2026-07-28",
+   "ultima": "2026-08-01",
+   "registros": 6,
+   "pecas": 34
+  },
+  {
+   "linha": "RIF",
+   "label": "Robe Infantil",
+   "tam": "8",
+   "spanDias": 4,
+   "primeira": "2026-08-01",
+   "ultima": "2026-08-04",
+   "registros": 5,
+   "pecas": 14
+  },
+  {
+   "linha": "RMC",
+   "label": "Robe Manga Curta",
+   "tam": "M",
+   "spanDias": 3,
+   "primeira": "2026-07-27",
+   "ultima": "2026-07-29",
+   "registros": 6,
+   "pecas": 102
+  },
+  {
+   "linha": "RMC",
+   "label": "Robe Manga Curta",
+   "tam": "P",
+   "spanDias": 3,
+   "primeira": "2026-07-27",
+   "ultima": "2026-07-29",
+   "registros": 8,
+   "pecas": 75
+  },
+  {
+   "linha": "PMC",
+   "label": "Pijama Verão",
+   "tam": "G",
+   "spanDias": 3,
+   "primeira": "2026-08-01",
+   "ultima": "2026-08-03",
+   "registros": 2,
+   "pecas": 14
+  }
+ ],
+ "naoIniciados": [
+  {
+   "sku": "PMI-P-Preto",
+   "linha": "PMI",
+   "cor": "Preto",
+   "tam": "P",
+   "planejado": 15
+  },
+  {
+   "sku": "PMI-M-Rose",
+   "linha": "PMI",
+   "cor": "Rose",
+   "tam": "M",
+   "planejado": 11
+  },
+  {
+   "sku": "RIF-8-Verde Água",
+   "linha": "RIF",
+   "cor": "Verde Água",
+   "tam": "8",
+   "planejado": 10
+  },
+  {
+   "sku": "RIF-14-Verde Água",
+   "linha": "RIF",
+   "cor": "Verde Água",
+   "tam": "14",
+   "planejado": 6
+  },
+  {
+   "sku": "PMI-M-Pink",
+   "linha": "PMI",
+   "cor": "Pink",
+   "tam": "M",
+   "planejado": 6
+  },
+  {
+   "sku": "PMI-P-Pink",
+   "linha": "PMI",
+   "cor": "Pink",
+   "tam": "P",
+   "planejado": 3
+  },
+  {
+   "sku": "PMC-P-Verde Menta",
+   "linha": "PMC",
+   "cor": "Verde Menta",
+   "tam": "P",
+   "planejado": 1
+  },
+  {
+   "sku": "PMC-G-Rosa Claro",
+   "linha": "PMC",
+   "cor": "Rosa Claro",
+   "tam": "G",
+   "planejado": 1
+  },
+  {
+   "sku": "PMC-GG-Rosa",
+   "linha": "PMC",
+   "cor": "Rosa",
+   "tam": "GG",
+   "planejado": 1
+  }
+ ],
+ "parciais": [
+  {
+   "sku": "PMI-GG-Azul Marinho",
+   "planejado": 56,
+   "realizado": 16,
+   "faltou": 40,
+   "motivo": "Mudança de estratégia"
+  },
+  {
+   "sku": "PMI-GG-Rose",
+   "planejado": 34,
+   "realizado": 12,
+   "faltou": 22,
+   "motivo": "Mudança de estratégia"
+  },
+  {
+   "sku": "PMI-P-Rose",
+   "planejado": 31,
+   "realizado": 10,
+   "faltou": 21,
+   "motivo": "Mudança de estratégia"
+  },
+  {
+   "sku": "PMI-M-Azul Marinho",
+   "planejado": 31,
+   "realizado": 10,
+   "faltou": 21,
+   "motivo": "Mudança de estratégia"
+  },
+  {
+   "sku": "PMI-G-Azul Marinho",
+   "planejado": 25,
+   "realizado": 10,
+   "faltou": 15,
+   "motivo": "Mudança de estratégia"
+  },
+  {
+   "sku": "PMI-G-Preto",
+   "planejado": 19,
+   "realizado": 6,
+   "faltou": 13,
+   "motivo": "Mudança de estratégia"
+  },
+  {
+   "sku": "RMC-G2-Branco",
+   "planejado": 12,
+   "realizado": 5,
+   "faltou": 7,
+   "motivo": "Falta de tecido"
+  },
+  {
+   "sku": "PMI-M-Preto",
+   "planejado": 8,
+   "realizado": 1,
+   "faltou": 7,
+   "motivo": "—"
+  },
+  {
+   "sku": "PMI-GG-Preto",
+   "planejado": 8,
+   "realizado": 2,
+   "faltou": 6,
+   "motivo": "—"
+  },
+  {
+   "sku": "RMC-GG-Verde Água",
+   "planejado": 8,
+   "realizado": 6,
+   "faltou": 2,
+   "motivo": "Falta de tecido"
+  },
+  {
+   "sku": "PMC-GG-Rosa Claro",
+   "planejado": 4,
+   "realizado": 2,
+   "faltou": 2,
+   "motivo": "Falta de tecido"
+  },
+  {
+   "sku": "RMC-G3-Preto",
+   "planejado": 8,
+   "realizado": 7,
+   "faltou": 1,
+   "motivo": "Falta de tecido"
+  }
+ ],
+ "porPessoa": [
+  {
+   "nome": "natalia",
+   "qtd": 561
+  }
+ ]
+};
+
+function anF2(n){ return (Math.round(n*10)/10).toFixed(1).replace('.',','); }
+function anDataBR(d){ return (d||'').split('-').reverse().join('/'); }
+function renderAnalises(){
+  const A = ANALISE_AGOSTO;
+  const t = A.totais;
+  document.getElementById('an-cards-totais').innerHTML =
+    `<div class="scard"><div class="v">${t.planejado}</div><div class="l">Peças planejadas</div></div>`+
+    `<div class="scard grn"><div class="v">${t.realizado}</div><div class="l">Peças cortadas</div></div>`+
+    `<div class="scard ${t.pct>=90?'grn':(t.pct>=60?'ora':'red')}"><div class="v">${anF2(t.pct)}%</div><div class="l">Do plano realizado</div></div>`+
+    `<div class="scard grn"><div class="v">${t.combosCompletos}</div><div class="l">Combos 100% cortados</div></div>`+
+    `<div class="scard ora"><div class="v">${t.combosParciais}</div><div class="l">Combos parciais</div></div>`+
+    `<div class="scard red"><div class="v">${t.combosNaoIniciados}</div><div class="l">Nunca cortados</div></div>`;
+
+  document.getElementById('an-por-linha').innerHTML = A.porLinha.map(l=>{
+    const pct=Math.min(100,l.pct);
+    return `<div class="an-linha-row">
+      <span class="an-linha-label">${l.label}</span>
+      <div class="an-linha-track"><div class="an-linha-fill${l.pct>100?' over':''}" style="width:${pct}%"></div></div>
+      <span class="an-linha-val">${l.realizado}/${l.planejado} pç <b>(${anF2(l.pct)}%)</b></span>
+    </div>`;
+  }).join('');
+
+  const tl = A.timeline;
+  document.getElementById('an-timeline-resumo').innerHTML =
+    `<div style="font-size:11.5px;line-height:1.9;margin-bottom:10px">`+
+    `Período: <b>${anDataBR(tl.inicio)}</b> a <b>${anDataBR(tl.fim)}</b> (${tl.diasCorridos} dias corridos)<br>`+
+    `Dias com corte registrado: <b>${tl.diasComCorte}</b> · Média: <b>${anF2(tl.mediaPcsDiaAtivo)} pç/dia</b> ativo<br>`+
+    `Dia mais forte: <b>${anDataBR(tl.diaMaisForte.data)}</b> (${tl.diaMaisForte.qtd} pç) · `+
+    `Dia mais fraco: <b>${anDataBR(tl.diaMaisFraco.data)}</b> (${tl.diaMaisFraco.qtd} pç)`+
+    `</div>`;
+  const maxDia = Math.max(...tl.porDia.map(d=>d.qtd), 1);
+  document.getElementById('an-por-dia').innerHTML = tl.porDia.map(d=>
+    `<div class="an-bar-row"><span class="an-bar-label">${anDataBR(d.data)}</span>`+
+    `<div class="an-bar-track"><div class="an-bar-fill" style="width:${d.qtd/maxDia*100}%"></div></div>`+
+    `<span class="an-bar-val">${d.qtd} pç</span></div>`
+  ).join('');
+
+  document.getElementById('an-grupos-lentos').innerHTML =
+    `<table class="an-tbl"><thead><tr><th>Linha / Tam</th><th class="r">Dias</th><th>Período</th><th class="r">Peças</th></tr></thead><tbody>`+
+    A.gruposMaisLentos.map(g=>`<tr><td>${g.label} <span class="an-pill">${g.tam}</span></td><td class="r"><b>${g.spanDias}</b></td><td>${anDataBR(g.primeira)}–${anDataBR(g.ultima)}</td><td class="r">${g.pecas}</td></tr>`).join('')+
+    `</tbody></table>`;
+
+  document.getElementById('an-por-pessoa').innerHTML = A.porPessoa.map(p=>
+    `<div class="an-linha-row"><span class="an-linha-label" style="text-transform:capitalize">${p.nome}</span>`+
+    `<div class="an-linha-track"><div class="an-linha-fill" style="width:100%"></div></div>`+
+    `<span class="an-linha-val"><b>${p.qtd} pç</b></span></div>`
+  ).join('') || '<span class="na">Sem registros</span>';
+
+  document.getElementById('an-nao-iniciados').innerHTML = A.naoIniciados.length ?
+    `<table class="an-tbl"><thead><tr><th>SKU</th><th class="r">Planejado</th></tr></thead><tbody>`+
+    A.naoIniciados.map(x=>`<tr><td class="mono">${x.sku}</td><td class="r">${x.planejado} pç</td></tr>`).join('')+
+    `</tbody></table>` : '<span class="na">Nenhum — tudo teve pelo menos algum corte ✅</span>';
+
+  document.getElementById('an-parciais').innerHTML = A.parciais.length ?
+    `<table class="an-tbl"><thead><tr><th>SKU</th><th class="r">Planejado</th><th class="r">Cortado</th><th class="r">Faltou</th><th>Motivo</th></tr></thead><tbody>`+
+    A.parciais.map(x=>`<tr><td class="mono">${x.sku}</td><td class="r">${x.planejado}</td><td class="r">${x.realizado}</td><td class="r"><span class="falta-pos">${x.faltou}</span></td><td>${x.motivo}</td></tr>`).join('')+
+    `</tbody></table>` : '<span class="na">Nenhum corte parcial registrado</span>';
 }
 
 
@@ -1446,14 +1915,14 @@ function importState(file){
       const data = JSON.parse(e.target.result);
       if(data.st){ Object.keys(st).forEach(k=>{ if(data.st[k]) st[k]=data.st[k]; }); }
       if(data.encSt){ Object.keys(encSt).forEach(k=>delete encSt[k]); Object.assign(encSt, data.encSt); }
-      renderMesSeletor(); renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras();
+      renderMesSeletor(); renderAnalises(); renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras();
       alert('Backup carregado! (salvo em '+(data.savedAt||'').slice(0,10)+')');
     }catch(err){ alert('Não consegui ler esse arquivo: '+err.message); }
   };
   reader.readAsText(file);
 }
 
-renderMesSeletor(); renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras();
+renderMesSeletor(); renderAnalises(); renderPlano(); renderEnc(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras();
 if(syncUrl){
   setSyncStatus('busy','Conectando...');
   syncPull().then(()=>{ renderPlano(); startSyncPolling(); });
