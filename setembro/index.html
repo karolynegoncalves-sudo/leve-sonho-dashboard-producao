@@ -1039,6 +1039,23 @@ function calcEnc(){
       if(!ok)break;
     }
     if(inf.total>0)infestos.push(inf);
+    // Chave de sincronizacao ESTAVEL: em vez de usar a posicao do infesto
+    // (ii, que desloca sempre que a quantidade recomendada de QUALQUER cor
+    // do grupo muda num refresh), cada cor recebe um contador proprio de
+    // "qual ocorrencia dela e essa" (corChunkIdx: 0,1,2...), contado na
+    // ordem de aparicao pelos infestos. A grande maioria das cores so
+    // aparece 1x (corChunkIdx sempre 0, nunca muda). So corre risco cores
+    // que precisam de 2+ folhas (quantidade > maxPec) - bem mais raro e
+    // contido que o bug antigo, que afetava TODAS as cores do grupo.
+    // (Bug real que causou corte sumido/duplicado em 27-31/08/2026.)
+    const corOcorrencia={};
+    infestos.forEach(inf_=>{
+      inf_.cores.forEach(c=>{
+        corOcorrencia[c.cor]=corOcorrencia[c.cor]||0;
+        c.corChunkIdx=corOcorrencia[c.cor];
+        corOcorrencia[c.cor]++;
+      });
+    });
     res.push({tipo:g.tipo,prod:g.prod,tam:g.tam,tec:g.tec,dobrado,maxPec,medFolha,infestos,totalPec:g.cores.reduce((a,c)=>a+c.qtd,0),prio:(g.oversold||0)*1000+(g.vd||0)*100+g.cores.reduce((a,c)=>a+c.qtd,0),oversold:(g.oversold||0)});
   });
   const ot={RMC:0,RIF:1,PMC:2,PMI:3};
@@ -1048,7 +1065,7 @@ function calcEnc(){
 }
 
 const encSt={};
-const encKey=(prod,tam,ii,cor)=>`${prod}|${tam}|${ii}|${cor}`;
+const encKey=(prod,tam,corChunkIdx,cor)=>`${prod}|${tam}|${corChunkIdx}|${cor}`;
 let encFiltro='todos', encTermo='';
 
 function encFilt(f,btn){
@@ -1094,7 +1111,7 @@ function refreshEncCards(){
     tInf+=g.infestos.length;
     g.infestos.forEach((inf,ii)=>inf.cores.forEach(c=>{
       tVar++;
-      const st_=encRowStatus(encKey(g.prod,g.tam,ii,c.cor),c.qtd);
+      const st_=encRowStatus(encKey(g.prod,g.tam,c.corChunkIdx,c.cor),c.qtd);
       if(st_==='completo')tCompleto++; else if(st_==='parcial')tParcial++;
     }));
   });
@@ -1114,7 +1131,7 @@ function renderEnc(){
     tInf+=g.infestos.length;
     g.infestos.forEach((inf,ii)=>inf.cores.forEach(c=>{
       tVar++;
-      const st_=encRowStatus(encKey(g.prod,g.tam,ii,c.cor),c.qtd);
+      const st_=encRowStatus(encKey(g.prod,g.tam,c.corChunkIdx,c.cor),c.qtd);
       if(st_==='completo')tCompleto++; else if(st_==='parcial')tParcial++;
     }));
   });
@@ -1134,7 +1151,7 @@ function renderEnc(){
     if(encFiltro!=='todos'&&encFiltro!=='pendentes'&&encFiltro!=='cortados'&&g.tipo!==encFiltro)return;
     let temVis=false;
     g.infestos.forEach((inf,ii)=>inf.cores.forEach(c=>{
-      const k=encKey(g.prod,g.tam,ii,c.cor), status=encRowStatus(k,c.qtd);
+      const k=encKey(g.prod,g.tam,c.corChunkIdx,c.cor), status=encRowStatus(k,c.qtd);
       const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
       if(!mb)return;
       if(encFiltro==='pendentes'&&status==='pendente')temVis=true;
@@ -1152,7 +1169,7 @@ function renderEnc(){
     g.infestos.forEach((inf,ii)=>{
       let infVis=false;
       inf.cores.forEach(c=>{
-        const k=encKey(g.prod,g.tam,ii,c.cor),status=encRowStatus(k,c.qtd);
+        const k=encKey(g.prod,g.tam,c.corChunkIdx,c.cor),status=encRowStatus(k,c.qtd);
         const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
         if(!mb)return;
         if(encFiltro==='pendentes'&&status==='pendente')infVis=true;
@@ -1162,7 +1179,7 @@ function renderEnc(){
       if(!infVis)return;
       const diaNum=Math.floor(ii/6)+1;
       const nFolhasInf=g.dobrado?Math.ceil(inf.total/2):inf.total;
-      const todasCort=inf.cores.every(c=>encRowStatus(encKey(g.prod,g.tam,ii,c.cor),c.qtd)==='completo');
+      const todasCort=inf.cores.every(c=>encRowStatus(encKey(g.prod,g.tam,c.corChunkIdx,c.cor),c.qtd)==='completo');
       html+=`<div class="enc-infesto" style="border-bottom:1px solid #f0f0f0">
         <div class="enc-inf-hdr">
           <span class="inf-badge">Infesto ${ii+1}</span>
@@ -1179,7 +1196,7 @@ function renderEnc(){
       inf.cores.forEach(c=>{
         const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
         if(!mb)return;
-        const k=encKey(g.prod,g.tam,ii,c.cor), s=encSt[k]||{};
+        const k=encKey(g.prod,g.tam,c.corChunkIdx,c.cor), s=encSt[k]||{};
         const cort=!!s.chk, dataVal=s.date||'';
         const cortadaVal=(s.qtd===''||s.qtd===undefined||s.qtd===null)?'':s.qtd;
         const status=encRowStatus(k,c.qtd);
@@ -1265,7 +1282,7 @@ function renderFaltaram(){
   grupos.forEach(g=>{
     g.infestos.forEach((inf,ii)=>{
       inf.cores.forEach(c=>{
-        const k=encKey(g.prod,g.tam,ii,c.cor);
+        const k=encKey(g.prod,g.tam,c.corChunkIdx,c.cor);
         if(encRowStatus(k,c.qtd)!=='parcial')return;
         const s=encSt[k]||{};
         const cortada=(s.qtd===''||s.qtd===undefined||s.qtd===null)?0:parseFloat(s.qtd);
