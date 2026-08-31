@@ -1065,7 +1065,7 @@ function calcEnc(){
 }
 
 const encSt={};
-const encKey=(prod,tam,corChunkIdx,cor)=>`${prod}|${tam}|${corChunkIdx}|${cor}`;
+const encKey=(prod,tam,corChunkIdx,cor)=>`${prod}|${tam}|c${corChunkIdx}|${cor}`;
 let encFiltro='todos', encTermo='';
 
 function encFilt(f,btn){
