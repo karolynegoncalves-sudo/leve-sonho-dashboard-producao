@@ -121,6 +121,13 @@ tr.row-ok td{color:#555}
 .c-dat input:focus{outline:none;border-color:#3949ab}
 .enc-row.parcial{background:#fff8e1!important}
 .enc-row.parcial .enc-cor{color:#8d6e00;font-weight:bold}
+.enc-legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px;font-size:11px;color:#555;background:#fafbff;padding:8px 12px;border-radius:8px;align-items:center}
+.enc-legend span{display:inline-flex;align-items:center;gap:5px}
+.leg-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+.fin-card{background:#f7f8fc;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:12px;display:flex;justify-content:space-between;align-items:center;border-left:3px solid #789;gap:10px}
+.fin-card .fin-info{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fin-card .fin-qtd{font-weight:bold;color:#2e7d32}
+.fin-card .fin-data{color:#888;font-size:11px}
 .enc-resumo{display:flex;gap:8px;padding:8px 14px;background:#fafbff;border-top:2px solid #e8eaf6;flex-wrap:wrap}
 .enc-tag{font-size:11px;background:#e8eaf6;color:#3949ab;padding:2px 8px;border-radius:10px}
 .enc-tag.warn{background:#fff3e0;color:#e65100}
@@ -284,6 +291,13 @@ tr.row-ok td{color:#555}
 <!-- ENCAIXE -->
 <div id="enc" class="section">
   <h2>✂️ Encaixe de Corte — Setembro/2026</h2>
+  <div class="enc-legend">
+    <b style="color:#333">Legenda:</b>
+    <span><span class="leg-dot" style="background:#e0e0e0"></span>⏳ Pendente — ainda não cortado</span>
+    <span><span class="leg-dot" style="background:#f9a825"></span>⚠️ Parcial — cortado menos do que o enfesto pedia</span>
+    <span><span class="leg-dot" style="background:#2e7d32"></span>✅ Completo — enfesto atual 100% cortado</span>
+    <span><span class="leg-dot" style="background:#789"></span>🏁 Finalizado — lote de um ciclo anterior, já fechado (não trava quando chega demanda nova)</span>
+  </div>
   <div class="sgrid" id="enc-cards"></div>
   <div class="enc-filters">
     <button class="efbtn active" onclick="encFilt('todos',this)">Todos</button>
@@ -293,6 +307,7 @@ tr.row-ok td{color:#555}
     <button class="efbtn" onclick="encFilt('PMI',this)"><span style="color:#1565c0">■</span> Pijama Inverno</button>
     <button class="efbtn" onclick="encFilt('pendentes',this)">⏳ Pendentes</button>
     <button class="efbtn" onclick="encFilt('cortados',this)">✅ Cortados</button>
+    <button class="efbtn" onclick="encFilt('finalizados',this)">🏁 Finalizados</button>
     <input class="search" type="text" placeholder="🔍 Buscar por cor..." oninput="encBusca(this.value)" style="margin-left:4px">
   </div>
   <div class="enc-busca-res" id="enc-busca-res"></div>
@@ -1604,6 +1619,39 @@ function filt(t,btn){
 function busca(v){buscoT=v;renderPlano();}
 
 // ─── ENCAIXE ─────────────────────────────────────────────
+// Menor rank (corChunkIdx) de uma cor que AINDA NAO teve corte registrado
+// (nem parcial, nem completo). Ranks anteriores a esse ja tem corte real
+// gravado e ficam congelados como historico ("Finalizado") - nao voltam a
+// ser reaproveitados por um enfesto novo mesmo que a quantidade recomendada
+// mude no proximo refresh.
+function startRankFor(prod,tam,cor){
+  for(let n=0;n<50;n++){
+    const s=encSt[encKey(prod,tam,n,cor)];
+    const teveCorte=s&&(s.chk||(s.qtd!==undefined&&s.qtd!==null&&s.qtd!==''&&parseFloat(s.qtd)>0));
+    if(!teveCorte)return n;
+  }
+  return 50;
+}
+// Lista os lotes de corte "fechados": ranks anteriores ao startRank atual de
+// cada combo (prod,tam,cor) presente no plano de hoje - ou seja, corte que
+// ja foi feito em um ciclo anterior e nao aparece mais no enfesto ativo
+// porque a demanda daquela cor mudou desde entao.
+function calcFinalizados(){
+  const vistos=new Set(), out=[];
+  rows.forEach(r=>{
+    const ck=`${r.prod}|${r.tam}|${r.cor}`;
+    if(vistos.has(ck))return; vistos.add(ck);
+    const sr=startRankFor(r.prod,r.tam,r.cor);
+    for(let n=0;n<sr;n++){
+      const k=encKey(r.prod,r.tam,n,r.cor), s=encSt[k];
+      if(!s)continue;
+      const cortada=(s.qtd===''||s.qtd===undefined||s.qtd===null)?0:parseFloat(s.qtd);
+      out.push({tipo:tip(r),prod:r.prod,tam:r.tam,cor:r.cor,cortada,date:s.date||'',k});
+    }
+  });
+  out.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  return out;
+}
 function calcEnc(){
   const map={};
   rows.forEach(r=>{
@@ -1641,10 +1689,19 @@ function calcEnc(){
     // que precisam de 2+ folhas (quantidade > maxPec) - bem mais raro e
     // contido que o bug antigo, que afetava TODAS as cores do grupo.
     // (Bug real que causou corte sumido/duplicado em 27-31/08/2026.)
+    //
+    // Alem disso, comeca a contar a partir de startRankFor() em vez de 0:
+    // isso pula qualquer rank que ja teve corte registrado em um ciclo
+    // anterior (parcial ou completo), deixando esse rank congelado como
+    // historico ("Finalizado") e abrindo um enfesto NOVO e limpo pro que
+    // esta pendente agora. Assim, quando entra mais demanda pra uma cor
+    // que ja foi cortada parcialmente, o sistema nao fica "travado" 
+    // mostrando o lote antigo - ele fecha o que ja foi feito e soma o
+    // residual com a demanda nova num enfesto novo.
     const corOcorrencia={};
     infestos.forEach(inf_=>{
       inf_.cores.forEach(c=>{
-        corOcorrencia[c.cor]=corOcorrencia[c.cor]||0;
+        if(corOcorrencia[c.cor]===undefined)corOcorrencia[c.cor]=startRankFor(g.prod,g.tam,c.cor);
         c.corChunkIdx=corOcorrencia[c.cor];
         corOcorrencia[c.cor]++;
       });
@@ -1719,6 +1776,25 @@ function refreshEncCards(){
 
 function renderEnc(){
   const grupos=calcEnc(), cont=document.getElementById('enc-body');
+  if(encFiltro==='finalizados'){
+    const fin=calcFinalizados();
+    const tBadge={RMC:'b-rmc',RIF:'b-rif',PMC:'b-pmc',PMI:'b-pmi'};
+    document.getElementById('enc-cards').innerHTML=
+      `<div class="scard"><div class="v">${fin.length}</div><div class="l">🏁 Lotes finalizados (histórico)</div></div>`+
+      `<div class="scard grn"><div class="v">${fin.reduce((a,f)=>a+f.cortada,0)}</div><div class="l">Peças cortadas nesses lotes</div></div>`;
+    cont.innerHTML = fin.length ? fin.map(f=>
+      `<div class="fin-card">
+        <div class="fin-info">
+          <span class="badge ${tBadge[f.tipo]}">${f.tipo}</span>
+          ${dot(f.cor)} <b>${f.cor}</b> — ${f.prod} Tam. ${f.tam}
+          <span class="fin-qtd">${f.cortada} pç cortadas</span>
+          ${f.date?`<span class="fin-data">em ${f.date.split('-').reverse().join('/')}</span>`:''}
+        </div>
+        <span style="font-size:16px" title="Finalizado - lote de ciclo anterior, ja fechado">🏁</span>
+      </div>`
+    ).join('') : '<p style="padding:16px;color:#999">Nenhum lote finalizado ainda — assim que um corte for concluído (ou parcial) e a demanda daquela cor mudar num refresh, o lote antigo aparece aqui como histórico.</p>';
+    return;
+  }
   let tInf=0,tVar=0,tCompleto=0,tParcial=0;
   grupos.forEach(g=>{
     tInf+=g.infestos.length;
