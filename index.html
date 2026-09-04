@@ -2556,7 +2556,7 @@ function buildPol(){
 
   rows.filter(r=>tip(r)==='RMC'||tip(r)==='RIF').forEach(r=>{
 
-    const c=r.cor; if(!m[c])m[c]={p:0,mt:0}; m[c].p+=r.qtd; m[c].mt+=r.qtd*r.tec;
+    const c=r.cor; if(!m[c])m[c]={p:0,mt:0}; m[c].p+=restante(r); m[c].mt+=restante(r)*r.tec;
 
   });
 
@@ -2616,7 +2616,7 @@ function buildEla(){
 
     const c=r.cor; if(!m[c])m[c]={p:0,mt:0,t:ESCUROS.includes(c)?'e':'c'};
 
-    m[c].p+=r.qtd; m[c].mt+=r.qtd*r.tec;
+    m[c].p+=restante(r); m[c].mt+=restante(r)*r.tec;
 
   });
 
@@ -2676,7 +2676,7 @@ function buildViv(){
 
     const c=r.cor; if(!m[c])m[c]={p:0,mv:0,t:ESCUROS.includes(c)?'e':'c'};
 
-    m[c].p+=r.qtd; m[c].mv+=r.qtd*r.vivo;
+    m[c].p+=restante(r); m[c].mv+=restante(r)*r.vivo;
 
   });
 
@@ -2734,7 +2734,7 @@ function buildElas(){
 
     const s=rows.filter(r=>(tip(r)==='PMC'||tip(r)==='PMI')&&r.tam===t&&r.elas);
 
-    const p=s.reduce((a,r)=>a+r.qtd,0);
+    const p=s.reduce((a,r)=>a+restante(r),0);
 
     const mpp=s.length?s[0].elas:0;
 
@@ -2790,7 +2790,7 @@ function buildBot(){
 
   rows.filter(r=>tip(r)==='PMC'||tip(r)==='PMI').forEach(r=>{
 
-    const c=r.cor; if(!m[c])m[c]={p:0,t:ESCUROS.includes(c)?'e':'c'}; m[c].p+=r.qtd;
+    const c=r.cor; if(!m[c])m[c]={p:0,t:ESCUROS.includes(c)?'e':'c'}; m[c].p+=restante(r);
 
   });
 
