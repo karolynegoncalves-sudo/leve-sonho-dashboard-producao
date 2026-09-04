@@ -2432,11 +2432,24 @@ function applyRemoteState(rowsIn){
 
       if(!st[aba]) return;
 
+      // campo2 agora e' JSON {qty, necessarioRef} - com compat pro formato
+      // antigo (campo2 = so o numero/string do qty, sem necessarioRef)
+      let qty='', necessarioRef=undefined;
+      if(campo2){
+        try{
+          const p=JSON.parse(campo2);
+          if(p&&typeof p==='object'){
+            qty=(p.qty===undefined||p.qty===null)?'':p.qty;
+            necessarioRef=(p.necessarioRef===undefined||p.necessarioRef===null)?undefined:p.necessarioRef;
+          } else { qty=campo2; }
+        }catch(e){ qty=campo2; } // formato antigo, pre-necessarioRef
+      }
+
       const cur=st[aba][chave];
 
-      if(!cur||cur.ok!==ok||String(cur.qty??'')!==String(campo2)||cur.by!==by){
+      if(!cur||cur.ok!==ok||String(cur.qty??'')!==String(qty)||String(cur.necessarioRef??'')!==String(necessarioRef??'')||cur.by!==by){
 
-        st[aba][chave]={ok,qty:campo2===''?'':campo2,by,at};
+        st[aba][chave]={ok,qty,necessarioRef,by,at};
 
         changed=true;
 
@@ -2564,7 +2577,15 @@ function buildPol(){
 
   const tM=e.reduce((a,[,v])=>a+v.mt,0);
 
-  document.getElementById('pol-body').innerHTML=e.map(([c,v])=>{
+  let resolvidas=0;
+
+  const linhas=e.filter(([c,v])=>{
+    const nec=rl(v.mt,60);
+    if(reconferirEDecidirExibir('pol',stKey(c),nec)) return true;
+    resolvidas++; return false;
+  });
+
+  document.getElementById('pol-body').innerHTML=linhas.length?linhas.map(([c,v])=>{
 
     const k=stKey(c), s=st.pol[k]||{ok:false,qty:''};
 
@@ -2588,7 +2609,7 @@ function buildPol(){
 
     </tr>`;
 
-  }).join('');
+  }).join(''):'<tr><td colspan="6" style="padding:16px;color:#999;text-align:center">✅ Tudo resolvido — nada precisando de atenção aqui agora.</td></tr>';
 
   document.getElementById('pol-foot').innerHTML=`<tr><td></td><td>TOTAL</td><td class="r">${f2(tM)}</td><td class="r">${rl(tM,60)} rolos</td><td></td><td></td></tr>`;
 
@@ -2600,7 +2621,7 @@ function buildPol(){
 
     `<div class="scard red"><div class="v">${f2(tM)} m</div><div class="l">Total metros</div></div>`+
 
-    `<div class="scard grn"><div class="v">${e.length} cores</div><div class="l">Cores distintas</div></div>`;
+    `<div class="scard grn"><div class="v">${resolvidas}/${e.length}</div><div class="l">Cores já resolvidas</div></div>`;
 
 }
 
@@ -2624,7 +2645,15 @@ function buildEla(){
 
   const tM=e.reduce((a,[,v])=>a+v.mt,0);
 
-  document.getElementById('ela-body').innerHTML=e.map(([c,v])=>{
+  let resolvidas=0;
+
+  const linhas=e.filter(([c,v])=>{
+    const nec=rl(v.mt,60);
+    if(reconferirEDecidirExibir('ela',stKey(c),nec)) return true;
+    resolvidas++; return false;
+  });
+
+  document.getElementById('ela-body').innerHTML=linhas.length?linhas.map(([c,v])=>{
 
     const k=stKey(c), s=st.ela[k]||{ok:false,qty:''};
 
@@ -2648,7 +2677,7 @@ function buildEla(){
 
     </tr>`;
 
-  }).join('');
+  }).join(''):'<tr><td colspan="7" style="padding:16px;color:#999;text-align:center">✅ Tudo resolvido — nada precisando de atenção aqui agora.</td></tr>';
 
   document.getElementById('ela-foot').innerHTML=`<tr><td></td><td colspan="2">TOTAL</td><td class="r">${f2(tM)}</td><td class="r">${rl(tM,60)} rolos</td><td></td><td></td></tr>`;
 
@@ -2660,7 +2689,7 @@ function buildEla(){
 
     `<div class="scard red"><div class="v">${f2(tM)} m</div><div class="l">Total metros</div></div>`+
 
-    `<div class="scard grn"><div class="v">${e.length} cores</div><div class="l">Cores distintas</div></div>`;
+    `<div class="scard grn"><div class="v">${resolvidas}/${e.length}</div><div class="l">Cores já resolvidas</div></div>`;
 
 }
 
@@ -2694,7 +2723,9 @@ function buildViv(){
 
   ];
 
-  document.getElementById('viv-body').innerHTML=vivRows.map(v=>{
+  const vivVisiveis=vivRows.filter(v=>reconferirEDecidirExibir('viv',stKey('Vivo_'+v.label),v.rolos));
+
+  document.getElementById('viv-body').innerHTML=vivVisiveis.length?vivVisiveis.map(v=>{
 
     const k=stKey('Vivo_'+v.label), s=st.viv[k]||{ok:false,qty:''};
 
@@ -2716,7 +2747,7 @@ function buildViv(){
 
     </tr>`;
 
-  }).join('');
+  }).join(''):'<tr><td colspan="6" style="padding:16px;color:#999;text-align:center">✅ Tudo resolvido — nada precisando de atenção aqui agora.</td></tr>';
 
   document.getElementById('viv-foot').innerHTML=`<tr><td></td><td><b>TOTAL</b></td><td class="r"><b>${f2(totB+totP)}</b></td><td class="r">${rl(totB,50)+rl(totP,50)} rolos</td><td></td><td></td></tr>`;
 
@@ -2746,7 +2777,19 @@ function buildElas(){
 
   const r=rl(tM,25);
 
-  const k='elastico_total'; const s=st.elas[k]||{ok:false,qty:''};
+  const k='elastico_total';
+
+  const precisaAtencao=reconferirEDecidirExibir('elas',k,r);
+
+  const s=st.elas[k]||{ok:false,qty:''};
+
+  if(!precisaAtencao){
+
+    document.getElementById('elas-body').innerHTML='<tr><td colspan="7" style="padding:16px;color:#999;text-align:center">✅ Tudo resolvido — nada precisando de atenção aqui agora.</td></tr>';
+
+    document.getElementById('elas-foot').innerHTML='';
+
+  } else {
 
   document.getElementById('elas-body').innerHTML=d.map(x=>`
 
@@ -2769,6 +2812,8 @@ function buildElas(){
     <td class="r" id="elas-falta-${k}">${faltaCell(r,s.qty,s.ok)}</td>
 
   </tr>`;
+
+  }
 
   document.getElementById('elas-cards').innerHTML=
 
@@ -2808,7 +2853,9 @@ function buildBot(){
 
   ];
 
-  document.getElementById('bot-body').innerHTML=botRows.map(v=>{
+  const botVisiveis=botRows.filter(v=>reconferirEDecidirExibir('bot',stKey('Bot_'+v.label),v.pacotes));
+
+  document.getElementById('bot-body').innerHTML=botVisiveis.length?botVisiveis.map(v=>{
 
     const k=stKey('Bot_'+v.label), s=st.bot[k]||{ok:false,qty:''};
 
@@ -2830,7 +2877,7 @@ function buildBot(){
 
     </tr>`;
 
-  }).join('');
+  }).join(''):'<tr><td colspan="6" style="padding:16px;color:#999;text-align:center">✅ Tudo resolvido — nada precisando de atenção aqui agora.</td></tr>';
 
   document.getElementById('bot-foot').innerHTML=`<tr><td></td><td><b>TOTAL</b></td><td class="r"><b>${tW+tP}</b></td><td class="r">${Math.ceil(tW/50)+Math.ceil(tP/50)} pacotes</td><td></td><td></td></tr>`;
 
@@ -3052,11 +3099,27 @@ function renderListaCompras(){
 
 // ─── HANDLERS ESTOQUE ────────────────────────────────────
 
+function reconferirEDecidirExibir(tab,key,nec){
+  let s=st[tab][key];
+  if(s&&s.ok&&s.necessarioRef!==nec){
+    s.ok=false;
+    syncPush(tab,key,false,stPayload(tab,key));
+  }
+  s=st[tab][key]||{ok:false,qty:''};
+  const suficiente=s.ok&&(s.qty===''||parseFloat(s.qty||0)>=nec);
+  return !suficiente;
+}
+function stPayload(tab,key){
+  const s=st[tab][key];
+  return JSON.stringify({qty:(s.qty===undefined||s.qty===null)?'':s.qty, necessarioRef:(s.necessarioRef===undefined?null:s.necessarioRef)});
+}
 function togSt(tab, key, nec, el){
 
   if(!st[tab][key]) st[tab][key]={ok:false,qty:''};
 
   st[tab][key].ok=el.checked;
+
+  if(el.checked) st[tab][key].necessarioRef=nec; // confirma "revisei com o necessario de agora"
 
   const row=document.getElementById(`${tab}-row-${key}`);
 
@@ -3074,7 +3137,7 @@ function togSt(tab, key, nec, el){
 
   renderListaCompras();
 
-  syncPush(tab,key,st[tab][key].ok,st[tab][key].qty);
+  syncPush(tab,key,st[tab][key].ok,stPayload(tab,key));
 
 }
 
@@ -3083,6 +3146,8 @@ function updSt(tab, key, nec, el){
   if(!st[tab][key]) st[tab][key]={ok:false,qty:''};
 
   st[tab][key].qty=el.value;
+
+  if(st[tab][key].ok) st[tab][key].necessarioRef=nec; // digitar tambem conta como revisao
 
   updFalta(tab,key,nec);
 
@@ -3098,7 +3163,7 @@ function updSt(tab, key, nec, el){
 
   renderListaCompras();
 
-  syncPush(tab,key,st[tab][key].ok,st[tab][key].qty);
+  syncPush(tab,key,st[tab][key].ok,stPayload(tab,key));
 
 }
 
