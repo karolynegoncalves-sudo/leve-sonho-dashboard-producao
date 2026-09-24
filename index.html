@@ -108,6 +108,34 @@ tfoot td.r{text-align:right}
 
 .leg{font-size:11px;background:#f7f8fc;padding:5px 10px;border-radius:6px}
 
+/* KPIs de produção (painel Karol 25/09) */
+.kpi-gauges-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.gauge-box{background:#f7f8fc;border-radius:8px;padding:10px 8px 6px;text-align:center}
+.gauge-box .gtitle{font-size:11px;color:#555;font-weight:bold;margin-bottom:2px}
+.gauge-box .gval{font-size:20px;font-weight:bold;fill:#1a1a2e}
+.gauge-box .glabel{font-size:9.5px;fill:#999}
+.gauge-box .gsub{font-size:10px;color:#777;margin-top:2px}
+.gauge-legend{display:flex;justify-content:center;gap:8px;font-size:9px;color:#999;margin-top:2px;flex-wrap:wrap}
+.gauge-legend span{display:flex;align-items:center;gap:3px}
+.gauge-legend i{width:7px;height:7px;border-radius:50%;display:inline-block}
+
+.donut-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.donut{width:110px;height:110px;border-radius:50%;position:relative;flex-shrink:0}
+.donut::after{content:'';position:absolute;inset:20px;background:#fff;border-radius:50%}
+.donut-leg{display:flex;flex-direction:column;gap:6px;font-size:11px}
+.donut-leg i{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px}
+
+.podio{display:flex;align-items:flex-end;justify-content:center;gap:8px;margin-bottom:6px;padding-top:6px}
+.podio-col{display:flex;flex-direction:column;align-items:center;width:78px}
+.podio-nome{font-size:11px;font-weight:bold;color:#333;text-transform:capitalize;text-align:center;max-width:78px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.podio-qtd{font-size:10px;color:#777;margin-bottom:4px}
+.podio-bloco{width:100%;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:6px;font-size:18px;color:#fff;font-weight:bold}
+.podio-col.p1 .podio-bloco{height:70px;background:linear-gradient(#f6c93b,#e0a800)}
+.podio-col.p2 .podio-bloco{height:52px;background:linear-gradient(#c9ccd1,#a9adb3)}
+.podio-col.p3 .podio-bloco{height:38px;background:linear-gradient(#d9915c,#c07540)}
+.podio-resto{font-size:11px;color:#555;margin-top:4px}
+.podio-resto .an-linha-row{margin-bottom:4px}
+
 .filters{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
 
 .filters label{font-weight:bold;color:#555}
@@ -498,6 +526,8 @@ tr.row-ok td{color:#555}
 
   </div>
 
+  <div class="kpi-gauges-row" id="an-gauges"></div>
+
   <div class="sgrid" id="an-cards-totais"></div>
 
   <div class="an-grid2">
@@ -507,6 +537,8 @@ tr.row-ok td{color:#555}
       <h3>Por linha</h3>
 
       <div id="an-por-linha"></div>
+
+      <div class="donut-wrap" id="an-donut-linha" style="margin-top:12px"></div>
 
     </div>
 
@@ -535,6 +567,8 @@ tr.row-ok td{color:#555}
     <div class="an-card-box">
 
       <h3>🙋 Quem cortou</h3>
+
+      <div id="an-podio"></div>
 
       <div id="an-por-pessoa"></div>
 
@@ -2050,7 +2084,7 @@ const ANALISES_POR_MES = {
  ]
 
 },
- setembro: {"mes": "Setembro/2026", "emAndamento": true, "atualizadoEm": "2026-09-24", "totais": {"planejado": 3483, "realizado": 2193, "pct": 63.0, "combosPlanejados": 103, "combosComCorte": 83, "combosCompletos": 18, "combosParciais": 65, "combosNaoIniciados": 20}, "porLinha": [{"linha": "RIF", "label": "Robe Infantil", "planejado": 985, "realizado": 623, "pct": 63.2}, {"linha": "RMC", "label": "Robe Manga Curta", "planejado": 2411, "realizado": 1484, "pct": 61.6}, {"linha": "PMC", "label": "Pijama Verão", "planejado": 87, "realizado": 86, "pct": 98.9}, {"linha": "PMI", "label": "Pijama Inverno", "planejado": 0, "realizado": 0, "pct": 0}], "timeline": {"inicio": "2026-08-10", "fim": "2026-09-24", "diasCorridos": 46, "diasComCorte": 12, "mediaPcsDiaAtivo": 182.8, "porDia": [{"data": "2026-08-10", "qtd": 0}, {"data": "2026-08-17", "qtd": 66}, {"data": "2026-08-18", "qtd": 291}, {"data": "2026-08-20", "qtd": 120}, {"data": "2026-08-22", "qtd": 1146}, {"data": "2026-08-26", "qtd": 186}, {"data": "2026-08-31", "qtd": 81}, {"data": "2026-09-04", "qtd": 434}, {"data": "2026-09-11", "qtd": 6}, {"data": "2026-09-17", "qtd": 0}, {"data": "2026-09-21", "qtd": 1}, {"data": "2026-09-24", "qtd": 55}], "diaMaisForte": {"data": "2026-08-22", "qtd": 1146}, "diaMaisFraco": {"data": "2026-08-10", "qtd": 0}}, "gruposMaisLentos": [{"linha": "RIF", "label": "Robe Infantil", "tam": "10", "spanDias": 46, "primeira": "2026-08-10", "ultima": "2026-09-24", "registros": 29, "pecas": 180}, {"linha": "PMI", "label": "Pijama Inverno", "tam": "GG", "spanDias": 34, "primeira": "2026-08-22", "ultima": "2026-09-24", "registros": 7, "pecas": 0}, {"linha": "PMI", "label": "Pijama Inverno", "tam": "P", "spanDias": 27, "primeira": "2026-08-22", "ultima": "2026-09-17", "registros": 6, "pecas": 0}, {"linha": "RIF", "label": "Robe Infantil", "tam": "12", "spanDias": 18, "primeira": "2026-08-18", "ultima": "2026-09-04", "registros": 14, "pecas": 86}, {"linha": "RIF", "label": "Robe Infantil", "tam": "8", "spanDias": 18, "primeira": "2026-08-18", "ultima": "2026-09-04", "registros": 11, "pecas": 80}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G3", "spanDias": 18, "primeira": "2026-08-31", "ultima": "2026-09-17", "registros": 17, "pecas": 72}, {"linha": "RIF", "label": "Robe Infantil", "tam": "14", "spanDias": 18, "primeira": "2026-08-18", "ultima": "2026-09-04", "registros": 11, "pecas": 57}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "P", "spanDias": 17, "primeira": "2026-08-26", "ultima": "2026-09-11", "registros": 17, "pecas": 231}, {"linha": "RIF", "label": "Robe Infantil", "tam": "2", "spanDias": 16, "primeira": "2026-08-20", "ultima": "2026-09-04", "registros": 7, "pecas": 51}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G", "spanDias": 14, "primeira": "2026-08-22", "ultima": "2026-09-04", "registros": 28, "pecas": 388}], "naoIniciados": [{"sku": "RMC-G-Azul Claro", "linha": "RMC", "cor": "Azul Claro", "tam": "G", "planejado": 45}, {"sku": "RMC-G1-Marsala", "linha": "RMC", "cor": "Marsala", "tam": "G1", "planejado": 27}, {"sku": "RMC-P-Pink", "linha": "RMC", "cor": "Pink", "tam": "P", "planejado": 23}, {"sku": "RMC-P-Marsala", "linha": "RMC", "cor": "Marsala", "tam": "P", "planejado": 12}, {"sku": "RIF-8-Lilás", "linha": "RIF", "cor": "Lilás", "tam": "8", "planejado": 12}, {"sku": "RIF-12-Lilás", "linha": "RIF", "cor": "Lilás", "tam": "12", "planejado": 11}, {"sku": "RMC-GG-Rose", "linha": "RMC", "cor": "Rose", "tam": "GG", "planejado": 11}, {"sku": "RIF-8-Azul Claro", "linha": "RIF", "cor": "Azul Claro", "tam": "8", "planejado": 9}, {"sku": "RMC-P-Preto", "linha": "RMC", "cor": "Preto", "tam": "P", "planejado": 8}, {"sku": "RMC-G3-Marsala", "linha": "RMC", "cor": "Marsala", "tam": "G3", "planejado": 6}, {"sku": "RIF-2-Lilás", "linha": "RIF", "cor": "Lilás", "tam": "2", "planejado": 6}, {"sku": "RMC-GG-Pink", "linha": "RMC", "cor": "Pink", "tam": "GG", "planejado": 6}], "parciais": [{"sku": "RMC-M-Rose", "planejado": 181, "realizado": 57, "faltou": 124, "motivo": "Falta de tecido"}, {"sku": "RMC-M-Azul Claro", "planejado": 167, "realizado": 102, "faltou": 65, "motivo": "—"}, {"sku": "RMC-P-Rose", "planejado": 75, "realizado": 20, "faltou": 55, "motivo": "Falta de tecido"}, {"sku": "RMC-G-Rose", "planejado": 61, "realizado": 28, "faltou": 33, "motivo": "Falta de tecido"}, {"sku": "RMC-GG-Marsala", "planejado": 97, "realizado": 66, "faltou": 31, "motivo": "—"}, {"sku": "RMC-M-Branco", "planejado": 129, "realizado": 99, "faltou": 30, "motivo": "Falta de tecido"}, {"sku": "RMC-P-Branco", "planejado": 120, "realizado": 90, "faltou": 30, "motivo": "—"}, {"sku": "RMC-G-Preto", "planejado": 143, "realizado": 114, "faltou": 29, "motivo": "—"}, {"sku": "RIF-10-Rosa Claro", "planejado": 77, "realizado": 50, "faltou": 27, "motivo": "—"}, {"sku": "RMC-P-Lilás", "planejado": 116, "realizado": 90, "faltou": 26, "motivo": "—"}, {"sku": "RMC-G-Marsala", "planejado": 78, "realizado": 54, "faltou": 24, "motivo": "—"}, {"sku": "RMC-GG-Branco", "planejado": 126, "realizado": 102, "faltou": 24, "motivo": "—"}, {"sku": "RIF-8-Rosa Claro", "planejado": 66, "realizado": 42, "faltou": 24, "motivo": "—"}, {"sku": "RMC-GG-Preto", "planejado": 71, "realizado": 48, "faltou": 23, "motivo": "—"}, {"sku": "RIF-8-Pink", "planejado": 43, "realizado": 21, "faltou": 22, "motivo": "—"}, {"sku": "RMC-GG-Lilás", "planejado": 45, "realizado": 24, "faltou": 21, "motivo": "—"}, {"sku": "RIF-6-Branco", "planejado": 38, "realizado": 18, "faltou": 20, "motivo": "—"}, {"sku": "RIF-12-Pink", "planejado": 33, "realizado": 13, "faltou": 20, "motivo": "—"}, {"sku": "RMC-M-Marsala", "planejado": 61, "realizado": 42, "faltou": 19, "motivo": "—"}, {"sku": "RIF-6-Pink", "planejado": 61, "realizado": 42, "faltou": 19, "motivo": "—"}, {"sku": "RMC-G-Pink", "planejado": 54, "realizado": 36, "faltou": 18, "motivo": "—"}, {"sku": "RMC-GG-Rosa Claro", "planejado": 41, "realizado": 24, "faltou": 17, "motivo": "—"}, {"sku": "RMC-M-Lilás", "planejado": 58, "realizado": 42, "faltou": 16, "motivo": "—"}, {"sku": "RMC-G-Rosa Claro", "planejado": 46, "realizado": 30, "faltou": 16, "motivo": "—"}, {"sku": "RMC-M-Pink", "planejado": 51, "realizado": 36, "faltou": 15, "motivo": "—"}, {"sku": "RMC-G3-Azul Claro", "planejado": 29, "realizado": 15, "faltou": 14, "motivo": "—"}, {"sku": "RIF-12-Azul Claro", "planejado": 38, "realizado": 24, "faltou": 14, "motivo": "—"}, {"sku": "RIF-14-Rosa Claro", "planejado": 20, "realizado": 6, "faltou": 14, "motivo": "—"}, {"sku": "RIF-6-Rose", "planejado": 32, "realizado": 18, "faltou": 14, "motivo": "—"}, {"sku": "RMC-G3-Preto", "planejado": 19, "realizado": 5, "faltou": 14, "motivo": "—"}, {"sku": "RMC-G-Lilás", "planejado": 49, "realizado": 36, "faltou": 13, "motivo": "—"}, {"sku": "RMC-GG-Azul Claro", "planejado": 48, "realizado": 36, "faltou": 12, "motivo": "—"}, {"sku": "RMC-G1-Rose", "planejado": 15, "realizado": 3, "faltou": 12, "motivo": "Falta de tecido"}, {"sku": "RMC-P-Rosa Claro", "planejado": 22, "realizado": 10, "faltou": 12, "motivo": "—"}, {"sku": "RIF-6-Rosa Claro", "planejado": 33, "realizado": 21, "faltou": 12, "motivo": "—"}, {"sku": "RIF-4-Rosa Claro", "planejado": 30, "realizado": 18, "faltou": 12, "motivo": "—"}, {"sku": "RMC-G3-Lilás", "planejado": 28, "realizado": 17, "faltou": 11, "motivo": "—"}, {"sku": "RMC-G2-Azul Claro", "planejado": 29, "realizado": 18, "faltou": 11, "motivo": "—"}, {"sku": "RIF-6-Azul Claro", "planejado": 23, "realizado": 12, "faltou": 11, "motivo": "—"}, {"sku": "RIF-8-Branco", "planejado": 17, "realizado": 6, "faltou": 11, "motivo": "—"}, {"sku": "RIF-10-Pink", "planejado": 27, "realizado": 17, "faltou": 10, "motivo": "—"}, {"sku": "RMC-M-Rosa Claro", "planejado": 51, "realizado": 42, "faltou": 9, "motivo": "—"}, {"sku": "RMC-G2-Rose", "planejado": 19, "realizado": 10, "faltou": 9, "motivo": "Falta de tecido"}, {"sku": "RMC-G3-Rose", "planejado": 19, "realizado": 10, "faltou": 9, "motivo": "Falta de tecido"}, {"sku": "RIF-14-Rose", "planejado": 27, "realizado": 18, "faltou": 9, "motivo": "—"}, {"sku": "RIF-14-Pink", "planejado": 15, "realizado": 6, "faltou": 9, "motivo": "—"}, {"sku": "RMC-M-Preto", "planejado": 27, "realizado": 18, "faltou": 9, "motivo": "—"}, {"sku": "RMC-G2-Branco", "planejado": 18, "realizado": 10, "faltou": 8, "motivo": "—"}, {"sku": "RMC-P-Azul Claro", "planejado": 22, "realizado": 15, "faltou": 7, "motivo": "—"}, {"sku": "RIF-10-Azul Claro", "planejado": 34, "realizado": 27, "faltou": 7, "motivo": "—"}, {"sku": "RIF-10-Lilás", "planejado": 21, "realizado": 15, "faltou": 6, "motivo": "—"}, {"sku": "RIF-14-Azul Claro", "planejado": 27, "realizado": 21, "faltou": 6, "motivo": "—"}, {"sku": "RIF-4-Rose", "planejado": 18, "realizado": 12, "faltou": 6, "motivo": "—"}, {"sku": "RIF-4-Pink", "planejado": 18, "realizado": 12, "faltou": 6, "motivo": "—"}, {"sku": "RIF-10-Rose", "planejado": 33, "realizado": 27, "faltou": 6, "motivo": "—"}, {"sku": "RIF-2-Rosa Claro", "planejado": 15, "realizado": 9, "faltou": 6, "motivo": "—"}, {"sku": "RIF-12-Rose", "planejado": 18, "realizado": 12, "faltou": 6, "motivo": "—"}, {"sku": "RIF-12-Rosa Claro", "planejado": 18, "realizado": 12, "faltou": 6, "motivo": "—"}, {"sku": "RMC-G1-Azul Claro", "planejado": 19, "realizado": 14, "faltou": 5, "motivo": "—"}, {"sku": "RIF-12-Marsala", "planejado": 20, "realizado": 15, "faltou": 5, "motivo": "—"}, {"sku": "RIF-12-Branco", "planejado": 14, "realizado": 10, "faltou": 4, "motivo": "—"}, {"sku": "RMC-G1-Pink", "planejado": 6, "realizado": 3, "faltou": 3, "motivo": "—"}, {"sku": "RMC-G1-Lilás", "planejado": 5, "realizado": 2, "faltou": 3, "motivo": "—"}, {"sku": "RIF-10-Branco", "planejado": 24, "realizado": 23, "faltou": 1, "motivo": "—"}, {"sku": "RIF-4-Azul Claro", "planejado": 19, "realizado": 18, "faltou": 1, "motivo": "—"}], "porPessoa": [{"nome": "Natália", "qtd": 678}, {"nome": "Karol", "qtd": 0}]}
+ setembro: {"mes": "Setembro/2026", "emAndamento": true, "atualizadoEm": "2026-09-24", "totais": {"planejado": 3483, "realizado": 2193, "pct": 63.0, "combosPlanejados": 103, "combosComCorte": 83, "combosCompletos": 18, "combosParciais": 65, "combosNaoIniciados": 20, "pctCombosCompletos": 17.5, "pctCombosIniciados": 80.6}, "porLinha": [{"linha": "RIF", "label": "Robe Infantil", "planejado": 985, "realizado": 623, "pct": 63.2}, {"linha": "RMC", "label": "Robe Manga Curta", "planejado": 2411, "realizado": 1484, "pct": 61.6}, {"linha": "PMC", "label": "Pijama Verão", "planejado": 87, "realizado": 86, "pct": 98.9}, {"linha": "PMI", "label": "Pijama Inverno", "planejado": 0, "realizado": 0, "pct": 0}], "timeline": {"inicio": "2026-08-10", "fim": "2026-09-24", "diasCorridos": 46, "diasComCorte": 12, "mediaPcsDiaAtivo": 182.8, "porDia": [{"data": "2026-08-10", "qtd": 0}, {"data": "2026-08-17", "qtd": 66}, {"data": "2026-08-18", "qtd": 291}, {"data": "2026-08-20", "qtd": 120}, {"data": "2026-08-22", "qtd": 1146}, {"data": "2026-08-26", "qtd": 186}, {"data": "2026-08-31", "qtd": 81}, {"data": "2026-09-04", "qtd": 434}, {"data": "2026-09-11", "qtd": 6}, {"data": "2026-09-17", "qtd": 0}, {"data": "2026-09-21", "qtd": 1}, {"data": "2026-09-24", "qtd": 55}], "diaMaisForte": {"data": "2026-08-22", "qtd": 1146}, "diaMaisFraco": {"data": "2026-08-10", "qtd": 0}}, "ritmo": {"atual": 182.8, "necessario": 184.3, "pct": 99.2, "diasRestantes": 7}, "gruposMaisLentos": [{"linha": "RIF", "label": "Robe Infantil", "tam": "10", "spanDias": 46, "primeira": "2026-08-10", "ultima": "2026-09-24", "registros": 29, "pecas": 180}, {"linha": "PMI", "label": "Pijama Inverno", "tam": "GG", "spanDias": 34, "primeira": "2026-08-22", "ultima": "2026-09-24", "registros": 7, "pecas": 0}, {"linha": "PMI", "label": "Pijama Inverno", "tam": "P", "spanDias": 27, "primeira": "2026-08-22", "ultima": "2026-09-17", "registros": 6, "pecas": 0}, {"linha": "RIF", "label": "Robe Infantil", "tam": "12", "spanDias": 18, "primeira": "2026-08-18", "ultima": "2026-09-04", "registros": 14, "pecas": 86}, {"linha": "RIF", "label": "Robe Infantil", "tam": "8", "spanDias": 18, "primeira": "2026-08-18", "ultima": "2026-09-04", "registros": 11, "pecas": 80}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G3", "spanDias": 18, "primeira": "2026-08-31", "ultima": "2026-09-17", "registros": 17, "pecas": 72}, {"linha": "RIF", "label": "Robe Infantil", "tam": "14", "spanDias": 18, "primeira": "2026-08-18", "ultima": "2026-09-04", "registros": 11, "pecas": 57}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "P", "spanDias": 17, "primeira": "2026-08-26", "ultima": "2026-09-11", "registros": 17, "pecas": 231}, {"linha": "RIF", "label": "Robe Infantil", "tam": "2", "spanDias": 16, "primeira": "2026-08-20", "ultima": "2026-09-04", "registros": 7, "pecas": 51}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G", "spanDias": 14, "primeira": "2026-08-22", "ultima": "2026-09-04", "registros": 28, "pecas": 388}], "naoIniciados": [{"sku": "RMC-G-Azul Claro", "linha": "RMC", "cor": "Azul Claro", "tam": "G", "planejado": 45}, {"sku": "RMC-G1-Marsala", "linha": "RMC", "cor": "Marsala", "tam": "G1", "planejado": 27}, {"sku": "RMC-P-Pink", "linha": "RMC", "cor": "Pink", "tam": "P", "planejado": 23}, {"sku": "RMC-P-Marsala", "linha": "RMC", "cor": "Marsala", "tam": "P", "planejado": 12}, {"sku": "RIF-8-Lilás", "linha": "RIF", "cor": "Lilás", "tam": "8", "planejado": 12}, {"sku": "RIF-12-Lilás", "linha": "RIF", "cor": "Lilás", "tam": "12", "planejado": 11}, {"sku": "RMC-GG-Rose", "linha": "RMC", "cor": "Rose", "tam": "GG", "planejado": 11}, {"sku": "RIF-8-Azul Claro", "linha": "RIF", "cor": "Azul Claro", "tam": "8", "planejado": 9}, {"sku": "RMC-P-Preto", "linha": "RMC", "cor": "Preto", "tam": "P", "planejado": 8}, {"sku": "RMC-G3-Marsala", "linha": "RMC", "cor": "Marsala", "tam": "G3", "planejado": 6}, {"sku": "RIF-2-Lilás", "linha": "RIF", "cor": "Lilás", "tam": "2", "planejado": 6}, {"sku": "RMC-GG-Pink", "linha": "RMC", "cor": "Pink", "tam": "GG", "planejado": 6}], "parciais": [{"sku": "RMC-M-Rose", "planejado": 181, "realizado": 57, "faltou": 124, "motivo": "Falta de tecido"}, {"sku": "RMC-M-Azul Claro", "planejado": 167, "realizado": 102, "faltou": 65, "motivo": "—"}, {"sku": "RMC-P-Rose", "planejado": 75, "realizado": 20, "faltou": 55, "motivo": "Falta de tecido"}, {"sku": "RMC-G-Rose", "planejado": 61, "realizado": 28, "faltou": 33, "motivo": "Falta de tecido"}, {"sku": "RMC-GG-Marsala", "planejado": 97, "realizado": 66, "faltou": 31, "motivo": "—"}, {"sku": "RMC-M-Branco", "planejado": 129, "realizado": 99, "faltou": 30, "motivo": "Falta de tecido"}, {"sku": "RMC-P-Branco", "planejado": 120, "realizado": 90, "faltou": 30, "motivo": "—"}, {"sku": "RMC-G-Preto", "planejado": 143, "realizado": 114, "faltou": 29, "motivo": "—"}, {"sku": "RIF-10-Rosa Claro", "planejado": 77, "realizado": 50, "faltou": 27, "motivo": "—"}, {"sku": "RMC-P-Lilás", "planejado": 116, "realizado": 90, "faltou": 26, "motivo": "—"}, {"sku": "RMC-G-Marsala", "planejado": 78, "realizado": 54, "faltou": 24, "motivo": "—"}, {"sku": "RMC-GG-Branco", "planejado": 126, "realizado": 102, "faltou": 24, "motivo": "—"}, {"sku": "RIF-8-Rosa Claro", "planejado": 66, "realizado": 42, "faltou": 24, "motivo": "—"}, {"sku": "RMC-GG-Preto", "planejado": 71, "realizado": 48, "faltou": 23, "motivo": "—"}, {"sku": "RIF-8-Pink", "planejado": 43, "realizado": 21, "faltou": 22, "motivo": "—"}, {"sku": "RMC-GG-Lilás", "planejado": 45, "realizado": 24, "faltou": 21, "motivo": "—"}, {"sku": "RIF-6-Branco", "planejado": 38, "realizado": 18, "faltou": 20, "motivo": "—"}, {"sku": "RIF-12-Pink", "planejado": 33, "realizado": 13, "faltou": 20, "motivo": "—"}, {"sku": "RMC-M-Marsala", "planejado": 61, "realizado": 42, "faltou": 19, "motivo": "—"}, {"sku": "RIF-6-Pink", "planejado": 61, "realizado": 42, "faltou": 19, "motivo": "—"}, {"sku": "RMC-G-Pink", "planejado": 54, "realizado": 36, "faltou": 18, "motivo": "—"}, {"sku": "RMC-GG-Rosa Claro", "planejado": 41, "realizado": 24, "faltou": 17, "motivo": "—"}, {"sku": "RMC-M-Lilás", "planejado": 58, "realizado": 42, "faltou": 16, "motivo": "—"}, {"sku": "RMC-G-Rosa Claro", "planejado": 46, "realizado": 30, "faltou": 16, "motivo": "—"}, {"sku": "RMC-M-Pink", "planejado": 51, "realizado": 36, "faltou": 15, "motivo": "—"}, {"sku": "RMC-G3-Azul Claro", "planejado": 29, "realizado": 15, "faltou": 14, "motivo": "—"}, {"sku": "RIF-12-Azul Claro", "planejado": 38, "realizado": 24, "faltou": 14, "motivo": "—"}, {"sku": "RIF-14-Rosa Claro", "planejado": 20, "realizado": 6, "faltou": 14, "motivo": "—"}, {"sku": "RIF-6-Rose", "planejado": 32, "realizado": 18, "faltou": 14, "motivo": "—"}, {"sku": "RMC-G3-Preto", "planejado": 19, "realizado": 5, "faltou": 14, "motivo": "—"}, {"sku": "RMC-G-Lilás", "planejado": 49, "realizado": 36, "faltou": 13, "motivo": "—"}, {"sku": "RMC-GG-Azul Claro", "planejado": 48, "realizado": 36, "faltou": 12, "motivo": "—"}, {"sku": "RMC-G1-Rose", "planejado": 15, "realizado": 3, "faltou": 12, "motivo": "Falta de tecido"}, {"sku": "RMC-P-Rosa Claro", "planejado": 22, "realizado": 10, "faltou": 12, "motivo": "—"}, {"sku": "RIF-6-Rosa Claro", "planejado": 33, "realizado": 21, "faltou": 12, "motivo": "—"}, {"sku": "RIF-4-Rosa Claro", "planejado": 30, "realizado": 18, "faltou": 12, "motivo": "—"}, {"sku": "RMC-G3-Lilás", "planejado": 28, "realizado": 17, "faltou": 11, "motivo": "—"}, {"sku": "RMC-G2-Azul Claro", "planejado": 29, "realizado": 18, "faltou": 11, "motivo": "—"}, {"sku": "RIF-6-Azul Claro", "planejado": 23, "realizado": 12, "faltou": 11, "motivo": "—"}, {"sku": "RIF-8-Branco", "planejado": 17, "realizado": 6, "faltou": 11, "motivo": "—"}, {"sku": "RIF-10-Pink", "planejado": 27, "realizado": 17, "faltou": 10, "motivo": "—"}, {"sku": "RMC-M-Rosa Claro", "planejado": 51, "realizado": 42, "faltou": 9, "motivo": "—"}, {"sku": "RMC-G2-Rose", "planejado": 19, "realizado": 10, "faltou": 9, "motivo": "Falta de tecido"}, {"sku": "RMC-G3-Rose", "planejado": 19, "realizado": 10, "faltou": 9, "motivo": "Falta de tecido"}, {"sku": "RIF-14-Rose", "planejado": 27, "realizado": 18, "faltou": 9, "motivo": "—"}, {"sku": "RIF-14-Pink", "planejado": 15, "realizado": 6, "faltou": 9, "motivo": "—"}, {"sku": "RMC-M-Preto", "planejado": 27, "realizado": 18, "faltou": 9, "motivo": "—"}, {"sku": "RMC-G2-Branco", "planejado": 18, "realizado": 10, "faltou": 8, "motivo": "—"}, {"sku": "RMC-P-Azul Claro", "planejado": 22, "realizado": 15, "faltou": 7, "motivo": "—"}, {"sku": "RIF-10-Azul Claro", "planejado": 34, "realizado": 27, "faltou": 7, "motivo": "—"}, {"sku": "RIF-10-Lilás", "planejado": 21, "realizado": 15, "faltou": 6, "motivo": "—"}, {"sku": "RIF-14-Azul Claro", "planejado": 27, "realizado": 21, "faltou": 6, "motivo": "—"}, {"sku": "RIF-4-Rose", "planejado": 18, "realizado": 12, "faltou": 6, "motivo": "—"}, {"sku": "RIF-4-Pink", "planejado": 18, "realizado": 12, "faltou": 6, "motivo": "—"}, {"sku": "RIF-10-Rose", "planejado": 33, "realizado": 27, "faltou": 6, "motivo": "—"}, {"sku": "RIF-2-Rosa Claro", "planejado": 15, "realizado": 9, "faltou": 6, "motivo": "—"}, {"sku": "RIF-12-Rose", "planejado": 18, "realizado": 12, "faltou": 6, "motivo": "—"}, {"sku": "RIF-12-Rosa Claro", "planejado": 18, "realizado": 12, "faltou": 6, "motivo": "—"}, {"sku": "RMC-G1-Azul Claro", "planejado": 19, "realizado": 14, "faltou": 5, "motivo": "—"}, {"sku": "RIF-12-Marsala", "planejado": 20, "realizado": 15, "faltou": 5, "motivo": "—"}, {"sku": "RIF-12-Branco", "planejado": 14, "realizado": 10, "faltou": 4, "motivo": "—"}, {"sku": "RMC-G1-Pink", "planejado": 6, "realizado": 3, "faltou": 3, "motivo": "—"}, {"sku": "RMC-G1-Lilás", "planejado": 5, "realizado": 2, "faltou": 3, "motivo": "—"}, {"sku": "RIF-10-Branco", "planejado": 24, "realizado": 23, "faltou": 1, "motivo": "—"}, {"sku": "RIF-4-Azul Claro", "planejado": 19, "realizado": 18, "faltou": 1, "motivo": "—"}], "porPessoa": [{"nome": "Natália", "qtd": 678}, {"nome": "Karol", "qtd": 0}]}
 };
 
 
@@ -2059,6 +2093,63 @@ function anF2(n){ return (Math.round(n*10)/10).toFixed(1).replace('.',','); }
 
 function anDataBR(d){ return (d||'').split('-').reverse().join('/'); }
 
+// ─── GAUGES / DONUT / PÓDIO (painel de KPIs, pedido Karol 25/09) ──
+const GBANDS=[{lim:50,cor:'#c62828'},{lim:75,cor:'#e65100'},{lim:90,cor:'#3949ab'},{lim:999,cor:'#2e7d32'}];
+function gaugeCorPct(pct){ for(const b of GBANDS){ if(pct<b.lim) return b.cor; } return '#2e7d32'; }
+function polarPt(cx,cy,r,angDeg){ const rad=angDeg*Math.PI/180; return {x:cx+r*Math.cos(rad), y:cy-r*Math.sin(rad)}; }
+function arcPath(cx,cy,r,a0,a1){ const p0=polarPt(cx,cy,r,a0), p1=polarPt(cx,cy,r,a1); return `M ${p0.x.toFixed(2)} ${p0.y.toFixed(2)} A ${r} ${r} 0 0 0 ${p1.x.toFixed(2)} ${p1.y.toFixed(2)}`; }
+function svgGauge(pctRaw,label,sub){
+  const pct=Number.isFinite(pctRaw)?Math.max(0,Math.min(100,pctRaw)):0;
+  const cx=75,cy=68,r=56,rNeedle=48;
+  const bandStops=[180,90,45,18,0]; // angulos dos limiares 50/75/90% (mesmos do gaugeCorPct)
+  const bandCores=['#c62828','#e65100','#3949ab','#2e7d32'];
+  let bandsSvg='';
+  for(let i=0;i<4;i++){ bandsSvg+=`<path d="${arcPath(cx,cy,r,bandStops[i],bandStops[i+1])}" stroke="${bandCores[i]}" stroke-width="10" fill="none" opacity="0.28" stroke-linecap="butt"/>`; }
+  const angNeedle=180-(pct/100*180);
+  const ponta=polarPt(cx,cy,rNeedle,angNeedle);
+  const corPonteiro=gaugeCorPct(pct);
+  return `<svg viewBox="0 0 150 90" width="100%" height="82">
+    ${bandsSvg}
+    <line x1="${cx}" y1="${cy}" x2="${ponta.x.toFixed(2)}" y2="${ponta.y.toFixed(2)}" stroke="${corPonteiro}" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="4.5" fill="${corPonteiro}"/>
+    <text x="${cx}" y="${cy-6}" text-anchor="middle" class="gval">${anF2(pct)}%</text>
+  </svg>
+  <div class="gtitle">${label}</div>${sub?`<div class="gsub">${sub}</div>`:''}`;
+}
+function renderGauges(A){
+  const el=document.getElementById('an-gauges'); if(!el) return;
+  const t=A.totais, rt=A.ritmo||{atual:0,necessario:0,pct:100,diasRestantes:0};
+  const pctCompletos = Number.isFinite(t.pctCombosCompletos)?t.pctCombosCompletos:(t.combosPlanejados?t.combosCompletos/t.combosPlanejados*100:0);
+  const pctIniciados = Number.isFinite(t.pctCombosIniciados)?t.pctCombosIniciados:(t.combosPlanejados?(t.combosPlanejados-t.combosNaoIniciados)/t.combosPlanejados*100:0);
+  el.innerHTML =
+    `<div class="gauge-box">${svgGauge(t.pct,'Aderência ao plano',`${t.realizado}/${t.planejado} pç`)}</div>`+
+    `<div class="gauge-box">${svgGauge(pctCompletos,'Combos concluídos',`${t.combosCompletos}/${t.combosPlanejados}`)}</div>`+
+    `<div class="gauge-box">${svgGauge(pctIniciados,'Combos iniciados',`${t.combosPlanejados-t.combosNaoIniciados}/${t.combosPlanejados}`)}</div>`+
+    `<div class="gauge-box">${svgGauge(rt.pct,'Ritmo de corte',`${anF2(rt.atual)} pç/dia (precisa ${anF2(rt.necessario)}/dia · ${rt.diasRestantes}d restantes)`)}</div>`+
+    `<div class="gauge-legend" style="grid-column:1/-1"><span><i style="background:#c62828"></i>Ruim &lt;50%</span><span><i style="background:#e65100"></i>Regular &lt;75%</span><span><i style="background:#3949ab"></i>Bom &lt;90%</span><span><i style="background:#2e7d32"></i>Ótimo ≥90%</span></div>`;
+}
+const LINHA_COR={RMC:'#6a5acd',RIF:'#2e8b57',PMC:'#c0392b',PMI:'#1565c0'};
+function renderDonutLinha(A){
+  const el=document.getElementById('an-donut-linha'); if(!el) return;
+  const linhas=(A.porLinha||[]).filter(l=>l.realizado>0);
+  const tot=linhas.reduce((a,l)=>a+l.realizado,0);
+  if(!tot){ el.innerHTML=''; return; }
+  let acc=0, stops=[];
+  linhas.forEach(l=>{ const p0=acc/tot*360; acc+=l.realizado; const p1=acc/tot*360; stops.push(`${LINHA_COR[l.linha]||'#999'} ${p0.toFixed(1)}deg ${p1.toFixed(1)}deg`); });
+  el.innerHTML = `<div class="donut" style="background:conic-gradient(${stops.join(',')})"></div>`+
+    `<div class="donut-leg">${linhas.map(l=>`<span><i style="background:${LINHA_COR[l.linha]||'#999'}"></i>${l.label} — ${l.realizado} pç (${anF2(l.realizado/tot*100)}%)</span>`).join('')}</div>`;
+}
+function renderPodio(A){
+  const el=document.getElementById('an-podio'); if(!el) return;
+  const top=(A.porPessoa||[]).slice(0,3);
+  if(top.length<2){ el.innerHTML=''; return; } // pódio so faz sentido com 2+ pessoas
+  const ordemVisual=[top[1],top[0],top[2]].filter(Boolean);
+  const medalha=['🥇','🥈','🥉'];
+  el.innerHTML = `<div class="podio">`+ordemVisual.map((p,i)=>{
+    const posReal=top.indexOf(p);
+    return `<div class="podio-col p${posReal+1}"><div class="podio-nome">${p.nome}</div><div class="podio-qtd">${p.qtd} pç</div><div class="podio-bloco">${medalha[posReal]||''}</div></div>`;
+  }).join('')+`</div>`;
+}
 function analiseMesAtual(){
   return ANALISES_POR_MES[planoMesAtivo] || ANALISES_POR_MES.agosto;
 }
@@ -2076,11 +2167,13 @@ function renderAnalises(){
   }
   if(!t || !t.combosPlanejados){
     document.getElementById('an-cards-totais').innerHTML = '<span class="na">Ainda não há corte registrado neste mês.</span>';
-    ['an-por-linha','an-timeline-resumo','an-por-dia','an-grupos-lentos','an-por-pessoa','an-nao-iniciados','an-parciais'].forEach(id=>{
+    ['an-gauges','an-por-linha','an-donut-linha','an-timeline-resumo','an-por-dia','an-grupos-lentos','an-podio','an-por-pessoa','an-nao-iniciados','an-parciais'].forEach(id=>{
       const el=document.getElementById(id); if(el) el.innerHTML='';
     });
     return;
   }
+
+  renderGauges(A);
 
   document.getElementById('an-cards-totais').innerHTML =
 
@@ -2097,6 +2190,8 @@ function renderAnalises(){
     `<div class="scard red"><div class="v">${t.combosNaoIniciados}</div><div class="l">Nunca cortados</div></div>`;
 
 
+
+  renderDonutLinha(A);
 
   document.getElementById('an-por-linha').innerHTML = A.porLinha.map(l=>{
 
@@ -2155,6 +2250,8 @@ function renderAnalises(){
     `</tbody></table>`;
 
 
+
+  renderPodio(A);
 
   document.getElementById('an-por-pessoa').innerHTML = A.porPessoa.map(p=>
 
