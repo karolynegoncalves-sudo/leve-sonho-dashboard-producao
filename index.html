@@ -3487,10 +3487,11 @@ function renderPlano(){
     const temDemanda=(r.vendas7d&&r.vendas7d>0)||(r.pctMix&&r.pctMix>0);
 
     const urgente=r.estoqueAtual!==undefined&&r.estoqueAtual!==null&&r.estoqueAtual<=0&&temDemanda;
+    const zero=r.estoqueAtual!==undefined&&r.estoqueAtual!==null&&r.estoqueAtual<=0;
 
-    return `<tr${urgente?' style="background:#fff5f5"':''}>
+    return `<tr${(urgente||zero)?' style="'+(urgente?'background:#fff5f5;':'')+(zero?'font-weight:700':'')+'"':''}>
 
-      <td class="mono">${urgente?'🔥 ':''}${r.abc&&r.abc!=='-'?'<span class="abc-pill '+r.abc+'">'+r.abc+'</span> ':''}${r.sku}</td>
+      <td class="mono">${r.abc&&r.abc!=='-'?'<span class="abc-pill '+r.abc+'">'+r.abc+'</span> ':''}${r.sku}</td>
 
       <td><span class="badge ${tc}">${t}</span> ${r.prod}</td>
 
