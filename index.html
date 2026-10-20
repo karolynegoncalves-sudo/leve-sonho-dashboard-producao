@@ -141,6 +141,16 @@ tfoot td.r{text-align:right}
 .podio-col.p3 .podio-bloco{height:38px;background:linear-gradient(#d9915c,#c07540)}
 .podio-resto{font-size:11px;color:#555;margin-top:4px}
 .podio-resto .an-linha-row{margin-bottom:4px}
+/* Reposicao diaria (Karol 20/10) */
+.rep-alerta{display:none;margin:0 0 12px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:bold;cursor:pointer;border:1px solid #e57373;background:#fff3f3;color:#8e1b1b}
+.rep-alerta.ok{background:#f1f8f2;border-color:#81c784;color:#1b5e20}
+.rep-alerta u{text-decoration:underline;font-weight:normal;margin-left:8px}
+.rep-st{white-space:nowrap;font-weight:bold}
+.rep-tbl td,.rep-tbl th{white-space:nowrap}
+.rep-corte{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin:8px 0 18px}
+.rep-corte .box{background:#f7f8fc;border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.7}
+.rep-corte .box h4{font-size:13px;margin-bottom:4px;color:#1a1a2e}
+#rep .fbtn.active{outline:2px solid #1a1a2e}
 /* Curva ABC (Karol 07/10) */
 .abc-pill{display:inline-block;min-width:22px;text-align:center;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:bold;color:#fff}
 .abc-pill.A{background:#2e7d32}.abc-pill.B{background:#e65100}.abc-pill.C{background:#9e9e9e}
@@ -456,7 +466,7 @@ tr.row-ok td{color:#555}
 
     <h1>🧵 Leve Sonho — Plano de Produção, Lista de Compras &amp; Encaixe de Corte</h1>
 
-    <div class="subtitle">Outubro/2026 · Baseado na curva ABC do Bling (vendas 31 dias · 19/09–19/10) + estoque atual 19/10 + corte de outubro já feito · 101 combinações · 826 peças a fabricar</div>
+    <div class="subtitle">Outubro/2026 · Baseado na curva ABC do Bling (vendas 31 dias · 20/09–20/10) + estoque atual 20/10 + corte de outubro já feito · 102 combinações · 848 peças a fabricar</div>
 
   </div>
 
@@ -505,14 +515,18 @@ tr.row-ok td{color:#555}
 </div>
 
 <div class="banner warn2">
-  <b>✔️ Atualizado em 19/10:</b> curva ABC das vendas de 19/09–19/10 no Bling, com <b>Nuvemshop já excluída</b> (é sob demanda). Recomendado a fabricar = <b>(36 dias de cobertura + lead time real (variavel por linha (corte+costura+conferência/caseado), calibrado com fichas de costureiras) = efetivo) × venda/dia − estoque atual (19/10) − o que já foi cortado para outubro até agora</b> (4 peças). Robe infantil: mínimo de 6 peças em cada combinação que vendeu no mês. A lista está em ordem de venda (faturamento), com a classe A/B/C da curva ABC ao lado do SKU. Estoque muda rápido — refresh automático segunda, quarta e sexta.
+  <b>✔️ Atualizado em 20/10:</b> curva ABC das vendas de 20/09–20/10 no Bling, com <b>Nuvemshop já excluída</b> (é sob demanda). Recomendado a fabricar = <b>(36 dias de cobertura + lead time real (variavel por linha (corte+costura+conferência/caseado), calibrado com fichas de costureiras) = efetivo) × venda/dia − estoque atual (20/10) − o que já foi cortado para outubro até agora</b> (7 peças). Robe infantil: mínimo de 6 peças em cada combinação que vendeu no mês. A lista está em ordem de venda (faturamento), com a classe A/B/C da curva ABC ao lado do SKU. Estoque muda rápido — refresh completo segunda, quarta e sexta; todo dia às 8h15 uma leitura leve atualiza a aba Reposição.
 </div>
+
+<div id="rep-alerta" class="rep-alerta" onclick="abrirReposicao()"></div>
 
 <div class="tabs">
 
   <button class="tab" onclick="showTab('analises',this)">📊 Análises</button>
 
   <button class="tab" onclick="showTab('abc',this)">📈 Curva ABC</button>
+
+  <button class="tab" id="tab-rep" onclick="showTab('rep',this)">🔄 Reposição</button>
 
   <button class="tab active" onclick="showTab('plano',this)">📋 Plano</button>
 
@@ -603,6 +617,44 @@ tr.row-ok td{color:#555}
 </div>
 
 
+
+<!-- REPOSICAO DIARIA -->
+
+<div id="rep" class="section">
+
+  <h2>🔄 Reposição — o que está acabando</h2>
+
+  <div class="banner" style="margin-bottom:14px">
+    <span id="rep-sub"></span> Para cada cor + tamanho: quantos dias o estoque dura no ritmo atual de venda, comparado com o <b>prazo real da peça chegar</b> (corte + costura + conferência/caseado). 🔴 <b>zerado</b> = prateleira vazia · 🟠 <b>abaixo do prazo</b> = o que existe (estoque + costura) acaba antes de uma peça cortada hoje ficar pronta · 🟢 ok. Ritmo = o das <b>últimas semanas</b> (o maior entre as vendas de 7 e de 14 dias), limitado a 2× a média de 31 dias (um pedido grande isolado não puxa tudo); o cartão mostra também o total <b>sem a trava</b>. Esta aba <b>não altera</b> o Plano nem o Encaixe: é um alerta e uma sugestão.
+  </div>
+
+  <div class="sgrid" id="rep-cards"></div>
+
+  <div class="filters">
+    <label>Linha:</label>
+    <button class="fbtn fbtn-all rep-lin active" onclick="repSetLinha('todas',this)">Todas</button>
+    <button class="fbtn fbtn-rmc rep-lin" onclick="repSetLinha('RMC',this)">Robe Manga Curta</button>
+    <button class="fbtn fbtn-rif rep-lin" onclick="repSetLinha('RIF',this)">Robe Infantil</button>
+    <button class="fbtn fbtn-pmc rep-lin" onclick="repSetLinha('PMC',this)">Pijama Verão</button>
+  </div>
+
+  <div class="filters">
+    <label>Situação:</label>
+    <button class="fbtn fbtn-all rep-stf active" onclick="repSetStatus('todos',this)">Todas</button>
+    <button class="fbtn fbtn-all rep-stf" onclick="repSetStatus('zerado',this)">🔴 Zerados</button>
+    <button class="fbtn fbtn-all rep-stf" onclick="repSetStatus('abaixo',this)">🟠 Abaixo do prazo</button>
+    <button class="fbtn fbtn-all rep-stf" onclick="repSetStatus('ok',this)">🟢 Ok</button>
+  </div>
+
+  <h3 style="margin:14px 0 6px;font-size:14px">✂️ O que cortar agora, por tamanho (em ordem de venda)</h3>
+  <div class="rep-corte" id="rep-corte"></div>
+
+  <div class="abc-wrap" id="rep-corpo"></div>
+
+  <h3 style="margin:22px 0 6px;font-size:14px">🧵 Bordado padrão</h3>
+  <div id="rep-bordado"></div>
+
+</div>
 
 <!-- CURVA ABC -->
 
@@ -821,6 +873,8 @@ tr.row-ok td{color:#555}
     <button class="efbtn" onclick="encFilt('pendentes',this)">⏳ Pendentes</button>
 
     <button class="efbtn" onclick="encFilt('cortados',this)">✅ Cortados</button>
+
+    <button class="efbtn" id="enc-toggle-cortados" onclick="encToggleCortados(this)" title="Por padrão a vista de corte mostra só o que falta cortar">👁 Mostrar já cortados</button>
 
     <input class="search" type="text" placeholder="🔍 Buscar por cor..." oninput="encBusca(this.value)" style="margin-left:4px">
 
@@ -1085,107 +1139,108 @@ tr.row-ok td{color:#555}
 // ─── DADOS (Plano Setembro/2026 — planilha "curva_ABC_Bling_Setembro2026") ──
 
 const rows = [
-  {sku:"RMC-M-BRANCO",prod:"Robe Manga Curta",tam:"M",cor:"Branco",qtd:67,tec:1.43,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:10,vendaDia:1.42,abc:"A"},
-  {sku:"RMC-G-PRETO",prod:"Robe Manga Curta",tam:"G",cor:"Preto",qtd:56,tec:1.53,vivo:null,elas:null,estoqueAtual:2,emProducao:0,vendas7d:9,vendaDia:1.23,abc:"A"},
-  {sku:"RMC-G-BRANCO",prod:"Robe Manga Curta",tam:"G",cor:"Branco",qtd:52,tec:1.53,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:8,vendaDia:1.16,abc:"A"},
+  {sku:"RMC-M-BRANCO",prod:"Robe Manga Curta",tam:"M",cor:"Branco",qtd:59,tec:1.43,vivo:null,elas:null,estoqueAtual:5,emProducao:0,vendas7d:9,vendaDia:1.35,abc:"A"},
+  {sku:"RMC-G-AZULCLA",prod:"Robe Manga Curta",tam:"G",cor:"Azul Claro",qtd:44,tec:1.53,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:8,vendaDia:1.13,abc:"A"},
+  {sku:"RMC-G-BRANCO",prod:"Robe Manga Curta",tam:"G",cor:"Branco",qtd:57,tec:1.53,vivo:null,elas:null,estoqueAtual:0,emProducao:1,vendas7d:9,vendaDia:1.23,abc:"A"},
+  {sku:"RMC-G-PRETO",prod:"Robe Manga Curta",tam:"G",cor:"Preto",qtd:52,tec:1.53,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:8,vendaDia:1.16,abc:"A"},
+  {sku:"RMC-M-ROSE",prod:"Robe Manga Curta",tam:"M",cor:"Rose",qtd:41,tec:1.43,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:7,vendaDia:1.06,abc:"A"},
   {sku:"PMC-M-ROSE",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Rose",qtd:0,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:19,emProducao:0,vendas7d:2,vendaDia:0.32,abc:"A"},
   {sku:"RMC-P-ROSE",prod:"Robe Manga Curta",tam:"P",cor:"Rose",qtd:49,tec:1.28,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:7,vendaDia:1.03,abc:"A"},
-  {sku:"RMC-M-ROSE",prod:"Robe Manga Curta",tam:"M",cor:"Rose",qtd:47,tec:1.43,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:7,vendaDia:1,abc:"A"},
-  {sku:"RMC-G-ROSE",prod:"Robe Manga Curta",tam:"G",cor:"Rose",qtd:28,tec:1.53,vivo:null,elas:null,estoqueAtual:16,emProducao:0,vendas7d:7,vendaDia:0.94,abc:"A"},
-  {sku:"RMC-M-AZULCLA",prod:"Robe Manga Curta",tam:"M",cor:"Azul Claro",qtd:27,tec:1.43,vivo:null,elas:null,estoqueAtual:14,emProducao:0,vendas7d:6,vendaDia:0.87,abc:"A"},
-  {sku:"RMC-G-AZULCLA",prod:"Robe Manga Curta",tam:"G",cor:"Azul Claro",qtd:25,tec:1.53,vivo:null,elas:null,estoqueAtual:12,emProducao:0,vendas7d:5,vendaDia:0.77,abc:"A"},
+  {sku:"RMC-G-ROSE",prod:"Robe Manga Curta",tam:"G",cor:"Rose",qtd:30,tec:1.53,vivo:null,elas:null,estoqueAtual:14,emProducao:0,vendas7d:7,vendaDia:0.94,abc:"A"},
+  {sku:"RMC-M-AZULCLA",prod:"Robe Manga Curta",tam:"M",cor:"Azul Claro",qtd:25,tec:1.43,vivo:null,elas:null,estoqueAtual:15,emProducao:0,vendas7d:6,vendaDia:0.84,abc:"A"},
+  {sku:"RMC-P-AZULCLA",prod:"Robe Manga Curta",tam:"P",cor:"Azul Claro",qtd:28,tec:1.28,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:5,vendaDia:0.77,abc:"A"},
+  {sku:"RMC-M-ROSACLA",prod:"Robe Manga Curta",tam:"M",cor:"Rosa Claro",qtd:24,tec:1.43,vivo:null,elas:null,estoqueAtual:17,emProducao:0,vendas7d:6,vendaDia:0.87,abc:"A"},
+  {sku:"PMC-G-ROSE",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Rose",qtd:0,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:17,emProducao:0,vendas7d:1,vendaDia:0.19,abc:"A"},
+  {sku:"RMC-GG-BRANCO",prod:"Robe Manga Curta",tam:"GG",cor:"Branco",qtd:27,tec:1.6,vivo:null,elas:null,estoqueAtual:1,emProducao:1,vendas7d:4,vendaDia:0.61,abc:"A"},
   {sku:"PMC-M-BRANCO",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Branco",qtd:9,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:5,emProducao:0,vendas7d:2,vendaDia:0.26,abc:"A"},
+  {sku:"RIF-12-BRANCO",prod:"Robe Infantil",tam:"12",cor:"Branco",qtd:25,tec:1.24,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:4,vendaDia:0.55,abc:"A"},
   {sku:"RMC-P-ROSACLA",prod:"Robe Manga Curta",tam:"P",cor:"Rosa Claro",qtd:18,tec:1.28,vivo:null,elas:null,estoqueAtual:15,emProducao:0,vendas7d:5,vendaDia:0.71,abc:"A"},
-  {sku:"PMC-G-ROSE",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Rose",qtd:0,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:18,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"A"},
-  {sku:"RIF-12-BRANCO",prod:"Robe Infantil",tam:"12",cor:"Branco",qtd:21,tec:1.24,vivo:null,elas:null,estoqueAtual:2,emProducao:0,vendas7d:3,vendaDia:0.48,abc:"A"},
-  {sku:"RMC-GG-BRANCO",prod:"Robe Manga Curta",tam:"GG",cor:"Branco",qtd:26,tec:1.6,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:4,vendaDia:0.55,abc:"A"},
+  {sku:"PMC-M-ROSACLA",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Rosa Claro",qtd:14,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:1,emProducao:0,vendas7d:2,vendaDia:0.29,abc:"A"},
   {sku:"RIF-12-ROSACLA",prod:"Robe Infantil",tam:"12",cor:"Rosa Claro",qtd:22,tec:1.24,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:3,vendaDia:0.48,abc:"A"},
-  {sku:"RIF-10-ROSACLA",prod:"Robe Infantil",tam:"10",cor:"Rosa Claro",qtd:20,tec:1.1,vivo:null,elas:null,estoqueAtual:4,emProducao:0,vendas7d:4,vendaDia:0.52,abc:"A"},
-  {sku:"RMC-M-ROSACLA",prod:"Robe Manga Curta",tam:"M",cor:"Rosa Claro",qtd:8,tec:1.43,vivo:null,elas:null,estoqueAtual:18,emProducao:0,vendas7d:4,vendaDia:0.55,abc:"A"},
+  {sku:"RIF-10-ROSACLA",prod:"Robe Infantil",tam:"10",cor:"Rosa Claro",qtd:19,tec:1.1,vivo:null,elas:null,estoqueAtual:5,emProducao:0,vendas7d:4,vendaDia:0.52,abc:"A"},
+  {sku:"RIF-10-BRANCO",prod:"Robe Infantil",tam:"10",cor:"Branco",qtd:17,tec:1.1,vivo:null,elas:null,estoqueAtual:4,emProducao:0,vendas7d:3,vendaDia:0.45,abc:"A"},
   {sku:"PMC-P-ROSE",prod:"Pijama Manga Curta (Verão)",tam:"P",cor:"Rose",qtd:11,tec:1.51,vivo:3.75,elas:0.64,estoqueAtual:1,emProducao:0,vendas7d:2,vendaDia:0.23,abc:"A"},
-  {sku:"PMC-M-ROSACLA",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Rosa Claro",qtd:12,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:2,emProducao:0,vendas7d:2,vendaDia:0.26,abc:"A"},
   {sku:"PMC-M-AZULMAR",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Azul Marinho",qtd:0,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:11,emProducao:0,vendas7d:1,vendaDia:0.19,abc:"A"},
-  {sku:"RIF-10-BRANCO",prod:"Robe Infantil",tam:"10",cor:"Branco",qtd:15,tec:1.1,vivo:null,elas:null,estoqueAtual:5,emProducao:0,vendas7d:3,vendaDia:0.42,abc:"A"},
+  {sku:"RMC-G1-BRANCO",prod:"Robe Manga Curta",tam:"G1",cor:"Branco",qtd:7,tec:2.18,vivo:null,elas:null,estoqueAtual:14,emProducao:0,vendas7d:3,vendaDia:0.45,abc:"A"},
   {sku:"RIF-14-ROSACLA",prod:"Robe Infantil",tam:"14",cor:"Rosa Claro",qtd:18,tec:1.28,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:3,vendaDia:0.39,abc:"A"},
   {sku:"RIF-6-BRANCO",prod:"Robe Infantil",tam:"6",cor:"Branco",qtd:14,tec:0.94,vivo:null,elas:null,estoqueAtual:4,emProducao:0,vendas7d:3,vendaDia:0.39,abc:"A"},
-  {sku:"RMC-P-AZULCLA",prod:"Robe Manga Curta",tam:"P",cor:"Azul Claro",qtd:13,tec:1.28,vivo:null,elas:null,estoqueAtual:11,emProducao:0,vendas7d:4,vendaDia:0.52,abc:"A"},
-  {sku:"RMC-G-MARSALA",prod:"Robe Manga Curta",tam:"G",cor:"Marsala",qtd:6,tec:1.53,vivo:null,elas:null,estoqueAtual:15,emProducao:0,vendas7d:3,vendaDia:0.45,abc:"A"},
-  {sku:"RMC-G1-BRANCO",prod:"Robe Manga Curta",tam:"G1",cor:"Branco",qtd:3,tec:2.18,vivo:null,elas:null,estoqueAtual:17,emProducao:0,vendas7d:3,vendaDia:0.42,abc:"A"},
+  {sku:"RMC-G-MARSALA",prod:"Robe Manga Curta",tam:"G",cor:"Marsala",qtd:7,tec:1.53,vivo:null,elas:null,estoqueAtual:14,emProducao:0,vendas7d:3,vendaDia:0.45,abc:"A"},
+  {sku:"PMC-G-BRANCO",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Branco",qtd:0,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:11,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"A"},
   {sku:"PMC-P-ROSACLA",prod:"Pijama Manga Curta (Verão)",tam:"P",cor:"Rosa Claro",qtd:12,tec:1.51,vivo:3.75,elas:0.64,estoqueAtual:0,emProducao:0,vendas7d:2,vendaDia:0.23,abc:"A"},
+  {sku:"PMC-G-ROSACLA",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Rosa Claro",qtd:1,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:9,emProducao:0,vendas7d:1,vendaDia:0.19,abc:"A"},
+  {sku:"RMC-GG-AZULCLA",prod:"Robe Manga Curta",tam:"GG",cor:"Azul Claro",qtd:0,tec:1.6,vivo:null,elas:null,estoqueAtual:18,emProducao:0,vendas7d:2,vendaDia:0.35,abc:"A"},
+  {sku:"RMC-G3-BRANCO",prod:"Robe Manga Curta",tam:"G3",cor:"Branco",qtd:13,tec:2.26,vivo:null,elas:null,estoqueAtual:4,emProducao:0,vendas7d:2,vendaDia:0.35,abc:"A"},
   {sku:"RMC-M-MARSALA",prod:"Robe Manga Curta",tam:"M",cor:"Marsala",qtd:0,tec:1.43,vivo:null,elas:null,estoqueAtual:18,emProducao:0,vendas7d:3,vendaDia:0.39,abc:"A"},
-  {sku:"RMC-G3-BRANCO",prod:"Robe Manga Curta",tam:"G3",cor:"Branco",qtd:10,tec:2.26,vivo:null,elas:null,estoqueAtual:5,emProducao:0,vendas7d:2,vendaDia:0.32,abc:"A"},
   {sku:"RMC-G3-MARSALA",prod:"Robe Manga Curta",tam:"G3",cor:"Marsala",qtd:15,tec:2.26,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:2,vendaDia:0.32,abc:"A"},
-  {sku:"PMC-G-ROSACLA",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Rosa Claro",qtd:0,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:10,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"A"},
-  {sku:"RIF-10-LILAS",prod:"Robe Infantil",tam:"10",cor:"Lilás",qtd:5,tec:1.1,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:2,vendaDia:0.29,abc:"A"},
+  {sku:"RMC-G-ROSACLA",prod:"Robe Manga Curta",tam:"G",cor:"Rosa Claro",qtd:0,tec:1.53,vivo:null,elas:null,estoqueAtual:21,emProducao:0,vendas7d:3,vendaDia:0.42,abc:"A"},
   {sku:"RMC-G-LILAS",prod:"Robe Manga Curta",tam:"G",cor:"Lilás",qtd:15,tec:1.53,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:2,vendaDia:0.32,abc:"A"},
-  {sku:"RMC-M-PRETO",prod:"Robe Manga Curta",tam:"M",cor:"Preto",qtd:7,tec:1.43,vivo:null,elas:null,estoqueAtual:11,emProducao:0,vendas7d:3,vendaDia:0.39,abc:"A"},
+  {sku:"RMC-M-PRETO",prod:"Robe Manga Curta",tam:"M",cor:"Preto",qtd:6,tec:1.43,vivo:null,elas:null,estoqueAtual:12,emProducao:0,vendas7d:3,vendaDia:0.39,abc:"A"},
+  {sku:"RMC-G2-MARSALA",prod:"Robe Manga Curta",tam:"G2",cor:"Marsala",qtd:12,tec:2.2,vivo:null,elas:null,estoqueAtual:2,emProducao:0,vendas7d:2,vendaDia:0.29,abc:"A"},
   {sku:"RIF-8-BRANCO",prod:"Robe Infantil",tam:"8",cor:"Branco",qtd:9,tec:0.92,vivo:null,elas:null,estoqueAtual:5,emProducao:0,vendas7d:2,vendaDia:0.29,abc:"A"},
   {sku:"RIF-6-LILAS",prod:"Robe Infantil",tam:"6",cor:"Lilás",qtd:11,tec:0.94,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:2,vendaDia:0.26,abc:"A"},
+  {sku:"RIF-10-LILAS",prod:"Robe Infantil",tam:"10",cor:"Lilás",qtd:3,tec:1.1,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:2,vendaDia:0.26,abc:"A"},
   {sku:"PMC-8-PRETO",prod:"Pijama Manga Curta (Verão)",tam:"8",cor:"Preto",qtd:12,tec:1.66,vivo:null,elas:null,estoqueAtual:-2,emProducao:0,vendas7d:1,vendaDia:0.19,abc:"A"},
-  {sku:"RMC-M-LILAS",prod:"Robe Manga Curta",tam:"M",cor:"Lilás",qtd:14,tec:1.43,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:2,vendaDia:0.29,abc:"A"},
-  {sku:"RMC-G2-MARSALA",prod:"Robe Manga Curta",tam:"G2",cor:"Marsala",qtd:9,tec:2.2,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:2,vendaDia:0.26,abc:"A"},
-  {sku:"RMC-P-LILAS",prod:"Robe Manga Curta",tam:"P",cor:"Lilás",qtd:14,tec:1.28,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:2,vendaDia:0.29,abc:"A"},
-  {sku:"RMC-GG-AZULCLA",prod:"Robe Manga Curta",tam:"GG",cor:"Azul Claro",qtd:0,tec:1.6,vivo:null,elas:null,estoqueAtual:19,emProducao:0,vendas7d:2,vendaDia:0.23,abc:"A"},
-  {sku:"RIF-10-AZULCLA",prod:"Robe Infantil",tam:"10",cor:"Azul Claro",qtd:2,tec:1.1,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:2,vendaDia:0.23,abc:"A"},
+  {sku:"RIF-10-AZULCLA",prod:"Robe Infantil",tam:"10",cor:"Azul Claro",qtd:4,tec:1.1,vivo:null,elas:null,estoqueAtual:8,emProducao:0,vendas7d:2,vendaDia:0.26,abc:"A"},
+  {sku:"RMC-M-LILAS",prod:"Robe Manga Curta",tam:"M",cor:"Lilás",qtd:0,tec:1.43,vivo:null,elas:null,estoqueAtual:20,emProducao:0,vendas7d:2,vendaDia:0.29,abc:"A"},
+  {sku:"RMC-P-LILAS",prod:"Robe Manga Curta",tam:"P",cor:"Lilás",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:18,emProducao:0,vendas7d:2,vendaDia:0.29,abc:"A"},
   {sku:"PMC-G-AZULMAR",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Azul Marinho",qtd:0,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:9,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"A"},
-  {sku:"PMC-G-BRANCO",prod:"Pijama Manga Curta (Verão)",tam:"G",cor:"Branco",qtd:0,tec:1.71,vivo:4.3,elas:0.68,estoqueAtual:13,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"A"},
-  {sku:"RIF-4-AZULCLA",prod:"Robe Infantil",tam:"4",cor:"Azul Claro",qtd:9,tec:0.94,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.19,abc:"A"},
+  {sku:"RIF-8-LILAS",prod:"Robe Infantil",tam:"8",cor:"Lilás",qtd:0,tec:0.92,vivo:null,elas:null,estoqueAtual:11,emProducao:0,vendas7d:1,vendaDia:0.19,abc:"A"},
+  {sku:"RIF-12-ROSE",prod:"Robe Infantil",tam:"12",cor:"Rose",qtd:0,tec:1.24,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:1,vendaDia:0.19,abc:"B"},
+  {sku:"RIF-6-ROSE",prod:"Robe Infantil",tam:"6",cor:"Rose",qtd:4,tec:0.94,vivo:null,elas:null,estoqueAtual:5,emProducao:0,vendas7d:1,vendaDia:0.19,abc:"B"},
+  {sku:"RIF-10-PINK",prod:"Robe Infantil",tam:"10",cor:"Pink",qtd:10,tec:1.1,vivo:null,elas:null,estoqueAtual:-1,emProducao:0,vendas7d:1,vendaDia:0.19,abc:"B"},
+  {sku:"RIF-4-AZULCLA",prod:"Robe Infantil",tam:"4",cor:"Azul Claro",qtd:9,tec:0.94,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.19,abc:"B"},
   {sku:"RMC-GG-ROSACLA",prod:"Robe Manga Curta",tam:"GG",cor:"Rosa Claro",qtd:0,tec:1.6,vivo:null,elas:null,estoqueAtual:17,emProducao:0,vendas7d:1,vendaDia:0.19,abc:"B"},
-  {sku:"RMC-P-BRANCO",prod:"Robe Manga Curta",tam:"P",cor:"Branco",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:15,emProducao:0,vendas7d:2,vendaDia:0.23,abc:"B"},
+  {sku:"RMC-P-BRANCO",prod:"Robe Manga Curta",tam:"P",cor:"Branco",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:16,emProducao:0,vendas7d:2,vendaDia:0.23,abc:"B"},
   {sku:"RIF-12-LILAS",prod:"Robe Infantil",tam:"12",cor:"Lilás",qtd:0,tec:1.24,vivo:null,elas:null,estoqueAtual:11,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
-  {sku:"RIF-8-LILAS",prod:"Robe Infantil",tam:"8",cor:"Lilás",qtd:0,tec:0.92,vivo:null,elas:null,estoqueAtual:12,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
-  {sku:"RIF-10-PINK",prod:"Robe Infantil",tam:"10",cor:"Pink",qtd:8,tec:1.1,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
-  {sku:"RMC-G1-AZULCLA",prod:"Robe Manga Curta",tam:"G1",cor:"Azul Claro",qtd:8,tec:2.18,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
-  {sku:"RMC-G2-BRANCO",prod:"Robe Manga Curta",tam:"G2",cor:"Branco",qtd:2,tec:2.2,vivo:null,elas:null,estoqueAtual:6,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
-  {sku:"RIF-6-ROSE",prod:"Robe Infantil",tam:"6",cor:"Rose",qtd:2,tec:0.94,vivo:null,elas:null,estoqueAtual:6,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
-  {sku:"RIF-8-ROSACLA",prod:"Robe Infantil",tam:"8",cor:"Rosa Claro",qtd:0,tec:0.92,vivo:null,elas:null,estoqueAtual:10,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
-  {sku:"RIF-12-ROSE",prod:"Robe Infantil",tam:"12",cor:"Rose",qtd:0,tec:1.24,vivo:null,elas:null,estoqueAtual:10,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
+  {sku:"RIF-14-AZULCLA",prod:"Robe Infantil",tam:"14",cor:"Azul Claro",qtd:5,tec:1.28,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
+  {sku:"RIF-14-LILAS",prod:"Robe Infantil",tam:"14",cor:"Lilás",qtd:4,tec:1.28,vivo:null,elas:null,estoqueAtual:4,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
+  {sku:"RMC-G1-AZULCLA",prod:"Robe Manga Curta",tam:"G1",cor:"Azul Claro",qtd:0,tec:2.18,vivo:null,elas:null,estoqueAtual:18,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
+  {sku:"RIF-8-ROSACLA",prod:"Robe Infantil",tam:"8",cor:"Rosa Claro",qtd:0,tec:0.92,vivo:null,elas:null,estoqueAtual:11,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
   {sku:"PMC-GG-ROSE",prod:"Pijama Manga Curta (Verão)",tam:"GG",cor:"Rose",qtd:0,tec:1.92,vivo:4.5,elas:0.72,estoqueAtual:12,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"B"},
   {sku:"PMC-6-PRETO",prod:"Pijama Manga Curta (Verão)",tam:"6",cor:"Preto",qtd:5,tec:1.65,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"B"},
   {sku:"PMC-4-PRETO",prod:"Pijama Manga Curta (Verão)",tam:"4",cor:"Preto",qtd:2,tec:1.67,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"B"},
-  {sku:"RIF-14-AZULCLA",prod:"Robe Infantil",tam:"14",cor:"Azul Claro",qtd:3,tec:1.28,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:1,vendaDia:0.13,abc:"B"},
-  {sku:"RIF-14-LILAS",prod:"Robe Infantil",tam:"14",cor:"Lilás",qtd:1,tec:1.28,vivo:null,elas:null,estoqueAtual:5,emProducao:0,vendas7d:1,vendaDia:0.13,abc:"B"},
+  {sku:"RIF-6-ROSACLA",prod:"Robe Infantil",tam:"6",cor:"Rosa Claro",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:11,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
+  {sku:"RMC-GG-PINK",prod:"Robe Manga Curta",tam:"GG",cor:"Pink",qtd:0,tec:1.6,vivo:null,elas:null,estoqueAtual:15,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
   {sku:"RIF-12-AZULCLA",prod:"Robe Infantil",tam:"12",cor:"Azul Claro",qtd:0,tec:1.24,vivo:null,elas:null,estoqueAtual:10,emProducao:0,vendas7d:1,vendaDia:0.13,abc:"B"},
-  {sku:"RIF-8-PINK",prod:"Robe Infantil",tam:"8",cor:"Pink",qtd:6,tec:0.92,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.13,abc:"B"},
   {sku:"PMC-GG-ROSACLA",prod:"Pijama Manga Curta (Verão)",tam:"GG",cor:"Rosa Claro",qtd:0,tec:1.92,vivo:4.5,elas:0.72,estoqueAtual:6,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"B"},
   {sku:"PMC-P-BRANCO",prod:"Pijama Manga Curta (Verão)",tam:"P",cor:"Branco",qtd:0,tec:1.51,vivo:3.75,elas:0.64,estoqueAtual:9,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"B"},
-  {sku:"RMC-G-ROSACLA",prod:"Robe Manga Curta",tam:"G",cor:"Rosa Claro",qtd:0,tec:1.53,vivo:null,elas:null,estoqueAtual:20,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
   {sku:"PMC-GG-AZULMAR",prod:"Pijama Manga Curta (Verão)",tam:"GG",cor:"Azul Marinho",qtd:0,tec:1.92,vivo:4.5,elas:0.72,estoqueAtual:4,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"B"},
-  {sku:"RMC-G1-PINK",prod:"Robe Manga Curta",tam:"G1",cor:"Pink",qtd:7,tec:2.18,vivo:null,elas:null,estoqueAtual:-1,emProducao:0,vendas7d:1,vendaDia:0.13,abc:"B"},
+  {sku:"RMC-G2-BRANCO",prod:"Robe Manga Curta",tam:"G2",cor:"Branco",qtd:0,tec:2.2,vivo:null,elas:null,estoqueAtual:6,emProducao:0,vendas7d:1,vendaDia:0.13,abc:"B"},
+  {sku:"RMC-P-PINK",prod:"Robe Manga Curta",tam:"P",cor:"Pink",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:15,emProducao:0,vendas7d:1,vendaDia:0.16,abc:"B"},
+  {sku:"RMC-G1-PINK",prod:"Robe Manga Curta",tam:"G1",cor:"Pink",qtd:6,tec:2.18,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.13,abc:"B"},
   {sku:"RIF-8-AZULCLA",prod:"Robe Infantil",tam:"8",cor:"Azul Claro",qtd:0,tec:0.92,vivo:null,elas:null,estoqueAtual:11,emProducao:0,vendas7d:1,vendaDia:0.13,abc:"B"},
-  {sku:"RIF-6-ROSACLA",prod:"Robe Infantil",tam:"6",cor:"Rosa Claro",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:11,emProducao:0,vendas7d:1,vendaDia:0.13,abc:"B"},
+  {sku:"RMC-G3-AZULCLA",prod:"Robe Manga Curta",tam:"G3",cor:"Azul Claro",qtd:2,tec:2.26,vivo:null,elas:null,estoqueAtual:1,emProducao:2,vendas7d:1,vendaDia:0.1,abc:"B"},
   {sku:"RIF-12-PINK",prod:"Robe Infantil",tam:"12",cor:"Pink",qtd:6,tec:1.24,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"B"},
+  {sku:"RIF-4-ROSE",prod:"Robe Infantil",tam:"4",cor:"Rose",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:6,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"B"},
+  {sku:"RIF-8-PINK",prod:"Robe Infantil",tam:"8",cor:"Pink",qtd:6,tec:0.92,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"B"},
   {sku:"RIF-8-ROSE",prod:"Robe Infantil",tam:"8",cor:"Rose",qtd:0,tec:0.92,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"B"},
-  {sku:"RMC-GG-LILAS",prod:"Robe Manga Curta",tam:"GG",cor:"Lilás",qtd:3,tec:1.6,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"B"},
   {sku:"RMC-G2-PINK",prod:"Robe Manga Curta",tam:"G2",cor:"Pink",qtd:5,tec:2.2,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"B"},
-  {sku:"RIF-6-AZULCLA",prod:"Robe Infantil",tam:"6",cor:"Azul Claro",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:12,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"B"},
-  {sku:"RIF-2-PINK",prod:"Robe Infantil",tam:"2",cor:"Pink",qtd:0,tec:1.03,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"B"},
+  {sku:"RIF-4-LILAS",prod:"Robe Infantil",tam:"4",cor:"Lilás",qtd:3,tec:0.94,vivo:null,elas:null,estoqueAtual:3,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"C"},
+  {sku:"RIF-6-AZULCLA",prod:"Robe Infantil",tam:"6",cor:"Azul Claro",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:12,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"C"},
+  {sku:"RIF-2-PINK",prod:"Robe Infantil",tam:"2",cor:"Pink",qtd:0,tec:1.03,vivo:null,elas:null,estoqueAtual:9,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"C"},
   {sku:"RMC-GG-MARSALA",prod:"Robe Manga Curta",tam:"GG",cor:"Marsala",qtd:5,tec:1.6,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"C"},
-  {sku:"RMC-GG-PINK",prod:"Robe Manga Curta",tam:"GG",cor:"Pink",qtd:0,tec:1.6,vivo:null,elas:null,estoqueAtual:17,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"C"},
-  {sku:"PMC-M-PRETO",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Preto",qtd:0,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:19,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
   {sku:"PMC-P-AZULMAR",prod:"Pijama Manga Curta (Verão)",tam:"P",cor:"Azul Marinho",qtd:0,tec:1.51,vivo:3.75,elas:0.64,estoqueAtual:7,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
+  {sku:"PMC-M-PRETO",prod:"Pijama Manga Curta (Verão)",tam:"M",cor:"Preto",qtd:0,tec:1.53,vivo:4.1,elas:0.66,estoqueAtual:19,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
+  {sku:"RMC-P-MARSALA",prod:"Robe Manga Curta",tam:"P",cor:"Marsala",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:16,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"C"},
   {sku:"PMC-GG-BRANCO",prod:"Pijama Manga Curta (Verão)",tam:"GG",cor:"Branco",qtd:0,tec:1.92,vivo:4.5,elas:0.72,estoqueAtual:15,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
+  {sku:"RMC-P-PRETO",prod:"Robe Manga Curta",tam:"P",cor:"Preto",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:18,emProducao:0,vendas7d:1,vendaDia:0.1,abc:"C"},
   {sku:"RIF-2-ROSACLA",prod:"Robe Infantil",tam:"2",cor:"Rosa Claro",qtd:6,tec:1.03,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"C"},
-  {sku:"RMC-G3-AZULCLA",prod:"Robe Manga Curta",tam:"G3",cor:"Azul Claro",qtd:1,tec:2.26,vivo:null,elas:null,estoqueAtual:0,emProducao:2,vendas7d:0,vendaDia:0.06,abc:"C"},
   {sku:"RIF-4-ROSACLA",prod:"Robe Infantil",tam:"4",cor:"Rosa Claro",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:7,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"C"},
   {sku:"RIF-2-LILAS",prod:"Robe Infantil",tam:"2",cor:"Lilás",qtd:6,tec:1.03,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"C"},
   {sku:"RIF-14-PINK",prod:"Robe Infantil",tam:"14",cor:"Pink",qtd:6,tec:1.28,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"C"},
-  {sku:"RIF-4-ROSE",prod:"Robe Infantil",tam:"4",cor:"Rose",qtd:0,tec:0.94,vivo:null,elas:null,estoqueAtual:7,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"C"},
-  {sku:"RMC-G3-ROSE",prod:"Robe Manga Curta",tam:"G3",cor:"Rose",qtd:4,tec:2.26,vivo:null,elas:null,estoqueAtual:-1,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"C"},
-  {sku:"RIF-4-LILAS",prod:"Robe Infantil",tam:"4",cor:"Lilás",qtd:2,tec:0.94,vivo:null,elas:null,estoqueAtual:4,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"C"},
-  {sku:"RMC-G3-PRETO",prod:"Robe Manga Curta",tam:"G3",cor:"Preto",qtd:3,tec:2.26,vivo:null,elas:null,estoqueAtual:-2,emProducao:2,vendas7d:0,vendaDia:0.06,abc:"C"},
+  {sku:"RMC-GG-LILAS",prod:"Robe Manga Curta",tam:"GG",cor:"Lilás",qtd:2,tec:1.6,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
+  {sku:"RMC-G3-ROSE",prod:"Robe Manga Curta",tam:"G3",cor:"Rose",qtd:3,tec:2.26,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"C"},
+  {sku:"RMC-GG-PRETO",prod:"Robe Manga Curta",tam:"GG",cor:"Preto",qtd:3,tec:1.6,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.06,abc:"C"},
+  {sku:"RMC-G3-PRETO",prod:"Robe Manga Curta",tam:"G3",cor:"Preto",qtd:1,tec:2.26,vivo:null,elas:null,estoqueAtual:0,emProducao:2,vendas7d:0,vendaDia:0.06,abc:"C"},
   {sku:"RIF-6-PINK",prod:"Robe Infantil",tam:"6",cor:"Pink",qtd:5,tec:0.94,vivo:null,elas:null,estoqueAtual:1,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
   {sku:"RIF-2-ROSE",prod:"Robe Infantil",tam:"2",cor:"Rose",qtd:6,tec:1.03,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
   {sku:"RIF-2-AZULCLA",prod:"Robe Infantil",tam:"2",cor:"Azul Claro",qtd:6,tec:1.03,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
   {sku:"RIF-14-ROSE",prod:"Robe Infantil",tam:"14",cor:"Rose",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:8,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
   {sku:"RMC-G1-LILAS",prod:"Robe Manga Curta",tam:"G1",cor:"Lilás",qtd:2,tec:2.18,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
   {sku:"RIF-10-ROSE",prod:"Robe Infantil",tam:"10",cor:"Rose",qtd:0,tec:1.1,vivo:null,elas:null,estoqueAtual:14,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
-  {sku:"RMC-GG-PRETO",prod:"Robe Manga Curta",tam:"GG",cor:"Preto",qtd:2,tec:1.6,vivo:null,elas:null,estoqueAtual:0,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
+  {sku:"RMC-GG-ROSE",prod:"Robe Manga Curta",tam:"GG",cor:"Rose",qtd:0,tec:1.6,vivo:null,elas:null,estoqueAtual:29,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
   {sku:"RMC-M-PINK",prod:"Robe Manga Curta",tam:"M",cor:"Pink",qtd:0,tec:1.43,vivo:null,elas:null,estoqueAtual:18,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
-  {sku:"RMC-P-PRETO",prod:"Robe Manga Curta",tam:"P",cor:"Preto",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:18,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
-  {sku:"RMC-P-MARSALA",prod:"Robe Manga Curta",tam:"P",cor:"Marsala",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:18,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
-  {sku:"RMC-G2-ROSE",prod:"Robe Manga Curta",tam:"G2",cor:"Rose",qtd:3,tec:2.2,vivo:null,elas:null,estoqueAtual:-1,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"},
-  {sku:"RMC-P-PINK",prod:"Robe Manga Curta",tam:"P",cor:"Pink",qtd:0,tec:1.28,vivo:null,elas:null,estoqueAtual:19,emProducao:0,vendas7d:0,vendaDia:0.03,abc:"C"}
+  {sku:"RMC-G2-ROSE",prod:"Robe Manga Curta",tam:"G2",cor:"Rose",qtd:0,tec:2.2,vivo:null,elas:null,estoqueAtual:1,emProducao:1,vendas7d:0,vendaDia:0.03,abc:"C"}
 ];
 
 
@@ -2243,7 +2298,7 @@ const ANALISES_POR_MES = {
 
 },
  setembro: {"mes": "Setembro/2026", "emAndamento": false, "atualizadoEm": "2026-09-30", "totais": {"planejado": 1898, "realizado": 905, "pct": 47.7, "combosPlanejados": 104, "combosComCorte": 60, "combosCompletos": 24, "combosParciais": 36, "combosNaoIniciados": 44, "pctCombosCompletos": 23.1, "pctCombosIniciados": 57.7}, "porLinha": [{"linha": "RIF", "label": "Robe Infantil", "planejado": 561, "realizado": 355, "pct": 63.3}, {"linha": "RMC", "label": "Robe Manga Curta", "planejado": 1227, "realizado": 470, "pct": 38.3}, {"linha": "PMC", "label": "Pijama Verão", "planejado": 110, "realizado": 80, "pct": 72.7}, {"linha": "PMI", "label": "Pijama Inverno", "planejado": 0, "realizado": 0, "pct": 0}], "timeline": {"inicio": "2026-09-04", "fim": "2026-09-30", "diasCorridos": 27, "diasComCorte": 8, "mediaPcsDiaAtivo": 113.1, "porDia": [{"data": "2026-09-04", "qtd": 496}, {"data": "2026-09-11", "qtd": 80}, {"data": "2026-09-17", "qtd": 48}, {"data": "2026-09-21", "qtd": 5}, {"data": "2026-09-24", "qtd": 244}, {"data": "2026-09-25", "qtd": 42}, {"data": "2026-09-28", "qtd": 31}, {"data": "2026-09-30", "qtd": 45}], "diaMaisForte": {"data": "2026-09-04", "qtd": 496}, "diaMaisFraco": {"data": "2026-09-21", "qtd": 5}}, "gruposMaisLentos": [{"linha": "RMC", "label": "Robe Manga Curta", "tam": "P", "spanDias": 27, "primeira": "2026-09-04", "ultima": "2026-09-30", "registros": 19, "pecas": 149}, {"linha": "RIF", "label": "Robe Infantil", "tam": "8", "spanDias": 25, "primeira": "2026-09-04", "ultima": "2026-09-28", "registros": 21, "pecas": 89}, {"linha": "RIF", "label": "Robe Infantil", "tam": "10", "spanDias": 22, "primeira": "2026-09-04", "ultima": "2026-09-25", "registros": 17, "pecas": 103}, {"linha": "RIF", "label": "Robe Infantil", "tam": "4", "spanDias": 22, "primeira": "2026-09-04", "ultima": "2026-09-25", "registros": 6, "pecas": 31}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G", "spanDias": 21, "primeira": "2026-09-04", "ultima": "2026-09-24", "registros": 12, "pecas": 174}, {"linha": "RIF", "label": "Robe Infantil", "tam": "12", "spanDias": 21, "primeira": "2026-09-04", "ultima": "2026-09-24", "registros": 13, "pecas": 94}, {"linha": "RIF", "label": "Robe Infantil", "tam": "14", "spanDias": 21, "primeira": "2026-09-04", "ultima": "2026-09-24", "registros": 9, "pecas": 36}, {"linha": "PMI", "label": "Pijama Inverno", "tam": "GG", "spanDias": 21, "primeira": "2026-09-04", "ultima": "2026-09-24", "registros": 6, "pecas": 0}, {"linha": "RIF", "label": "Robe Infantil", "tam": "6", "spanDias": 15, "primeira": "2026-09-11", "ultima": "2026-09-25", "registros": 9, "pecas": 59}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G3", "spanDias": 14, "primeira": "2026-09-04", "ultima": "2026-09-17", "registros": 8, "pecas": 33}], "naoIniciados": [{"sku": "RMC-M-Azul Claro", "linha": "RMC", "cor": "Azul Claro", "tam": "M", "planejado": 50}, {"sku": "RMC-M-Lilás", "linha": "RMC", "cor": "Lilás", "tam": "M", "planejado": 38}, {"sku": "RMC-M-Branco", "linha": "RMC", "cor": "Branco", "tam": "M", "planejado": 34}, {"sku": "RMC-G-Preto", "linha": "RMC", "cor": "Preto", "tam": "G", "planejado": 33}, {"sku": "RMC-G-Lilás", "linha": "RMC", "cor": "Lilás", "tam": "G", "planejado": 30}, {"sku": "RMC-GG-Marsala", "linha": "RMC", "cor": "Marsala", "tam": "GG", "planejado": 29}, {"sku": "RMC-M-Rosa Claro", "linha": "RMC", "cor": "Rosa Claro", "tam": "M", "planejado": 27}, {"sku": "RMC-GG-Preto", "linha": "RMC", "cor": "Preto", "tam": "GG", "planejado": 24}, {"sku": "RMC-GG-Lilás", "linha": "RMC", "cor": "Lilás", "tam": "GG", "planejado": 21}, {"sku": "RIF-8-Pink", "linha": "RIF", "cor": "Pink", "tam": "8", "planejado": 21}, {"sku": "RIF-6-Pink", "linha": "RIF", "cor": "Pink", "tam": "6", "planejado": 20}, {"sku": "RMC-GG-Branco", "linha": "RMC", "cor": "Branco", "tam": "GG", "planejado": 18}], "parciais": [{"sku": "RMC-M-Rose", "planejado": 75, "realizado": 10, "faltou": 65, "motivo": "—"}, {"sku": "RMC-G-Azul Claro", "planejado": 92, "realizado": 56, "faltou": 36, "motivo": "—"}, {"sku": "RIF-12-Rosa Claro", "planejado": 43, "realizado": 17, "faltou": 26, "motivo": "—"}, {"sku": "RMC-G-Branco", "planejado": 84, "realizado": 60, "faltou": 24, "motivo": "—"}, {"sku": "RMC-P-Lilás", "planejado": 43, "realizado": 20, "faltou": 23, "motivo": "—"}, {"sku": "RMC-P-Rosa Claro", "planejado": 44, "realizado": 21, "faltou": 23, "motivo": "—"}, {"sku": "RMC-M-Marsala", "planejado": 39, "realizado": 17, "faltou": 22, "motivo": "—"}, {"sku": "RIF-12-Pink", "planejado": 34, "realizado": 13, "faltou": 21, "motivo": "—"}, {"sku": "RMC-P-Branco", "planejado": 29, "realizado": 10, "faltou": 19, "motivo": "—"}, {"sku": "RMC-G-Marsala", "planejado": 24, "realizado": 6, "faltou": 18, "motivo": "—"}, {"sku": "RIF-10-Pink", "planejado": 35, "realizado": 17, "faltou": 18, "motivo": "—"}, {"sku": "RMC-G1-Azul Claro", "planejado": 30, "realizado": 14, "faltou": 16, "motivo": "—"}, {"sku": "RMC-P-Rose", "planejado": 44, "realizado": 29, "faltou": 15, "motivo": "Falta de tecido"}, {"sku": "RIF-14-Rosa Claro", "planejado": 28, "realizado": 15, "faltou": 13, "motivo": "—"}, {"sku": "RMC-P-Azul Claro", "planejado": 46, "realizado": 35, "faltou": 11, "motivo": "—"}, {"sku": "RIF-10-Rosa Claro", "planejado": 30, "realizado": 21, "faltou": 9, "motivo": "—"}, {"sku": "RMC-G3-Rose", "planejado": 19, "realizado": 10, "faltou": 9, "motivo": "Falta de tecido"}, {"sku": "RMC-G3-Lilás", "planejado": 11, "realizado": 2, "faltou": 9, "motivo": "—"}, {"sku": "PMC-M-Branco", "planejado": 12, "realizado": 4, "faltou": 8, "motivo": "—"}, {"sku": "RIF-10-Lilás", "planejado": 17, "realizado": 9, "faltou": 8, "motivo": "TESTE de funcionalidade (Claude 25/09) - sem peca real, zerado"}, {"sku": "RMC-G2-Rose", "planejado": 18, "realizado": 10, "faltou": 8, "motivo": "Falta de tecido"}, {"sku": "RMC-G3-Preto", "planejado": 13, "realizado": 5, "faltou": 8, "motivo": "—"}, {"sku": "RMC-G1-Rose", "planejado": 9, "realizado": 3, "faltou": 6, "motivo": "Falta de tecido"}, {"sku": "RMC-G1-Pink", "planejado": 9, "realizado": 3, "faltou": 6, "motivo": "—"}, {"sku": "RMC-G-Rose", "planejado": 57, "realizado": 52, "faltou": 5, "motivo": "Falta de tecido"}, {"sku": "RIF-12-Branco", "planejado": 24, "realizado": 19, "faltou": 5, "motivo": "—"}, {"sku": "RMC-G3-Branco", "planejado": 20, "realizado": 16, "faltou": 4, "motivo": "—"}, {"sku": "RIF-8-Rosa Claro", "planejado": 16, "realizado": 13, "faltou": 3, "motivo": "—"}, {"sku": "PMC-GG-Rosa Claro", "planejado": 9, "realizado": 6, "faltou": 3, "motivo": "—"}, {"sku": "RMC-M-Bordô", "planejado": 5, "realizado": 2, "faltou": 3, "motivo": "—"}, {"sku": "RIF-6-Branco", "planejado": 18, "realizado": 16, "faltou": 2, "motivo": "—"}, {"sku": "RIF-6-Rose", "planejado": 15, "realizado": 13, "faltou": 2, "motivo": "—"}, {"sku": "RMC-G1-Lilás", "planejado": 4, "realizado": 2, "faltou": 2, "motivo": "—"}, {"sku": "RIF-10-Branco", "planejado": 24, "realizado": 23, "faltou": 1, "motivo": "—"}, {"sku": "PMC-P-Rosa Claro", "planejado": 7, "realizado": 6, "faltou": 1, "motivo": "—"}, {"sku": "PMC-G-Azul Marinho", "planejado": 13, "realizado": 12, "faltou": 1, "motivo": "—"}], "porPessoa": [{"nome": "Natália", "qtd": 980}, {"nome": "(sem nome)", "qtd": 11}, {"nome": "Karol", "qtd": 0}]},
- outubro: {"mes": "Outubro/2026", "emAndamento": true, "atualizadoEm": "2026-10-19", "totais": {"planejado": 1338, "realizado": 512, "pct": 38.3, "combosPlanejados": 72, "combosComCorte": 32, "combosCompletos": 8, "combosParciais": 24, "combosNaoIniciados": 40, "pctCombosCompletos": 11.1, "pctCombosIniciados": 44.4}, "porLinha": [{"linha": "RIF", "label": "Robe Infantil", "planejado": 209, "realizado": 0, "pct": 0.0}, {"linha": "RMC", "label": "Robe Manga Curta", "planejado": 1066, "realizado": 512, "pct": 48.0}, {"linha": "PMC", "label": "Pijama Verão", "planejado": 63, "realizado": 0, "pct": 0.0}, {"linha": "PMI", "label": "Pijama Inverno", "planejado": 0, "realizado": 0, "pct": 0}], "timeline": {"inicio": "2026-10-02", "fim": "2026-10-19", "diasCorridos": 18, "diasComCorte": 8, "mediaPcsDiaAtivo": 64.0, "porDia": [{"data": "2026-10-02", "qtd": 91}, {"data": "2026-10-05", "qtd": 0}, {"data": "2026-10-07", "qtd": 447}, {"data": "2026-10-08", "qtd": 57}, {"data": "2026-10-09", "qtd": 56}, {"data": "2026-10-14", "qtd": 0}, {"data": "2026-10-16", "qtd": 0}, {"data": "2026-10-19", "qtd": 5}], "diaMaisForte": {"data": "2026-10-07", "qtd": 447}, "diaMaisFraco": {"data": "2026-10-05", "qtd": 0}}, "gruposMaisLentos": [{"linha": "RMC", "label": "Robe Manga Curta", "tam": "G", "spanDias": 18, "primeira": "2026-10-02", "ultima": "2026-10-19", "registros": 33, "pecas": 160}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "M", "spanDias": 18, "primeira": "2026-10-02", "ultima": "2026-10-19", "registros": 40, "pecas": 127}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "P", "spanDias": 18, "primeira": "2026-10-02", "ultima": "2026-10-19", "registros": 20, "pecas": 61}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "GG", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 29, "pecas": 169}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G1", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 20, "pecas": 79}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G2", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 18, "pecas": 30}, {"linha": "RIF", "label": "Robe Infantil", "tam": "6", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 14, "pecas": 0}, {"linha": "RIF", "label": "Robe Infantil", "tam": "2", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 9, "pecas": 0}, {"linha": "RIF", "label": "Robe Infantil", "tam": "8", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 9, "pecas": 0}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G3", "spanDias": 13, "primeira": "2026-10-07", "ultima": "2026-10-19", "registros": 19, "pecas": 30}], "naoIniciados": [{"sku": "RMC-M-Branco", "linha": "RMC", "cor": "Branco", "tam": "M", "planejado": 67}, {"sku": "RMC-P-Rose", "linha": "RMC", "cor": "Rose", "tam": "P", "planejado": 49}, {"sku": "RMC-G-Rose", "linha": "RMC", "cor": "Rose", "tam": "G", "planejado": 28}, {"sku": "RIF-12-Rosa Claro", "linha": "RIF", "cor": "Rosa Claro", "tam": "12", "planejado": 22}, {"sku": "RIF-12-Branco", "linha": "RIF", "cor": "Branco", "tam": "12", "planejado": 21}, {"sku": "RIF-10-Rosa Claro", "linha": "RIF", "cor": "Rosa Claro", "tam": "10", "planejado": 20}, {"sku": "RIF-14-Rosa Claro", "linha": "RIF", "cor": "Rosa Claro", "tam": "14", "planejado": 18}, {"sku": "RIF-10-Branco", "linha": "RIF", "cor": "Branco", "tam": "10", "planejado": 15}, {"sku": "RMC-G3-Marsala", "linha": "RMC", "cor": "Marsala", "tam": "G3", "planejado": 15}, {"sku": "RIF-6-Branco", "linha": "RIF", "cor": "Branco", "tam": "6", "planejado": 14}, {"sku": "RMC-P-Azul Claro", "linha": "RMC", "cor": "Azul Claro", "tam": "P", "planejado": 13}, {"sku": "PMC-M-Rosa Claro", "linha": "PMC", "cor": "Rosa Claro", "tam": "M", "planejado": 12}], "parciais": [{"sku": "RMC-G-Preto", "planejado": 96, "realizado": 40, "faltou": 56, "motivo": "—"}, {"sku": "RMC-G-Branco", "planejado": 60, "realizado": 8, "faltou": 52, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-M-Rose", "planejado": 58, "realizado": 11, "faltou": 47, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-M-Azul Claro", "planejado": 49, "realizado": 22, "faltou": 27, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-GG-Branco", "planejado": 46, "realizado": 20, "faltou": 26, "motivo": "—"}, {"sku": "RMC-G-Azul Claro", "planejado": 34, "realizado": 9, "faltou": 25, "motivo": "—"}, {"sku": "RMC-P-Rosa Claro", "planejado": 30, "realizado": 12, "faltou": 18, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-G-Lilás", "planejado": 35, "realizado": 20, "faltou": 15, "motivo": "—"}, {"sku": "RMC-M-Lilás", "planejado": 42, "realizado": 28, "faltou": 14, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-P-Lilás", "planejado": 34, "realizado": 20, "faltou": 14, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-G2-Marsala", "planejado": 15, "realizado": 6, "faltou": 9, "motivo": "Bordo = Marsala: necessidade somada ao Marsala (Karol 07/10)"}, {"sku": "RMC-M-Rosa Claro", "planejado": 28, "realizado": 20, "faltou": 8, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-G1-Azul Claro", "planejado": 28, "realizado": 20, "faltou": 8, "motivo": "—"}, {"sku": "RMC-M-Preto", "planejado": 27, "realizado": 20, "faltou": 7, "motivo": "—"}, {"sku": "RMC-G1-Pink", "planejado": 14, "realizado": 7, "faltou": 7, "motivo": "—"}, {"sku": "RMC-G-Marsala", "planejado": 20, "realizado": 14, "faltou": 6, "motivo": "Bordo = Marsala: necessidade somada ao Marsala (Karol 07/10)"}, {"sku": "RMC-GG-Marsala", "planejado": 25, "realizado": 20, "faltou": 5, "motivo": "—"}, {"sku": "RMC-GG-Lilás", "planejado": 22, "realizado": 19, "faltou": 3, "motivo": "—"}, {"sku": "RMC-G3-Preto", "planejado": 13, "realizado": 10, "faltou": 3, "motivo": "—"}, {"sku": "RMC-G2-Rose", "planejado": 13, "realizado": 10, "faltou": 3, "motivo": "—"}, {"sku": "RMC-G2-Branco", "planejado": 6, "realizado": 4, "faltou": 2, "motivo": "—"}, {"sku": "RMC-G1-Lilás", "planejado": 12, "realizado": 10, "faltou": 2, "motivo": "—"}, {"sku": "RMC-GG-Preto", "planejado": 22, "realizado": 20, "faltou": 2, "motivo": "—"}, {"sku": "RMC-G3-Azul Claro", "planejado": 11, "realizado": 10, "faltou": 1, "motivo": "—"}], "porPessoa": [{"nome": "(sem nome)", "qtd": 530}, {"nome": "Natália", "qtd": 126}], "ritmo": {"atual": 64.0, "necessario": 63.5, "pct": 100.8, "diasRestantes": 13}}
+ outubro: {"mes": "Outubro/2026", "emAndamento": true, "atualizadoEm": "2026-10-20", "totais": {"planejado": 1393, "realizado": 542, "pct": 38.9, "combosPlanejados": 74, "combosComCorte": 33, "combosCompletos": 13, "combosParciais": 20, "combosNaoIniciados": 41, "pctCombosCompletos": 17.6, "pctCombosIniciados": 44.6}, "porLinha": [{"linha": "RIF", "label": "Robe Infantil", "planejado": 224, "realizado": 0, "pct": 0.0}, {"linha": "RMC", "label": "Robe Manga Curta", "planejado": 1103, "realizado": 542, "pct": 49.1}, {"linha": "PMC", "label": "Pijama Verão", "planejado": 66, "realizado": 0, "pct": 0.0}, {"linha": "PMI", "label": "Pijama Inverno", "planejado": 0, "realizado": 0, "pct": 0}], "timeline": {"inicio": "2026-10-02", "fim": "2026-10-19", "diasCorridos": 18, "diasComCorte": 8, "mediaPcsDiaAtivo": 67.8, "porDia": [{"data": "2026-10-02", "qtd": 91}, {"data": "2026-10-05", "qtd": 0}, {"data": "2026-10-07", "qtd": 447}, {"data": "2026-10-08", "qtd": 57}, {"data": "2026-10-09", "qtd": 56}, {"data": "2026-10-14", "qtd": 0}, {"data": "2026-10-16", "qtd": 0}, {"data": "2026-10-19", "qtd": 5}], "diaMaisForte": {"data": "2026-10-07", "qtd": 447}, "diaMaisFraco": {"data": "2026-10-05", "qtd": 0}}, "gruposMaisLentos": [{"linha": "RMC", "label": "Robe Manga Curta", "tam": "G", "spanDias": 18, "primeira": "2026-10-02", "ultima": "2026-10-19", "registros": 33, "pecas": 160}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "M", "spanDias": 18, "primeira": "2026-10-02", "ultima": "2026-10-19", "registros": 40, "pecas": 127}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "P", "spanDias": 18, "primeira": "2026-10-02", "ultima": "2026-10-19", "registros": 20, "pecas": 61}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "GG", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 29, "pecas": 169}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G1", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 20, "pecas": 79}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G2", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 18, "pecas": 30}, {"linha": "RIF", "label": "Robe Infantil", "tam": "6", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 14, "pecas": 0}, {"linha": "RIF", "label": "Robe Infantil", "tam": "2", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 9, "pecas": 0}, {"linha": "RIF", "label": "Robe Infantil", "tam": "8", "spanDias": 15, "primeira": "2026-10-05", "ultima": "2026-10-19", "registros": 9, "pecas": 0}, {"linha": "RMC", "label": "Robe Manga Curta", "tam": "G3", "spanDias": 13, "primeira": "2026-10-07", "ultima": "2026-10-19", "registros": 19, "pecas": 30}], "naoIniciados": [{"sku": "RMC-M-Branco", "linha": "RMC", "cor": "Branco", "tam": "M", "planejado": 59}, {"sku": "RMC-P-Rose", "linha": "RMC", "cor": "Rose", "tam": "P", "planejado": 49}, {"sku": "RMC-G-Rose", "linha": "RMC", "cor": "Rose", "tam": "G", "planejado": 30}, {"sku": "RMC-P-Azul Claro", "linha": "RMC", "cor": "Azul Claro", "tam": "P", "planejado": 28}, {"sku": "RIF-12-Branco", "linha": "RIF", "cor": "Branco", "tam": "12", "planejado": 25}, {"sku": "RIF-12-Rosa Claro", "linha": "RIF", "cor": "Rosa Claro", "tam": "12", "planejado": 22}, {"sku": "RIF-10-Rosa Claro", "linha": "RIF", "cor": "Rosa Claro", "tam": "10", "planejado": 19}, {"sku": "RIF-14-Rosa Claro", "linha": "RIF", "cor": "Rosa Claro", "tam": "14", "planejado": 18}, {"sku": "RIF-10-Branco", "linha": "RIF", "cor": "Branco", "tam": "10", "planejado": 17}, {"sku": "RMC-G3-Marsala", "linha": "RMC", "cor": "Marsala", "tam": "G3", "planejado": 15}, {"sku": "PMC-M-Rosa Claro", "linha": "PMC", "cor": "Rosa Claro", "tam": "M", "planejado": 14}, {"sku": "RIF-6-Branco", "linha": "RIF", "cor": "Branco", "tam": "6", "planejado": 14}], "parciais": [{"sku": "RMC-G-Branco", "planejado": 66, "realizado": 8, "faltou": 58, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-G-Preto", "planejado": 92, "realizado": 40, "faltou": 52, "motivo": "—"}, {"sku": "RMC-G-Azul Claro", "planejado": 53, "realizado": 9, "faltou": 44, "motivo": "—"}, {"sku": "RMC-M-Rose", "planejado": 52, "realizado": 11, "faltou": 41, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-GG-Branco", "planejado": 48, "realizado": 20, "faltou": 28, "motivo": "—"}, {"sku": "RMC-M-Azul Claro", "planejado": 47, "realizado": 22, "faltou": 25, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-M-Rosa Claro", "planejado": 44, "realizado": 20, "faltou": 24, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-P-Rosa Claro", "planejado": 30, "realizado": 12, "faltou": 18, "motivo": "Criado em duplicidade: corte parcial ainda nao era creditado no calculo (Claude 07/10)"}, {"sku": "RMC-G-Lilás", "planejado": 35, "realizado": 20, "faltou": 15, "motivo": "—"}, {"sku": "RMC-G2-Marsala", "planejado": 18, "realizado": 6, "faltou": 12, "motivo": "Bordo = Marsala: necessidade somada ao Marsala (Karol 07/10)"}, {"sku": "RMC-G-Marsala", "planejado": 21, "realizado": 14, "faltou": 7, "motivo": "Bordo = Marsala: necessidade somada ao Marsala (Karol 07/10)"}, {"sku": "RMC-M-Preto", "planejado": 26, "realizado": 20, "faltou": 6, "motivo": "—"}, {"sku": "RMC-G1-Pink", "planejado": 13, "realizado": 7, "faltou": 6, "motivo": "—"}, {"sku": "RMC-GG-Marsala", "planejado": 25, "realizado": 20, "faltou": 5, "motivo": "—"}, {"sku": "RMC-GG-Preto", "planejado": 23, "realizado": 20, "faltou": 3, "motivo": "—"}, {"sku": "RMC-G3-Azul Claro", "planejado": 12, "realizado": 10, "faltou": 2, "motivo": "—"}, {"sku": "RMC-GG-Lilás", "planejado": 21, "realizado": 19, "faltou": 2, "motivo": "—"}, {"sku": "RMC-G1-Lilás", "planejado": 12, "realizado": 10, "faltou": 2, "motivo": "—"}, {"sku": "RMC-G3-Preto", "planejado": 11, "realizado": 10, "faltou": 1, "motivo": "—"}, {"sku": "RMC-G2-Rose", "planejado": 11, "realizado": 10, "faltou": 1, "motivo": "—"}], "porPessoa": [{"nome": "(sem nome)", "qtd": 530}, {"nome": "Natália", "qtd": 126}], "ritmo": {"atual": 67.8, "necessario": 70.9, "pct": 95.6, "diasRestantes": 12}}
 };
 
 
@@ -2300,7 +2355,7 @@ function renderDonutLinha(A){
     `<div class="donut-leg">${linhas.map(l=>`<span><i style="background:${LINHA_COR[l.linha]||'#999'}"></i>${l.label} — ${l.realizado} pç (${anF2(l.realizado/tot*100)}%)</span>`).join('')}</div>`;
 }
 // ─── CURVA ABC ───────────────────────────────────────────
-const CURVA_ABC = /*ABC_INI*/{"periodo": "19/09–19/10", "geradoEm": "19/10", "itens": [["RMC", "M", "Branco", 44, 1931.2, 0, 67, 1.42], ["RMC", "G", "Preto", 38, 1696.7, 2, 56, 1.23], ["RMC", "G", "Branco", 36, 1614.9, 3, 52, 1.16], ["PMC", "M", "Rose", 10, 1467.3, 19, 0, 0.32], ["RMC", "P", "Rose", 32, 1393.0, 0, 49, 1.03], ["RMC", "M", "Rose", 31, 1389.0, 0, 47, 1.0], ["RMC", "G", "Rose", 29, 1376.8, 16, 28, 0.94], ["RMC", "M", "Azul Claro", 27, 1210.3, 14, 27, 0.87], ["RMC", "G", "Azul Claro", 24, 1122.1, 12, 25, 0.77], ["PMC", "M", "Branco", 8, 997.2, 5, 9, 0.26], ["RMC", "P", "Rosa Claro", 22, 914.3, 15, 18, 0.71], ["PMC", "G", "Rose", 5, 907.7, 18, 0, 0.16], ["RIF", "12", "Branco", 15, 853.5, 2, 21, 0.48], ["RMC", "GG", "Branco", 17, 838.4, 0, 26, 0.55], ["RIF", "12", "Rosa Claro", 15, 837.5, 1, 22, 0.48], ["RIF", "10", "Rosa Claro", 16, 829.4, 4, 20, 0.52], ["RMC", "M", "Rosa Claro", 17, 771.8, 18, 8, 0.55], ["PMC", "P", "Rose", 7, 768.9, 1, 11, 0.23], ["PMC", "M", "Rosa Claro", 8, 755.2, 2, 12, 0.26], ["PMC", "M", "Azul Marinho", 6, 731.5, 11, 0, 0.19], ["RIF", "10", "Branco", 13, 722.7, 5, 15, 0.42], ["RIF", "14", "Rosa Claro", 12, 704.8, 0, 18, 0.39], ["RIF", "6", "Branco", 12, 683.8, 4, 14, 0.39], ["RMC", "P", "Azul Claro", 16, 681.9, 11, 13, 0.52], ["RMC", "G", "Marsala", 14, 676.7, 15, 6, 0.45], ["RMC", "G1", "Branco", 13, 675.21, 17, 3, 0.42], ["PMC", "P", "Rosa Claro", 7, 639.1, 0, 12, 0.23], ["RMC", "M", "Marsala", 12, 597.0, 18, 0, 0.39], ["RMC", "G3", "Branco", 10, 565.51, 5, 10, 0.32], ["RMC", "G3", "Marsala", 10, 563.2, 0, 15, 0.32], ["PMC", "G", "Rosa Claro", 5, 541.1, 10, 0, 0.16], ["RIF", "10", "Lilás", 9, 482.1, 9, 5, 0.29], ["RMC", "G", "Lilás", 10, 477.0, 0, 15, 0.32], ["RMC", "M", "Preto", 12, 474.8, 11, 7, 0.39], ["RIF", "8", "Branco", 9, 465.1, 5, 9, 0.29], ["RIF", "6", "Lilás", 8, 435.2, 1, 11, 0.26], ["PMC", "8", "Preto", 6, 429.4, -2, 12, 0.19], ["RMC", "M", "Lilás", 9, 425.1, 0, 14, 0.29], ["RMC", "G2", "Marsala", 8, 423.71, 3, 9, 0.26], ["RMC", "P", "Lilás", 9, 395.1, 0, 14, 0.29], ["RMC", "GG", "Azul Claro", 7, 377.3, 19, 0, 0.23], ["RIF", "10", "Azul Claro", 7, 376.3, 9, 2, 0.23], ["PMC", "G", "Azul Marinho", 3, 349.7, 9, 0, 0.1], ["PMC", "G", "Branco", 3, 339.5, 13, 0, 0.1], ["RIF", "4", "Azul Claro", 6, 315.4, 0, 9, 0.19], ["RMC", "GG", "Rosa Claro", 6, 301.4, 17, 0, 0.19], ["RMC", "P", "Branco", 7, 294.3, 15, 0, 0.23], ["RIF", "12", "Lilás", 5, 290.5, 11, 0, 0.16], ["RIF", "8", "Lilás", 5, 281.5, 12, 0, 0.16], ["RIF", "10", "Pink", 5, 273.5, 0, 8, 0.16], ["RMC", "G1", "Azul Claro", 5, 269.5, 0, 8, 0.16], ["RMC", "G2", "Branco", 5, 268.52, 6, 2, 0.16], ["RIF", "6", "Rose", 5, 267.5, 6, 2, 0.16], ["RIF", "8", "Rosa Claro", 5, 267.5, 10, 0, 0.16], ["RIF", "12", "Rose", 5, 266.5, 10, 0, 0.16], ["PMC", "GG", "Rose", 2, 255.8, 12, 0, 0.06], ["PMC", "4", "Preto", 3, 249.7, 3, 2, 0.1], ["PMC", "6", "Preto", 3, 249.7, 0, 5, 0.1], ["RIF", "14", "Azul Claro", 4, 226.6, 3, 3, 0.13], ["RIF", "12", "Azul Claro", 4, 226.6, 10, 0, 0.13], ["RIF", "14", "Lilás", 4, 226.6, 5, 1, 0.13], ["PMC", "GG", "Rosa Claro", 2, 225.6, 6, 0, 0.06], ["RIF", "8", "Pink", 4, 225.6, 0, 6, 0.13], ["PMC", "P", "Branco", 2, 225.6, 9, 0, 0.06], ["RMC", "G", "Rosa Claro", 5, 221.0, 20, 0, 0.16], ["PMC", "GG", "Azul Marinho", 2, 219.8, 4, 0, 0.06], ["RMC", "G1", "Pink", 4, 205.6, -1, 7, 0.13], ["RIF", "8", "Azul Claro", 4, 199.6, 11, 0, 0.13], ["RIF", "6", "Rosa Claro", 4, 199.6, 11, 0, 0.13], ["RIF", "12", "Pink", 3, 178.7, 0, 6, 0.1], ["RIF", "8", "Rose", 3, 165.7, 9, 0, 0.1], ["RMC", "GG", "Lilás", 2, 160.9, 0, 3, 0.06], ["RMC", "G2", "Pink", 3, 158.7, 0, 5, 0.1], ["RIF", "6", "Azul Claro", 3, 149.7, 12, 0, 0.1], ["RIF", "2", "Pink", 3, 145.7, 9, 0, 0.1], ["RMC", "GG", "Pink", 3, 137.7, 17, 0, 0.1], ["RMC", "GG", "Marsala", 3, 137.7, 0, 5, 0.1], ["PMC", "M", "Preto", 1, 129.9, 19, 0, 0.03], ["PMC", "P", "Azul Marinho", 1, 129.9, 7, 0, 0.03], ["PMC", "GG", "Branco", 1, 125.9, 15, 0, 0.03], ["RIF", "2", "Rosa Claro", 2, 121.8, 0, 6, 0.06], ["RMC", "G3", "Azul Claro", 2, 119.8, 0, 1, 0.06], ["RIF", "4", "Rosa Claro", 2, 116.8, 7, 0, 0.06], ["RIF", "2", "Lilás", 2, 112.8, 0, 6, 0.06], ["RIF", "14", "Pink", 2, 111.8, 0, 6, 0.06], ["RIF", "4", "Rose", 2, 108.8, 7, 0, 0.06], ["RMC", "G3", "Rose", 2, 101.9, -1, 4, 0.06], ["RIF", "4", "Lilás", 2, 99.8, 4, 2, 0.06], ["RMC", "G3", "Preto", 2, 83.8, -2, 3, 0.06], ["RIF", "6", "Pink", 1, 65.9, 1, 5, 0.03], ["RIF", "2", "Rose", 1, 58.9, 0, 6, 0.03], ["RIF", "2", "Azul Claro", 1, 57.9, 0, 6, 0.03], ["RIF", "14", "Rose", 1, 54.9, 8, 0, 0.03], ["RMC", "G1", "Lilás", 1, 52.9, 0, 2, 0.03], ["RIF", "10", "Rose", 1, 49.9, 14, 0, 0.03], ["RMC", "GG", "Preto", 1, 45.9, 0, 2, 0.03], ["RMC", "M", "Pink", 1, 43.9, 18, 0, 0.03], ["RMC", "P", "Preto", 1, 42.9, 18, 0, 0.03], ["RMC", "P", "Marsala", 1, 42.9, 18, 0, 0.03], ["RMC", "G2", "Rose", 1, 41.9, -1, 3, 0.03], ["RMC", "P", "Pink", 1, 37.4, 19, 0, 0.03]]}/*ABC_FIM*/;
+const CURVA_ABC = /*ABC_INI*/{"periodo": "20/09–20/10", "geradoEm": "20/10", "itens": [["RMC", "M", "Branco", 42, 1843.4, 5, 59, 1.35], ["RMC", "G", "Azul Claro", 35, 1840.4, 9, 44, 1.13], ["RMC", "G", "Branco", 38, 1746.2, 0, 57, 1.23], ["RMC", "G", "Preto", 36, 1604.9, 3, 52, 1.16], ["RMC", "M", "Rose", 33, 1476.8, 9, 41, 1.06], ["PMC", "M", "Rose", 10, 1467.3, 19, 0, 0.32], ["RMC", "P", "Rose", 32, 1393.0, 0, 49, 1.03], ["RMC", "G", "Rose", 29, 1376.8, 14, 30, 0.94], ["RMC", "M", "Azul Claro", 26, 1186.5, 15, 25, 0.84], ["RMC", "P", "Azul Claro", 24, 1155.1, 9, 28, 0.77], ["RMC", "M", "Rosa Claro", 27, 1126.8, 17, 24, 0.87], ["PMC", "G", "Rose", 6, 1109.7, 17, 0, 0.19], ["RMC", "GG", "Branco", 19, 1024.2, 1, 27, 0.61], ["PMC", "M", "Branco", 8, 997.2, 5, 9, 0.26], ["RIF", "12", "Branco", 17, 977.3, 1, 25, 0.55], ["RMC", "P", "Rosa Claro", 22, 914.3, 15, 18, 0.71], ["PMC", "M", "Rosa Claro", 9, 845.1, 1, 14, 0.29], ["RIF", "12", "Rosa Claro", 15, 837.5, 1, 22, 0.48], ["RIF", "10", "Rosa Claro", 16, 829.4, 5, 19, 0.52], ["RIF", "10", "Branco", 14, 782.6, 4, 17, 0.45], ["PMC", "P", "Rose", 7, 768.9, 1, 11, 0.23], ["PMC", "M", "Azul Marinho", 6, 731.5, 11, 0, 0.19], ["RMC", "G1", "Branco", 14, 713.62, 14, 7, 0.45], ["RIF", "14", "Rosa Claro", 12, 704.8, 0, 18, 0.39], ["RIF", "6", "Branco", 12, 683.8, 4, 14, 0.39], ["RMC", "G", "Marsala", 14, 676.7, 14, 7, 0.45], ["PMC", "G", "Branco", 5, 641.2, 11, 0, 0.16], ["PMC", "P", "Rosa Claro", 7, 639.1, 0, 12, 0.23], ["PMC", "G", "Rosa Claro", 6, 631.0, 9, 1, 0.19], ["RMC", "GG", "Azul Claro", 11, 625.2, 18, 0, 0.35], ["RMC", "G3", "Branco", 11, 603.92, 4, 13, 0.35], ["RMC", "M", "Marsala", 12, 597.0, 18, 0, 0.39], ["RMC", "G3", "Marsala", 10, 563.2, 0, 15, 0.32], ["RMC", "G", "Rosa Claro", 13, 528.7, 21, 0, 0.42], ["RMC", "G", "Lilás", 10, 477.0, 0, 15, 0.32], ["RMC", "M", "Preto", 12, 476.8, 12, 6, 0.39], ["RMC", "G2", "Marsala", 9, 468.61, 2, 12, 0.29], ["RIF", "8", "Branco", 9, 465.1, 5, 9, 0.29], ["RIF", "6", "Lilás", 8, 435.2, 1, 11, 0.26], ["RIF", "10", "Lilás", 8, 432.2, 9, 3, 0.26], ["PMC", "8", "Preto", 6, 429.4, -2, 12, 0.19], ["RIF", "10", "Azul Claro", 8, 426.2, 8, 4, 0.26], ["RMC", "M", "Lilás", 9, 425.1, 20, 0, 0.29], ["RMC", "P", "Lilás", 9, 395.1, 18, 0, 0.29], ["PMC", "G", "Azul Marinho", 3, 349.7, 9, 0, 0.1], ["RIF", "8", "Lilás", 6, 331.4, 11, 0, 0.19], ["RIF", "12", "Rose", 6, 328.4, 9, 0, 0.19], ["RIF", "6", "Rose", 6, 326.4, 5, 4, 0.19], ["RIF", "10", "Pink", 6, 316.4, -1, 10, 0.19], ["RIF", "4", "Azul Claro", 6, 315.4, 0, 9, 0.19], ["RMC", "GG", "Rosa Claro", 6, 301.4, 17, 0, 0.19], ["RMC", "P", "Branco", 7, 294.3, 16, 0, 0.23], ["RIF", "12", "Lilás", 5, 290.5, 11, 0, 0.16], ["RIF", "14", "Azul Claro", 5, 288.5, 3, 5, 0.16], ["RIF", "14", "Lilás", 5, 281.5, 4, 4, 0.16], ["RMC", "G1", "Azul Claro", 5, 269.5, 18, 0, 0.16], ["RIF", "8", "Rosa Claro", 5, 267.5, 11, 0, 0.16], ["PMC", "GG", "Rose", 2, 255.8, 12, 0, 0.06], ["PMC", "6", "Preto", 3, 249.7, 0, 5, 0.1], ["PMC", "4", "Preto", 3, 249.7, 3, 2, 0.1], ["RIF", "6", "Rosa Claro", 5, 249.5, 11, 0, 0.16], ["RMC", "GG", "Pink", 5, 229.5, 15, 0, 0.16], ["RIF", "12", "Azul Claro", 4, 226.6, 10, 0, 0.13], ["PMC", "GG", "Rosa Claro", 2, 225.6, 6, 0, 0.06], ["PMC", "P", "Branco", 2, 225.6, 9, 0, 0.06], ["PMC", "GG", "Azul Marinho", 2, 219.8, 4, 0, 0.06], ["RMC", "G2", "Branco", 4, 215.62, 6, 0, 0.13], ["RMC", "P", "Pink", 5, 209.0, 15, 0, 0.16], ["RMC", "G1", "Pink", 4, 205.6, 0, 6, 0.13], ["RIF", "8", "Azul Claro", 4, 199.6, 11, 0, 0.13], ["RMC", "G3", "Azul Claro", 3, 189.8, 1, 2, 0.1], ["RIF", "12", "Pink", 3, 178.7, 0, 6, 0.1], ["RIF", "4", "Rose", 3, 167.7, 6, 0, 0.1], ["RIF", "8", "Pink", 3, 166.7, 0, 6, 0.1], ["RIF", "8", "Rose", 3, 165.7, 9, 0, 0.1], ["RMC", "G2", "Pink", 3, 158.7, 0, 5, 0.1], ["RIF", "6", "Azul Claro", 3, 149.7, 12, 0, 0.1], ["RIF", "4", "Lilás", 3, 149.7, 3, 3, 0.1], ["RIF", "2", "Pink", 3, 145.7, 9, 0, 0.1], ["RMC", "GG", "Marsala", 3, 137.7, 0, 5, 0.1], ["PMC", "P", "Azul Marinho", 1, 129.9, 7, 0, 0.03], ["PMC", "M", "Preto", 1, 129.9, 19, 0, 0.03], ["RMC", "P", "Marsala", 3, 128.7, 16, 0, 0.1], ["PMC", "GG", "Branco", 1, 125.9, 15, 0, 0.03], ["RMC", "P", "Preto", 3, 123.2, 18, 0, 0.1], ["RIF", "2", "Rosa Claro", 2, 121.8, 0, 6, 0.06], ["RIF", "4", "Rosa Claro", 2, 116.8, 7, 0, 0.06], ["RIF", "2", "Lilás", 2, 112.8, 0, 6, 0.06], ["RIF", "14", "Pink", 2, 111.8, 0, 6, 0.06], ["RMC", "GG", "Lilás", 1, 109.0, 0, 2, 0.03], ["RMC", "G3", "Rose", 2, 101.9, 0, 3, 0.06], ["RMC", "GG", "Preto", 2, 87.8, 0, 3, 0.06], ["RMC", "G3", "Preto", 2, 83.8, 0, 1, 0.06], ["RIF", "6", "Pink", 1, 65.9, 1, 5, 0.03], ["RIF", "2", "Rose", 1, 58.9, 0, 6, 0.03], ["RIF", "2", "Azul Claro", 1, 57.9, 0, 6, 0.03], ["RIF", "14", "Rose", 1, 54.9, 8, 0, 0.03], ["RMC", "G1", "Lilás", 1, 52.9, 0, 2, 0.03], ["RIF", "10", "Rose", 1, 49.9, 14, 0, 0.03], ["RMC", "GG", "Rose", 1, 45.9, 29, 0, 0.03], ["RMC", "M", "Pink", 1, 43.9, 18, 0, 0.03], ["RMC", "G2", "Rose", 1, 41.9, 1, 0, 0.03]]}/*ABC_FIM*/;
 const ABC_LIN = {RMC:'Robe Manga Curta',RIF:'Robe Infantil',PMC:'Pijama Verão',PMI:'Pijama Inverno'};
 let abcVista = 'combo', abcLinha = 'todas';
 function abcSetVista(v,btn){ abcVista=v; document.querySelectorAll('#abc .abc-vista').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderABC(); }
@@ -2309,6 +2364,71 @@ function abcClasse(cum){ return cum<=80?'A':(cum<=95?'B':'C'); }
 function abcRS(v){ return 'R$ '+Math.round(v).toLocaleString('pt-BR'); }
 let abcClasseF = 'todas';
 function abcSetClasse(c,btn){ abcClasseF=c; document.querySelectorAll('#abc .abc-cls').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderABC(); }
+// ─── REPOSICAO DIARIA (Karol 20/10) ───────────────────────────
+const REPOSICAO = /*REP_INI*/{"geradoEm": "20/10 15:09", "ate": "20/10", "itens": [["RMC", "M", "Branco", "A", 5, 0, 6, 42, 1.5, "ult. semanas", 3.3, 3.3, 11.2, "abaixo", 66, 1.43, 66], ["RMC", "G", "Azul Claro", "A", 9, 0, 10, 35, 1.43, "ult. semanas", 6.3, 6.3, 11.2, "abaixo", 58, 1.53, 58], ["RMC", "G", "Branco", "A", 0, 1, 10, 38, 1.43, "ult. semanas", 0.0, 0.7, 11.2, "zerado", 66, 1.53, 66], ["RMC", "G", "Preto", "A", 3, 0, 15, 36, 2.14, "ult. semanas", 1.4, 1.4, 11.2, "abaixo", 98, 1.53, 98], ["RMC", "M", "Rose", "A", 9, 0, 20, 33, 2.13, "ult. semanas (limitado a 2x)", 4.2, 4.2, 11.2, "abaixo", 91, 1.43, 126], ["PMC", "M", "Rose", "A", 19, 0, 0, 10, 0.32, "31d", 58.9, 58.9, 17.3, "ok", 0, 1.53, 0], ["RMC", "P", "Rose", "A", 0, 0, 19, 32, 2.06, "ult. semanas (limitado a 2x)", 0.0, 0.0, 11.2, "zerado", 97, 1.28, 128], ["RMC", "G", "Rose", "A", 14, 0, 22, 29, 1.87, "ult. semanas (limitado a 2x)", 7.5, 7.5, 11.2, "abaixo", 74, 1.53, 134], ["RMC", "M", "Azul Claro", "A", 15, 0, 18, 26, 1.68, "ult. semanas (limitado a 2x)", 8.9, 8.9, 11.2, "abaixo", 64, 1.43, 106], ["RMC", "P", "Azul Claro", "A", 9, 0, 5, 24, 0.86, "ult. semanas", 10.5, 10.5, 11.2, "abaixo", 31, 1.28, 31], ["RMC", "M", "Rosa Claro", "A", 17, 0, 14, 27, 1.74, "ult. semanas (limitado a 2x)", 9.8, 9.8, 11.2, "abaixo", 65, 1.43, 77], ["PMC", "G", "Rose", "A", 17, 0, 2, 6, 0.19, "31d", 87.8, 87.8, 17.3, "ok", 0, 1.71, 0], ["RMC", "GG", "Branco", "A", 1, 1, 4, 19, 0.64, "ult. semanas", 1.6, 3.1, 11.2, "abaixo", 28, 1.6, 28], ["PMC", "M", "Branco", "A", 5, 0, 1, 8, 0.26, "31d", 19.4, 19.4, 17.3, "ok", 9, 1.53, 9], ["RIF", "12", "Branco", "A", 1, 0, 5, 17, 0.71, "ult. semanas", 1.4, 1.4, 11.2, "abaixo", 33, 1.24, 33], ["RMC", "P", "Rosa Claro", "A", 15, 0, 15, 22, 1.42, "ult. semanas (limitado a 2x)", 10.6, 10.6, 11.2, "abaixo", 52, 1.28, 86], ["PMC", "M", "Rosa Claro", "A", 1, 0, 1, 9, 0.29, "31d", 3.4, 3.4, 17.3, "abaixo", 14, 1.53, 14], ["RIF", "12", "Rosa Claro", "A", 1, 0, 0, 15, 0.86, "ult. semanas", 1.2, 1.2, 11.2, "abaixo", 39, 1.24, 39], ["RIF", "10", "Rosa Claro", "A", 5, 0, 1, 16, 0.93, "ult. semanas", 5.4, 5.4, 11.2, "abaixo", 39, 1.1, 39], ["RIF", "10", "Branco", "A", 4, 0, 2, 14, 0.71, "ult. semanas", 5.6, 5.6, 11.2, "abaixo", 30, 1.1, 30], ["PMC", "P", "Rose", "A", 1, 0, 3, 7, 0.23, "31d", 4.4, 4.4, 17.3, "abaixo", 11, 1.51, 11], ["PMC", "M", "Azul Marinho", "A", 11, 0, 1, 6, 0.19, "31d", 56.8, 56.8, 17.3, "ok", 0, 1.53, 0], ["RMC", "G1", "Branco", "A", 14, 0, 6, 14, 0.86, "ult. semanas", 16.3, 16.3, 11.2, "ok", 26, 2.18, 26], ["RIF", "14", "Rosa Claro", "A", 0, 0, 0, 12, 0.39, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 18, 1.28, 18], ["RIF", "6", "Branco", "A", 4, 0, 5, 12, 0.77, "ult. semanas (limitado a 2x)", 5.2, 5.2, 11.2, "abaixo", 33, 0.94, 33], ["RMC", "G", "Marsala", "A", 14, 0, 6, 14, 0.86, "ult. semanas", 16.3, 16.3, 11.2, "ok", 26, 1.53, 26], ["PMC", "G", "Branco", "A", 11, 0, 3, 5, 0.16, "31d", 68.2, 68.2, 17.3, "ok", 0, 1.71, 0], ["PMC", "P", "Rosa Claro", "A", 0, 0, 0, 7, 0.23, "31d", 0.0, 0.0, 17.3, "zerado", 12, 1.51, 12], ["PMC", "G", "Rosa Claro", "A", 9, 0, 1, 6, 0.19, "31d", 46.5, 46.5, 17.3, "ok", 1, 1.71, 1], ["RMC", "GG", "Azul Claro", "A", 18, 0, 2, 11, 0.35, "ult. semanas", 50.7, 50.7, 11.2, "ok", 0, 1.6, 0], ["RMC", "G3", "Branco", "A", 4, 0, 2, 11, 0.35, "ult. semanas", 11.3, 11.3, 11.2, "ok", 13, 2.26, 13], ["RMC", "M", "Marsala", "A", 18, 0, 2, 12, 0.39, "ult. semanas", 46.5, 46.5, 11.2, "ok", 0, 1.43, 0], ["RMC", "G3", "Marsala", "A", 0, 0, 1, 10, 0.32, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 15, 2.26, 15], ["RMC", "G", "Rosa Claro", "A", 21, 0, 8, 13, 0.84, "ult. semanas (limitado a 2x)", 25.0, 25.0, 11.2, "ok", 19, 1.53, 33], ["RMC", "G", "Lilás", "A", 0, 0, 0, 10, 0.32, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 15, 1.53, 15], ["RMC", "M", "Preto", "A", 12, 0, 11, 12, 0.77, "ult. semanas (limitado a 2x)", 15.5, 15.5, 11.2, "ok", 25, 1.43, 62], ["RMC", "G2", "Marsala", "A", 2, 0, 3, 9, 0.43, "ult. semanas", 4.7, 4.7, 11.2, "abaixo", 18, 2.2, 18], ["RIF", "8", "Branco", "A", 5, 0, 6, 9, 0.58, "ult. semanas (limitado a 2x)", 8.6, 8.6, 11.2, "abaixo", 22, 0.92, 35], ["RIF", "6", "Lilás", "A", 1, 0, 0, 8, 0.26, "ult. semanas", 3.9, 3.9, 11.2, "abaixo", 11, 0.94, 11], ["RIF", "10", "Lilás", "A", 9, 0, 0, 8, 0.26, "ult. semanas", 34.9, 34.9, 11.2, "ok", 3, 1.1, 3], ["PMC", "8", "Preto", "A", -2, 0, 0, 6, 0.19, "31d", 0.0, 0.0, 17.3, "zerado", 12, 1.66, 12], ["RIF", "10", "Azul Claro", "A", 8, 0, 2, 8, 0.29, "ult. semanas", 28.0, 28.0, 11.2, "ok", 5, 1.1, 5], ["RMC", "M", "Lilás", "A", 20, 0, 0, 9, 0.29, "ult. semanas", 68.9, 68.9, 11.2, "ok", 0, 1.43, 0], ["RMC", "P", "Lilás", "A", 18, 0, 0, 9, 0.29, "ult. semanas", 62.0, 62.0, 11.2, "ok", 0, 1.28, 0], ["PMC", "G", "Azul Marinho", "A", 9, 0, 2, 3, 0.1, "31d", 93.0, 93.0, 17.3, "ok", 0, 1.71, 0], ["RIF", "8", "Lilás", "A", 11, 0, 1, 6, 0.19, "ult. semanas", 56.8, 56.8, 11.2, "ok", 0, 0.92, 0], ["RIF", "12", "Rose", "B", 9, 0, 1, 6, 0.39, "ult. semanas (limitado a 2x)", 23.2, 23.2, 11.2, "ok", 9, 1.24, 11], ["RIF", "6", "Rose", "B", 5, 0, 2, 6, 0.29, "ult. semanas", 17.5, 17.5, 11.2, "ok", 8, 0.94, 8], ["RIF", "10", "Pink", "B", -1, 0, 1, 6, 0.19, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 10, 1.1, 10], ["RIF", "4", "Azul Claro", "B", 0, 0, 3, 6, 0.39, "ult. semanas (limitado a 2x)", 0.0, 0.0, 11.2, "zerado", 18, 0.94, 20], ["RMC", "GG", "Rosa Claro", "B", 17, 0, 3, 6, 0.39, "ult. semanas (limitado a 2x)", 43.9, 43.9, 11.2, "ok", 1, 1.6, 3], ["RMC", "P", "Branco", "B", 16, 0, 4, 7, 0.45, "ult. semanas (limitado a 2x)", 35.4, 35.4, 11.2, "ok", 5, 1.28, 11], ["RIF", "12", "Lilás", "B", 11, 0, 0, 5, 0.21, "ult. semanas", 51.3, 51.3, 11.2, "ok", 0, 1.24, 0], ["RIF", "14", "Azul Claro", "B", 3, 0, 2, 5, 0.29, "ult. semanas", 10.5, 10.5, 11.2, "abaixo", 10, 1.28, 10], ["RIF", "14", "Lilás", "B", 4, 0, 1, 5, 0.16, "ult. semanas", 24.8, 24.8, 11.2, "ok", 4, 1.28, 4], ["RMC", "G1", "Azul Claro", "B", 18, 0, 0, 5, 0.16, "ult. semanas", 111.6, 111.6, 11.2, "ok", 0, 2.18, 0], ["RIF", "8", "Rosa Claro", "B", 11, 0, 0, 5, 0.29, "ult. semanas", 38.5, 38.5, 11.2, "ok", 2, 0.92, 2], ["PMC", "GG", "Rose", "B", 12, 0, 0, 2, 0.06, "31d", 186.0, 186.0, 17.3, "ok", 0, 1.92, 0], ["PMC", "6", "Preto", "B", 0, 0, 0, 3, 0.1, "31d", 0.0, 0.0, 17.3, "zerado", 5, 1.65, 5], ["PMC", "4", "Preto", "B", 3, 0, 0, 3, 0.1, "31d", 31.0, 31.0, 17.3, "ok", 2, 1.67, 2], ["RIF", "6", "Rosa Claro", "B", 11, 0, 2, 5, 0.29, "ult. semanas", 38.5, 38.5, 11.2, "ok", 2, 0.94, 2], ["RMC", "GG", "Pink", "B", 15, 0, 5, 5, 0.32, "ult. semanas (limitado a 2x)", 46.5, 46.5, 11.2, "ok", 0, 1.6, 19], ["RIF", "12", "Azul Claro", "B", 10, 0, 2, 4, 0.26, "ult. semanas (limitado a 2x)", 38.8, 38.8, 11.2, "ok", 2, 1.24, 3], ["PMC", "GG", "Rosa Claro", "B", 6, 0, 0, 2, 0.06, "31d", 93.0, 93.0, 17.3, "ok", 0, 1.92, 0], ["PMC", "P", "Branco", "B", 9, 0, 1, 2, 0.06, "31d", 139.5, 139.5, 17.3, "ok", 0, 1.51, 0], ["PMC", "GG", "Azul Marinho", "B", 4, 0, 0, 2, 0.06, "31d", 62.0, 62.0, 17.3, "ok", 0, 1.92, 0], ["RMC", "G2", "Branco", "B", 6, 0, 0, 4, 0.14, "ult. semanas", 42.0, 42.0, 11.2, "ok", 1, 2.2, 1], ["RMC", "P", "Pink", "B", 15, 0, 5, 5, 0.32, "ult. semanas (limitado a 2x)", 46.5, 46.5, 11.2, "ok", 0, 1.28, 19], ["RMC", "G1", "Pink", "B", 0, 0, 0, 4, 0.13, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 6, 2.18, 6], ["RIF", "8", "Azul Claro", "B", 11, 0, 3, 4, 0.26, "ult. semanas (limitado a 2x)", 42.6, 42.6, 11.2, "ok", 1, 0.92, 9], ["RMC", "G3", "Azul Claro", "B", 1, 2, 1, 3, 0.14, "ult. semanas", 7.0, 21.0, 11.2, "ok", 4, 2.26, 4], ["RIF", "12", "Pink", "B", 0, 0, 0, 3, 0.1, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 6, 1.24, 6], ["RIF", "4", "Rose", "B", 6, 0, 2, 3, 0.19, "ult. semanas (limitado a 2x)", 31.0, 31.0, 11.2, "ok", 3, 0.94, 7], ["RIF", "8", "Pink", "B", 0, 0, 1, 3, 0.14, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 7, 0.92, 7], ["RIF", "8", "Rose", "B", 9, 0, 0, 3, 0.1, "ult. semanas", 93.0, 93.0, 11.2, "ok", 0, 0.92, 0], ["RMC", "G2", "Pink", "B", 0, 0, 0, 3, 0.1, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 5, 2.2, 5], ["RIF", "6", "Azul Claro", "C", 12, 0, 1, 3, 0.14, "ult. semanas", 84.0, 84.0, 11.2, "ok", 0, 0.94, 0], ["RIF", "4", "Lilás", "C", 3, 0, 2, 3, 0.19, "ult. semanas (limitado a 2x)", 15.5, 15.5, 11.2, "ok", 6, 0.94, 10], ["RIF", "2", "Pink", "C", 9, 0, 1, 3, 0.14, "ult. semanas", 63.0, 63.0, 11.2, "ok", 0, 1.03, 0], ["RMC", "GG", "Marsala", "C", 0, 0, 0, 3, 0.1, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 5, 1.6, 5], ["PMC", "P", "Azul Marinho", "C", 7, 0, 0, 1, 0.03, "31d", 217.0, 217.0, 17.3, "ok", 0, 1.51, 0], ["PMC", "M", "Preto", "C", 19, 0, 0, 1, 0.03, "31d", 589.0, 589.0, 17.3, "ok", 0, 1.53, 0], ["RMC", "P", "Marsala", "C", 16, 0, 3, 3, 0.19, "ult. semanas (limitado a 2x)", 82.7, 82.7, 11.2, "ok", 0, 1.28, 4], ["PMC", "GG", "Branco", "C", 15, 0, 0, 1, 0.03, "31d", 465.0, 465.0, 17.3, "ok", 0, 1.92, 0], ["RMC", "P", "Preto", "C", 18, 0, 3, 3, 0.19, "ult. semanas (limitado a 2x)", 93.0, 93.0, 11.2, "ok", 0, 1.28, 2], ["RIF", "2", "Rosa Claro", "C", 0, 0, 0, 2, 0.06, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 6, 1.03, 6], ["RIF", "4", "Rosa Claro", "C", 7, 0, 2, 2, 0.13, "ult. semanas (limitado a 2x)", 54.2, 54.2, 11.2, "ok", 0, 0.94, 6], ["RIF", "2", "Lilás", "C", 0, 0, 0, 2, 0.06, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 6, 1.03, 6], ["RIF", "14", "Pink", "C", 0, 0, 0, 2, 0.07, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 6, 1.28, 6], ["RMC", "GG", "Lilás", "C", 0, 0, 0, 1, 0.03, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 2, 1.6, 2], ["RMC", "G3", "Rose", "C", 0, 0, 1, 2, 0.13, "ult. semanas (limitado a 2x)", 0.0, 0.0, 11.2, "zerado", 6, 2.26, 7], ["RMC", "GG", "Preto", "C", 0, 0, 1, 2, 0.13, "ult. semanas (limitado a 2x)", 0.0, 0.0, 11.2, "zerado", 6, 1.6, 7], ["RMC", "G3", "Preto", "C", 0, 2, 2, 2, 0.13, "ult. semanas (limitado a 2x)", 0.0, 15.5, 11.2, "zerado", 4, 2.26, 11], ["RIF", "6", "Pink", "C", 1, 0, 0, 1, 0.03, "ult. semanas", 31.0, 31.0, 11.2, "ok", 5, 0.94, 5], ["RIF", "2", "Rose", "C", 0, 0, 0, 1, 0.03, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 6, 1.03, 6], ["RIF", "2", "Azul Claro", "C", 0, 0, 1, 1, 0.06, "ult. semanas (limitado a 2x)", 0.0, 0.0, 11.2, "zerado", 6, 1.03, 7], ["RIF", "14", "Rose", "C", 8, 0, 0, 1, 0.06, "ult. semanas (limitado a 2x)", 124.0, 124.0, 11.2, "ok", 0, 1.28, 0], ["RMC", "G1", "Lilás", "C", 0, 0, 0, 1, 0.03, "ult. semanas", 0.0, 0.0, 11.2, "zerado", 2, 2.18, 2], ["RIF", "10", "Rose", "C", 14, 0, 0, 1, 0.06, "ult. semanas (limitado a 2x)", 217.0, 217.0, 11.2, "ok", 0, 1.1, 0], ["RMC", "GG", "Rose", "C", 29, 0, 1, 1, 0.06, "ult. semanas (limitado a 2x)", 449.5, 449.5, 11.2, "ok", 0, 1.6, 0], ["RMC", "M", "Pink", "C", 18, 0, 1, 1, 0.06, "ult. semanas (limitado a 2x)", 279.0, 279.0, 11.2, "ok", 0, 1.43, 0], ["RMC", "G2", "Rose", "C", 1, 1, 1, 1, 0.06, "ult. semanas (limitado a 2x)", 15.5, 31.0, 11.2, "ok", 1, 2.2, 5]], "bordado": {"desde": "2026-10-16", "dataFinal": "2026-10-20", "papeis": {"FNA": 7}, "carga": {"Azul Escuro": {"cores": ["Azul Claro"], "vendido": 1, "cortar": 199}, "Branco": {"cores": ["Marsala", "Pink", "Preto"], "vendido": 0, "cortar": 242}, "Pink": {"cores": ["Rosa Claro", "Rose"], "vendido": 3, "cortar": 538}, "Roxo": {"cores": ["Lilás"], "vendido": 0, "cortar": 49}, "Dourado": {"cores": ["Branco"], "vendido": 3, "cortar": 323}}, "nomes": {"NOI": "Noiva", "MNA": "Mãe da Noiva", "MNO": "Mãe do Noivo", "ANA": "Avó da Noiva", "MAD": "Madrinha", "TNA": "Tia da Noiva", "TNO": "Tia do Noivo", "DAM": "Daminha", "FLO": "Florista", "FNA": "Filha da Noiva", "FNO": "Filha do Noivo", "DEB": "Debutante", "MDB": "Mãe da Debutante", "ADB": "Avó da Debutante", "ANO": "Avó do Noivo", "IDB": "Irmã da Debutante", "FOR": "Formanda"}}}/*REP_FIM*/;
+let repLinha='todas', repStatus='todos';
+const REP_ST={zerado:{ico:'🔴',txt:'Zerado',ord:0},abaixo:{ico:'🟠',txt:'Abaixo do prazo',ord:1},ok:{ico:'🟢',txt:'Ok',ord:2},'sem-venda':{ico:'⚪',txt:'Sem venda',ord:3}};
+const REP_NOME={RMC:'Robe Manga Curta',RIF:'Robe Infantil',PMC:'Pijama Verão',PMI:'Pijama Inverno'};
+function repItens(){
+  return ((REPOSICAO&&REPOSICAO.itens)||[]).map(a=>({linha:a[0],tam:a[1],cor:a[2],abc:a[3],est:a[4],emp:a[5],q7:a[6],q30:a[7],ritmo:a[8],base:a[9],cobEst:a[10],cobTot:a[11],lt:a[12],st:a[13],cortar:a[14],tec:a[15],semTrava:a[16]||0}));
+}
+function repF1(x){ return x===null||x===undefined?'—':(Math.round(x*10)/10).toString().replace('.',','); }
+function repSetLinha(l,btn){ repLinha=l; document.querySelectorAll('#rep .rep-lin').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderReposicao(); }
+function repSetStatus(s,btn){ repStatus=s; document.querySelectorAll('#rep .rep-stf').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderReposicao(); }
+function abrirReposicao(){ showTab('rep',document.getElementById('tab-rep')); window.scrollTo({top:0,behavior:'smooth'}); }
+function renderReposicao(){
+  const R=REPOSICAO, al=document.getElementById('rep-alerta');
+  if(!R||!R.itens||!document.getElementById('rep')){ if(al) al.style.display='none'; return; }
+  const todos=repItens();
+  const nZ=todos.filter(i=>i.st==='zerado').length, nA=todos.filter(i=>i.st==='abaixo').length;
+  if(al){
+    al.style.display='block';
+    if(nZ+nA===0){ al.className='rep-alerta ok'; al.innerHTML='🟢 Reposição em dia — nenhuma combinação zerada ou abaixo do prazo <u>ver</u>'; }
+    else { al.className='rep-alerta'; al.innerHTML='🔴 '+nZ+' zerados · 🟠 '+nA+' abaixo do prazo <u>ver Reposição</u>'; }
+  }
+  document.getElementById('rep-sub').innerHTML='Posição de '+R.geradoEm+' (vendas até '+R.ate+').';
+  const lista=todos.filter(i=>(repLinha==='todas'||i.linha===repLinha)&&(repStatus==='todos'||i.st===repStatus)&&i.st!=='sem-venda');
+  const m=(typeof abcMapa==='function')?abcMapa():{};
+  const rk=i=>{ const a=m[i.linha+'|'+i.tam+'|'+i.cor]; return a?a.rank:99999; };
+  lista.sort((a,b)=>(REP_ST[a.st].ord-REP_ST[b.st].ord)||(rk(a)-rk(b)));
+  // cartoes
+  const cut=lista.reduce((s,i)=>s+i.cortar,0), met=lista.reduce((s,i)=>s+i.cortar*(i.tec||0),0);
+  document.getElementById('rep-cards').innerHTML=
+    '<div class="scard red"><div class="v">'+nZ+'</div><div class="l">🔴 zerados (com venda no mês)</div></div>'+
+    '<div class="scard ora"><div class="v">'+nA+'</div><div class="l">🟠 abaixo do prazo</div></div>'+
+    '<div class="scard grn"><div class="v">'+todos.filter(i=>i.st==='ok').length+'</div><div class="l">🟢 ok</div></div>'+
+    '<div class="scard"><div class="v">'+cut+' pç</div><div class="l">a cortar (filtro atual)</div></div>'+
+    '<div class="scard"><div class="v">'+repF1(met)+' m</div><div class="l">de tecido (filtro atual)</div></div>'+
+    '<div class="scard"><div class="v">'+lista.reduce((s,i)=>s+(i.semTrava||0),0)+' pç</div><div class="l">a cortar sem a trava de 2×</div></div>';
+  // cortar por tamanho, em ordem de venda (linha pelo melhor rank, tamanho pelo melhor rank, cor pelo rank)
+  const grp={};
+  lista.filter(i=>i.cortar>0).forEach(i=>{ ((grp[i.linha]=grp[i.linha]||{})[i.tam]=grp[i.linha][i.tam]||[]).push(i); });
+  const melhor=a=>a.reduce((s,i)=>Math.min(s,rk(i)),99999);
+  const linhas=Object.keys(grp).sort((x,y)=>melhor(Object.values(grp[x]).flat())-melhor(Object.values(grp[y]).flat()));
+  document.getElementById('rep-corte').innerHTML=linhas.length?linhas.map(L=>{
+    const tams=Object.keys(grp[L]).sort((a,b)=>melhor(grp[L][a])-melhor(grp[L][b]));
+    return '<div class="box"><h4>'+REP_NOME[L]+'</h4>'+tams.map(t=>{
+      const it=grp[L][t].sort((a,b)=>rk(a)-rk(b)), q=it.reduce((s,i)=>s+i.cortar,0), mt=it.reduce((s,i)=>s+i.cortar*(i.tec||0),0);
+      return '<div><b>Tam '+t+'</b> · '+q+' pç · '+repF1(mt)+' m — '+it.map(i=>'<span class="abc-pill '+((m[i.linha+'|'+i.tam+'|'+i.cor]||{}).classe||'C')+'">'+((m[i.linha+'|'+i.tam+'|'+i.cor]||{}).classe||'C')+'</span> '+i.cor+' <b>'+i.cortar+'</b>').join(' · ')+'</div>';
+    }).join('')+'</div>';
+  }).join(''):'<div class="box">Nada a cortar neste filtro.</div>';
+  // tabela
+  document.getElementById('rep-corpo').innerHTML='<table class="an-tbl rep-tbl"><thead><tr><th>Situação</th><th>Classe</th><th>Produto</th><th>Tam</th><th>Cor</th><th class="r">Estoque</th><th class="r">Em costura</th><th class="r">Vend. 7d</th><th class="r">Vend. 30d</th><th class="r">Ritmo/dia</th><th class="r">Dura (estoque)</th><th class="r">Dura (c/ costura)</th><th class="r">Prazo da peça</th><th class="r">Cortar</th><th class="r">Tecido</th></tr></thead><tbody>'+
+    lista.map(i=>{
+      const a=m[i.linha+'|'+i.tam+'|'+i.cor], s=REP_ST[i.st];
+      return '<tr'+(i.est<=0?' style="font-weight:700"':'')+'><td class="rep-st">'+s.ico+' '+s.txt+'</td><td>'+(a?'<span class="abc-pill '+a.classe+'">'+a.classe+'</span>':'')+'</td><td>'+REP_NOME[i.linha]+'</td><td><b>'+i.tam+'</b></td><td>'+dot(i.cor)+'</td><td class="r">'+i.est+'</td><td class="r">'+i.emp+'</td><td class="r">'+i.q7+'</td><td class="r">'+i.q30+'</td><td class="r" title="base do ritmo: '+i.base+'">'+repF1(i.ritmo)+'</td><td class="r">'+(i.est<=0?'0 d':repF1(i.cobEst)+' d')+'</td><td class="r">'+repF1(i.cobTot)+' d</td><td class="r">'+repF1(i.lt)+' d</td><td class="r">'+(i.cortar||'—')+'</td><td class="r">'+(i.cortar?repF1(i.cortar*(i.tec||0))+' m':'—')+'</td></tr>';
+    }).join('')+'</tbody></table>';
+  // bordado padrao
+  const B=R.bordado||{};
+  const pap=Object.entries(B.papeis||{}), totp=pap.reduce((s,[,n])=>s+n,0);
+  let bh='<p class="note" style="margin-bottom:8px">Peças vendidas com bordado padrão desde '+(B.desde?B.desde.slice(8,10)+'/'+B.desde.slice(5,7):'16/10')+' (sem o bazar): <b>'+totp+'</b>. '+(totp<30?'Ainda é pouco dado para decidir <b>quais papéis bordar antes de vender</b>: segue em observação por cerca de 2 semanas.':'')+'</p>';
+  bh+=pap.length?'<div class="abc-wrap"><table class="an-tbl"><thead><tr><th>Papel</th><th class="r">Vendidas</th></tr></thead><tbody>'+pap.map(([s,n])=>'<tr><td>'+(B.nomes&&B.nomes[s]?B.nomes[s]+' <span style="color:#999">('+s+')</span>':s)+'</td><td class="r">'+n+'</td></tr>').join('')+'</tbody></table></div>':'';
+  const car=Object.entries(B.carga||{}).sort((a,b)=>(b[1].vendido+b[1].cortar)-(a[1].vendido+a[1].cortar));
+  bh+='<p class="note" style="margin:12px 0 6px">Carga de bordado por <b>cor de linha</b>. <i>Vendido</i> = peças já vendidas com papel; <i>A cortar</i> = robes da lista acima que usariam essa linha se fossem bordados.</p>';
+  bh+=car.length?'<div class="abc-wrap"><table class="an-tbl"><thead><tr><th>Cor da linha</th><th>Cores de robe</th><th class="r">Vendido c/ bordado</th><th class="r">A cortar (robe)</th></tr></thead><tbody>'+car.map(([l,v])=>'<tr><td><b>'+l+'</b></td><td>'+v.cores.join(', ')+'</td><td class="r">'+v.vendido+'</td><td class="r">'+v.cortar+'</td></tr>').join('')+'</tbody></table></div>':'';
+  document.getElementById('rep-bordado').innerHTML=bh;
+}
+
 function renderABC(){
   const D = CURVA_ABC, corpo = document.getElementById('abc-corpo'), cards = document.getElementById('abc-cards');
   if(!corpo) return;
@@ -2339,7 +2459,7 @@ function renderABC(){
   corpo.innerHTML = '<table class="an-tbl"><thead><tr><th>#</th><th>Classe</th><th>'+(abcVista==='linha'?'Linha':'Produto')+'</th>'+(abcVista==='linha'?'':'<th>Cor</th>')+'<th class="r">Peças</th><th class="r">Faturamento</th><th class="r">% total</th><th class="r">% acum.</th><th class="r">Estoque</th><th class="r">Dias de estoque</th><th class="r">Recomendado</th></tr></thead><tbody>'
     + (it.length ? it.map(x=>{
         const dias = x.vd>0 ? Math.round(x.estoque/x.vd) : null;
-        return `<tr><td>${x.rank}</td><td><span class="abc-pill ${x.classe}">${x.classe}</span></td><td>${nome(x)}</td>${abcVista==='linha'?'':'<td>'+dot(x.cor)+'</td>'}<td class="r">${x.qtd}</td><td class="r">${abcRS(x.valor)}</td><td class="r">${anF2(x.pct)}%</td><td class="r">${anF2(x.cum)}%</td><td class="r">${x.estoque}</td><td class="r">${dias===null?'—':dias+' d'}</td><td class="r">${x.rec||'—'}</td></tr>`;
+        return `<tr${x.estoque<=0?' style="font-weight:700"':''}><td>${x.rank}</td><td><span class="abc-pill ${x.classe}">${x.classe}</span></td><td>${nome(x)}</td>${abcVista==='linha'?'':'<td>'+dot(x.cor)+'</td>'}<td class="r">${x.qtd}</td><td class="r">${abcRS(x.valor)}</td><td class="r">${anF2(x.pct)}%</td><td class="r">${anF2(x.cum)}%</td><td class="r">${x.estoque}</td><td class="r">${dias===null?'—':dias+' d'}</td><td class="r">${x.rec||'—'}</td></tr>`;
       }).join('') : '<tr><td colspan="11" class="na">Nenhum item nessa combinação de filtros.</td></tr>')
     + '</tbody></table>';
 }
@@ -3493,7 +3613,7 @@ function renderPlano(){
 
       <td><span class="badge ${tc}">${t}</span> ${r.prod}</td>
 
-      <td><b>${r.tam}</b></td><td>${dot(r.cor)} ${r.cor}</td>
+      <td><b>${r.tam}</b></td><td>${dot(r.cor)}</td>
 
       <td class="r">${urgente?`<span class="falta-pos" title="Estoque zerado/negativo com venda ativa">${r.estoqueAtual}</span>`:(r.estoqueAtual??'<span class="na">—</span>')}</td>
 
@@ -3571,7 +3691,7 @@ function busca(v){buscoT=v;renderPlano();}
 
 const encSt={};
 
-let encFiltro='todos', encTermo='';
+let encFiltro='todos', encTermo='', encMostrarCortados=false;
 
 function loteKey(prod,tam,cor,n){ return `${prod}|${tam}|${cor}|LOTE${n}`; }
 
@@ -3703,11 +3823,18 @@ function brData(d){ return d?d.split('-').reverse().join('/'):''; }
 
 
 
+function encToggleCortados(btn){
+  encMostrarCortados=!encMostrarCortados;
+  btn.textContent=encMostrarCortados?'🙈 Esconder já cortados':'👁 Mostrar já cortados';
+  btn.classList.toggle('active',encMostrarCortados);
+  renderEncaixe();
+}
+
 function encFilt(f,btn){
 
   encFiltro=f;
 
-  document.querySelectorAll('.efbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.efbtn:not(#enc-toggle-cortados)').forEach(b=>b.classList.remove('active'));
 
   btn.classList.add('active');
 
@@ -3745,6 +3872,18 @@ function encBusca(v){
 
 
 
+// ─── ordem do Encaixe pela curva ABC (Karol 08/10) ───────────
+function abcMapa(){
+  if(abcMapa._c) return abcMapa._c;
+  const it=(CURVA_ABC&&CURVA_ABC.itens)||[], tot=it.reduce((s,a)=>s+a[4],0); let cum=0; const m={};
+  it.forEach((a,k)=>{ cum+=a[4]; m[a[0]+'|'+a[1]+'|'+a[2]]={rank:k+1,classe:abcClasse(tot?cum/tot*100:100)}; });
+  return (abcMapa._c=m);
+}
+function abcDe(c){ return abcMapa()[c.tipo+'|'+c.tam+'|'+c.cor]||null; }
+function abcRankDe(c){ const a=abcDe(c); return a?a.rank:99999; }
+function abcPill(c){ const a=abcDe(c); return a?'<span class="abc-pill '+a.classe+'">'+a.classe+'</span> ':''; }
+function abcMelhor(lista){ return (lista||[]).reduce((m,c)=>Math.min(m,abcRankDe(c)),99999); }
+
 function renderEncaixe(){
 
   const cont=document.getElementById('enc-body');
@@ -3757,7 +3896,7 @@ function renderEncaixe(){
 
   combos.forEach(c=>{ (porTipo[c.tipo]=porTipo[c.tipo]||[]).push(c); });
 
-  const ordem=['RMC','RIF','PMC','PMI'];
+  const ordem=['RMC','RIF','PMC','PMI'].sort((x,y)=>abcMelhor(porTipo[x])-abcMelhor(porTipo[y]));
 
   const otam=['P','M','G','GG','G1','G2','G3','02','04','06','08','10','12','14','2','4','6','8','10','12','14'];
 
@@ -3787,7 +3926,7 @@ function renderEncaixe(){
 
     lista.forEach(c=>{ (porTam[c.tam]=porTam[c.tam]||[]).push(c); });
 
-    const tamsOrd=Object.keys(porTam).sort((a,b)=>otam.indexOf(a)-otam.indexOf(b));
+    const tamsOrd=Object.keys(porTam).sort((a,b)=>(abcMelhor(porTam[a])-abcMelhor(porTam[b]))||(otam.indexOf(a)-otam.indexOf(b)));
 
 
 
@@ -3812,7 +3951,7 @@ function renderEncaixe(){
       cs.forEach(c=>{
         lotesDoCombo(c.prod,c.tam,c.cor).forEach(l=>pares.push({c,l}));
       });
-      pares.sort((a,b)=>(a.l.chk===b.l.chk?0:(a.l.chk?1:-1))||a.c.cor.localeCompare(b.c.cor));
+      pares.sort((a,b)=>(abcRankDe(a.c)-abcRankDe(b.c))||a.c.cor.localeCompare(b.c.cor)||(a.l.chk===b.l.chk?0:(a.l.chk?1:-1)));
       pares.forEach(({c,l})=>{
         {
           const status=l.chk?'completo':(l.cortado>0?'parcial':'pendente');
@@ -3857,11 +3996,11 @@ function renderEncaixe(){
 
           const pct=l.necessario>0?Math.min(100,(l.cortado/l.necessario)*100):(l.cortado>0?100:0);
 
-          linhasHtml+=`<div class="lote-row${status==='completo'?' feito':''}" id="${rowId}">
+          linhasHtml+=(status==='completo'&&!encMostrarCortados&&encFiltro!=='cortados')?'':`<div class="lote-row${status==='completo'?' feito':''}" id="${rowId}">
 
             <input type="checkbox" ${l.chk?'checked':''} onchange="loteToggleChk('${l.k}',this,'${rowId}',${l.necessario})">
 
-            <div class="lote-nome"><div class="l1">${dot(c.cor)} ${tag}</div><div class="l2">${sub}</div></div>
+            <div class="lote-nome"><div class="l1">${abcPill(c)}${dot(c.cor)} ${tag}</div><div class="l2">${sub}</div></div>
 
             <div class="lote-progresso"><div class="lote-fracao"><span><b>${f2(l.cortado)}</b> / ${f2(l.necessario)} pç</span></div><div class="lote-barra"><div class="fill${status==='completo'?' completo':''}" style="width:${pct}%"></div></div></div>
 
@@ -4205,7 +4344,7 @@ function importState(file){
 
       if(data.encSt){ Object.keys(encSt).forEach(k=>delete encSt[k]); Object.assign(encSt, data.encSt); }
 
-      renderMesSeletor(); renderAnalises(); renderPlano(); renderEncaixe(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras(); renderRetalhoCores(); renderABC();
+      renderMesSeletor(); renderAnalises(); renderPlano(); renderEncaixe(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras(); renderRetalhoCores(); renderABC(); renderReposicao();
 
       alert('Backup carregado! (salvo em '+(data.savedAt||'').slice(0,10)+')');
 
@@ -4219,7 +4358,7 @@ function importState(file){
 
 
 
-renderMesSeletor(); renderAnalises(); renderPlano(); renderEncaixe(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras(); renderRetalhoCores(); renderABC();
+renderMesSeletor(); renderAnalises(); renderPlano(); renderEncaixe(); renderFaltaram(); buildPol(); buildEla(); buildViv(); buildElas(); buildBot(); renderListaCompras(); renderRetalhoCores(); renderABC(); renderReposicao();
 
 if(syncUrl){
 
