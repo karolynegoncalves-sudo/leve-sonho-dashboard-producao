@@ -572,6 +572,8 @@ tr.row-ok td{color:#555}
 
   </div>
 
+  <div id="an-producao"></div>
+
   <div class="kpi-gauges-row" id="an-gauges"></div>
 
   <div class="sgrid" id="an-cards-totais"></div>
@@ -2577,10 +2579,81 @@ function renderABC(){
       }).join('') : '<tr><td colspan="11" class="na">Nenhum item nessa combinação de filtros.</td></tr>')
     + '</tbody></table>';
 }
+const PROD = /*PROD_INI*/{"geradoEm": "12/11/2026", "regra": "Natália até 30/10 (inclui peças sem nome) · Karol a partir de 31/10", "inicio": "2026-09-01", "viradaKarol": "2026-10-31", "semanas": [{"ini": "2026-08-31", "Natália": 425, "Karol": 0}, {"ini": "2026-09-07", "Natália": 104, "Karol": 0}, {"ini": "2026-09-14", "Natália": 65, "Karol": 0}, {"ini": "2026-09-21", "Natália": 315, "Karol": 0}, {"ini": "2026-09-28", "Natália": 167, "Karol": 0}, {"ini": "2026-10-05", "Natália": 566, "Karol": 0}, {"ini": "2026-10-12", "Natália": 0, "Karol": 0}, {"ini": "2026-10-19", "Natália": 462, "Karol": 0}, {"ini": "2026-10-26", "Natália": 374, "Karol": 70}, {"ini": "2026-11-02", "Natália": 0, "Karol": 178}, {"ini": "2026-11-09", "Natália": 0, "Karol": 78}], "diario": [{"d": "2026-09-04", "pessoa": "Natália", "pcs": 425, "lotes": 61}, {"d": "2026-09-11", "pessoa": "Natália", "pcs": 104, "lotes": 14}, {"d": "2026-09-17", "pessoa": "Natália", "pcs": 65, "lotes": 10}, {"d": "2026-09-21", "pessoa": "Natália", "pcs": 5, "lotes": 4}, {"d": "2026-09-24", "pessoa": "Natália", "pcs": 268, "lotes": 42}, {"d": "2026-09-25", "pessoa": "Natália", "pcs": 42, "lotes": 7}, {"d": "2026-09-28", "pessoa": "Natália", "pcs": 31, "lotes": 6}, {"d": "2026-09-30", "pessoa": "Natália", "pcs": 45, "lotes": 4}, {"d": "2026-10-02", "pessoa": "Natália", "pcs": 91, "lotes": 7}, {"d": "2026-10-07", "pessoa": "Natália", "pcs": 453, "lotes": 56}, {"d": "2026-10-08", "pessoa": "Natália", "pcs": 57, "lotes": 6}, {"d": "2026-10-09", "pessoa": "Natália", "pcs": 56, "lotes": 10}, {"d": "2026-10-19", "pessoa": "Natália", "pcs": 5, "lotes": 3}, {"d": "2026-10-21", "pessoa": "Natália", "pcs": 171, "lotes": 8}, {"d": "2026-10-22", "pessoa": "Natália", "pcs": 64, "lotes": 3}, {"d": "2026-10-23", "pessoa": "Natália", "pcs": 222, "lotes": 8}, {"d": "2026-10-26", "pessoa": "Natália", "pcs": 22, "lotes": 1}, {"d": "2026-10-28", "pessoa": "Natália", "pcs": 162, "lotes": 7}, {"d": "2026-10-30", "pessoa": "Natália", "pcs": 190, "lotes": 4}, {"d": "2026-10-31", "pessoa": "Karol", "pcs": 70, "lotes": 2}, {"d": "2026-11-08", "pessoa": "Karol", "pcs": 178, "lotes": 19}, {"d": "2026-11-09", "pessoa": "Karol", "pcs": 54, "lotes": 4}, {"d": "2026-11-10", "pessoa": "Karol", "pcs": 24, "lotes": 1}], "meses": [{"ym": "2026-09", "mes": "Setembro", "pessoa": "Natália", "pcs": 985, "lotes": 148, "dias": 8, "enfestos": 0, "pcsEnfesto": 0, "retalho": 213, "pcsDia": 123.1, "diasUteis": 22, "pcsDiaUtil": 44.8, "primeiro": "2026-09-04", "ultimo": "2026-09-30"}, {"ym": "2026-10", "mes": "Outubro", "pessoa": "Natália", "pcs": 1493, "lotes": 113, "dias": 11, "enfestos": 31, "pcsEnfesto": 27, "retalho": 253, "pcsDia": 135.7, "diasUteis": 22, "pcsDiaUtil": 67.9, "primeiro": "2026-10-02", "ultimo": "2026-10-30"}, {"ym": "2026-10", "mes": "Outubro", "pessoa": "Karol", "pcs": 70, "lotes": 2, "dias": 1, "enfestos": 1, "pcsEnfesto": 60, "retalho": 10, "pcsDia": 70.0, "diasUteis": 1, "pcsDiaUtil": 70.0, "primeiro": "2026-10-31", "ultimo": "2026-10-31"}, {"ym": "2026-11", "mes": "Novembro", "pessoa": "Karol", "pcs": 256, "lotes": 24, "dias": 3, "enfestos": 9, "pcsEnfesto": 22, "retalho": 56, "pcsDia": 85.3, "diasUteis": 9, "pcsDiaUtil": 28.4, "primeiro": "2026-11-08", "ultimo": "2026-11-10"}], "projetado": [{"mes": "Agosto", "planejado": 727, "realizado": 561, "pct": 77.2, "fechado": true}, {"mes": "Setembro", "planejado": 1968, "realizado": 975, "pct": 49.5, "fechado": true, "combos": 104, "completos": 24, "naoIniciados": 43}, {"mes": "Outubro", "planejado": 2556, "realizado": 1259, "pct": 49.3, "fechado": true, "combos": 95, "completos": 19, "naoIniciados": 54}, {"mes": "Novembro", "planejado": 1799, "realizado": 247, "pct": 13.7, "fechado": false, "combos": 91, "completos": 6, "naoIniciados": 70}], "gargalos": {"ritmoNataliaSetOut": 56.3, "ritmoKarol": 32.6, "capacidadeEnfestoDia": "2 a 3 enfestos de 60 a 70 pç = 120 a 210 pç/dia", "historicoFuros": [{"data": "2026-11-12", "zerados": 43, "abaixo": 15, "rec": 1778, "wip": 17, "porLinha": {"PMC": {"zerados": 14, "abaixo": 4}, "RMC": {"zerados": 10, "abaixo": 7}, "RIF": {"zerados": 19, "abaixo": 4}}}], "leadCostura": {"RMC": 6.2, "PMC": 10.1, "RIF": 6.2}, "furosHoje": {"data": "2026-11-12", "zerados": 43, "abaixo": 15, "rec": 1778, "wip": 17, "porLinha": {"PMC": {"zerados": 14, "abaixo": 4}, "RMC": {"zerados": 10, "abaixo": 7}, "RIF": {"zerados": 19, "abaixo": 4}}}}, "frase": "Corte: Novembro saiu 247 de 1799 pç planejadas (13,7%). Desde 31/10 o ritmo é 32,6 pç por dia útil, contra 56,3 da Natália em set/out (58%). Costura e balanço não entram nesta conta: o dashboard ainda não guarda a data de saída e de volta de cada lote.", "loginDiverge": 0}/*PROD_FIM*/;
+let prodPeriodo = 'tudo';
+function prodSetPeriodo(p){ prodPeriodo = p; renderProducao(); }
+function prodF1(n){ return (Math.round(n*10)/10).toString().replace('.',','); }
+function renderProducao(){
+  const host = document.getElementById('an-producao'); if(!host) return;
+  if(!PROD || !PROD.meses){ host.innerHTML = '<span class="na">Ranking e gargalos aparecem depois do próximo refresh.</span>'; return; }
+  const COR = {'Natália':'#3949ab','Karol':'#e65100'};
+  const per = [['tudo','Tudo (set–nov)'],['2026-09','Setembro'],['2026-10','Outubro'],['2026-11','Novembro']];
+  // --- 1. ranking por pessoa ---
+  const sel = prodPeriodo==='tudo' ? PROD.meses : PROD.meses.filter(m=>m.ym===prodPeriodo);
+  const agg = {};
+  sel.forEach(m=>{ const a = agg[m.pessoa] = agg[m.pessoa] || {pcs:0,lotes:0,dias:0,enf:0,enfPcs:0,ret:0,du:0};
+    a.pcs+=m.pcs; a.lotes+=m.lotes; a.dias+=m.dias; a.enf+=m.enfestos; a.enfPcs+=m.enfestos*m.pcsEnfesto; a.ret+=m.retalho; a.du+=m.diasUteis; });
+  const nomes = Object.keys(agg).sort((x,y)=>agg[y].pcs-agg[x].pcs);
+  const maxP = Math.max(1,...nomes.map(n=>agg[n].pcs));
+  const btns = per.map(p=>`<button class="tab${prodPeriodo===p[0]?' active':''}" style="padding:4px 10px;font-size:11px" onclick="prodSetPeriodo('${p[0]}')">${p[1]}</button>`).join(' ');
+  let h = `<div class="an-card-box" style="margin-top:14px"><h3>🏅 Ranking de corte por pessoa</h3><div style="margin-bottom:10px">${btns}</div>`;
+  h += nomes.length ? `<table class="an-tbl"><thead><tr><th>#</th><th>Pessoa</th><th class="r">Peças</th><th class="r">Lotes</th><th class="r">Dias com corte</th><th class="r">Peças por dia com corte</th><th class="r">Peças por dia útil</th><th class="r">Peças por enfesto</th><th class="r">Retalho</th></tr></thead><tbody>`
+    + nomes.map((n,i)=>{ const a=agg[n]; return `<tr><td>${i+1}</td><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${COR[n]};margin-right:6px"></span><b>${n}</b></td><td class="r"><b>${a.pcs}</b></td><td class="r">${a.lotes}</td><td class="r">${a.dias}</td><td class="r">${a.dias?prodF1(a.pcs/a.dias):'–'}</td><td class="r">${a.du?prodF1(a.pcs/a.du):'–'}</td><td class="r">${a.enf?Math.round(a.enfPcs/a.enf):'–'}</td><td class="r">${a.ret}</td></tr>`; }).join('')
+    + `</tbody></table>` : '<span class="na">Sem corte neste período.</span>';
+  h += `<div style="font-size:11px;color:#777;margin-top:10px;line-height:1.6">Regra de atribuição (Karol, 12/11): <b>${PROD.regra}</b>. O login gravado na planilha é só quem digitou, então não é usado. Cada lote tem uma data (a do último corte), então “dias com corte” conta dias de registro: se vários dias foram lançados juntos, as peças por dia ficam infladas. “Dia útil” = segunda a sexta desde o início do período da pessoa; o corte de sábado e domingo entra nas peças, mas não nos dias úteis.</div></div>`;
+
+  // --- 2. linha do tempo semanal (queda e retomada) ---
+  const S = PROD.semanas; const maxS = Math.max(1,...S.map(s=>s['Natália']+s['Karol']));
+  const W=Math.max(560,S.length*38), H=190, pl=34, pb=34, pt=10, bw=Math.min(26,(W-pl-10)/S.length-6);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;height:auto;font-family:inherit">`;
+  [0,.5,1].forEach(f=>{ const y=pt+(H-pt-pb)*(1-f); svg+=`<line x1="${pl}" x2="${W-4}" y1="${y}" y2="${y}" stroke="#e3e5ee"/><text x="${pl-4}" y="${y+3}" font-size="9" text-anchor="end" fill="#777">${Math.round(maxS*f)}</text>`; });
+  S.forEach((s,i)=>{ const x=pl+6+i*((W-pl-10)/S.length); let y=H-pb;
+    ['Natália','Karol'].forEach(p=>{ const hh=(H-pt-pb)*s[p]/maxS; if(hh>0){ y-=hh; svg+=`<rect x="${x}" y="${y}" width="${bw}" height="${hh}" fill="${COR[p]}"><title>Semana de ${anDataBR(s.ini)} · ${p}: ${s[p]} pç</title></rect>`; } });
+    const tot=s['Natália']+s['Karol']; svg+=`<text x="${x+bw/2}" y="${(tot?y:H-pb)-3}" font-size="9" text-anchor="middle" fill="#333">${tot||0}</text>`;
+    svg+=`<text x="${x+bw/2}" y="${H-pb+12}" font-size="8.5" text-anchor="middle" fill="#777">${anDataBR(s.ini).slice(0,5)}</text>`; });
+  svg += `</svg>`;
+  h += `<div class="an-card-box" style="margin-top:14px"><h3>📉 Peças cortadas por semana (queda e retomada)</h3><div style="font-size:11px;margin-bottom:6px"><span style="color:${COR['Natália']}">■</span> Natália &nbsp; <span style="color:${COR['Karol']}">■</span> Karol (desde 31/10) &nbsp;· semana começando na segunda</div><div style="overflow-x:auto">${svg}</div></div>`;
+
+  // --- 3. projetado x realizado ---
+  const P = PROD.projetado; const maxP2 = Math.max(1,...P.map(p=>p.planejado));
+  const W2=Math.max(420,P.length*110), H2=210, bw2=34;
+  let s2 = `<svg viewBox="0 0 ${W2} ${H2}" style="width:100%;max-width:${W2}px;height:auto;font-family:inherit">`;
+  [0,.5,1].forEach(f=>{ const y=10+(H2-52)*(1-f); s2+=`<line x1="34" x2="${W2-4}" y1="${y}" y2="${y}" stroke="#e3e5ee"/><text x="30" y="${y+3}" font-size="9" text-anchor="end" fill="#777">${Math.round(maxP2*f)}</text>`; });
+  let pts=[];
+  P.forEach((p,i)=>{ const cx=34+(i+.5)*((W2-38)/P.length), hp=(H2-52)*p.planejado/maxP2, hr=(H2-52)*p.realizado/maxP2, y0=H2-42;
+    s2+=`<rect x="${cx-bw2-1}" y="${y0-hp}" width="${bw2}" height="${hp}" fill="#c5cae9"><title>${p.mes} · planejado ${p.planejado} pç</title></rect><rect x="${cx+1}" y="${y0-hr}" width="${bw2}" height="${hr}" fill="#3949ab"><title>${p.mes} · realizado ${p.realizado} pç</title></rect>`;
+    s2+=`<text x="${cx-bw2/2-1}" y="${y0-hp-3}" font-size="9" text-anchor="middle" fill="#555">${p.planejado}</text><text x="${cx+bw2/2+1}" y="${y0-hr-3}" font-size="9" text-anchor="middle" fill="#1a1a2e">${p.realizado}</text>`;
+    s2+=`<text x="${cx}" y="${H2-26}" font-size="10" text-anchor="middle" fill="#333">${p.mes}${p.fechado?'':' (parcial)'}</text><text x="${cx}" y="${H2-12}" font-size="10.5" text-anchor="middle" font-weight="bold" fill="${p.pct>=75?'#2e7d32':(p.pct>=40?'#e65100':'#c62828')}">${prodF1(p.pct)}% cumprido</text>`;
+    pts.push([cx, 10+(H2-52)*(1-Math.min(100,p.pct)/100)]); });
+  s2 += `<polyline fill="none" stroke="#c62828" stroke-width="1.5" stroke-dasharray="4 3" points="${pts.map(q=>q.join(',')).join(' ')}"/>` + pts.map(q=>`<circle cx="${q[0]}" cy="${q[1]}" r="3" fill="#c62828"/>`).join('') + `</svg>`;
+  h += `<div class="an-card-box" style="margin-top:14px"><h3>🎯 Projetado × realizado, mês a mês</h3><div style="font-size:11px;margin-bottom:6px"><span style="color:#9fa8da">■</span> planejado &nbsp; <span style="color:#3949ab">■</span> realizado (cortado) &nbsp; <span style="color:#c62828">- -</span> % cumprido (escala de 0 a 100% do eixo)</div><div style="overflow-x:auto">${s2}</div>`
+    + `<div style="font-size:11px;color:#777;margin-top:8px;line-height:1.6"><b>Cuidado ao comparar:</b> agosto tinha uma meta fixa de 727 peças. De setembro em diante o planejado = o que já foi cortado + o que o plano ainda pedia na última leitura, e ele muda a cada refresh. Por isso o % de setembro e outubro (≈ 49%) não é comparável 1 a 1 com o de agosto (77%). Novembro está em andamento, a barra cresce até o dia 30.</div></div>`;
+
+  // --- 4. gargalos ---
+  const g = PROD.gargalos||{}; const f = g.furosHoje; const lc = g.leadCostura||{};
+  const nom = {RMC:'Robe adulto',RIF:'Robe infantil',PMC:'Pijama verão',PMI:'Pijama inverno'};
+  let gh = PROD.frase ? `<div class="banner" style="margin-bottom:10px"><b>Maior gargalo do mês:</b> ${PROD.frase}</div>` : '';
+  gh += `<div class="sgrid">`
+    + `<div class="scard"><div class="v">${g.ritmoKarol!=null?prodF1(g.ritmoKarol):'–'} pç/dia útil</div><div class="l">Corte da Karol desde 31/10 (Natália em set/out: ${g.ritmoNataliaSetOut!=null?prodF1(g.ritmoNataliaSetOut):'–'})</div></div>`
+    + `<div class="scard"><div class="v">120 a 210 pç/dia</div><div class="l">Capacidade da mesa (2 a 3 enfestos de 60 a 70 pç)</div></div>`
+    + (f?`<div class="scard red"><div class="v">${f.zerados}</div><div class="l">Combinações zeradas hoje (${f.abaixo} abaixo do prazo)</div></div>`:'')
+    + (f?`<div class="scard ora"><div class="v">${f.wip} pç</div><div class="l">A caminho (costura lançada à mão)</div></div>`:'')
+    + `</div>`;
+  if(f){ gh += `<table class="an-tbl" style="margin-top:12px"><thead><tr><th>Linha</th><th class="r">Zeradas</th><th class="r">Abaixo do prazo</th><th class="r">Lead time de costura (config.)</th></tr></thead><tbody>`
+    + Object.keys(f.porLinha).map(k=>`<tr><td>${nom[k]||k}</td><td class="r">${f.porLinha[k].zerados}</td><td class="r">${f.porLinha[k].abaixo}</td><td class="r">${lc[k]!=null?prodF1(lc[k])+' d':'–'}</td></tr>`).join('') + `</tbody></table>`; }
+  const hist = (g.historicoFuros||[]);
+  if(hist.length>1){ gh += `<div style="font-size:11px;margin-top:10px">Furos por dia: ` + hist.slice(-14).map(x=>`${anDataBR(x.data).slice(0,5)}: <b>${x.zerados}</b>`).join(' · ') + `</div>`; }
+  else gh += `<div style="font-size:11px;color:#777;margin-top:10px">Histórico de furos começou a ser guardado em ${PROD.geradoEm}: um registro por dia, o gráfico aparece quando houver alguns dias.</div>`;
+  gh += `<div style="font-size:11px;color:#777;margin-top:10px;line-height:1.6"><b>Ainda sem dado (não dá para medir hoje):</b> costura (o dashboard não guarda a data em que cada lote saiu e voltou, nem a costureira), caseado e conferência do pijama, e falta de tecido ou aviamento por dia. Para medir, precisaria registrar a data de saída e de volta de cada lote. O “a caminho” hoje é digitado à mão.</div>`;
+  h += `<div class="an-card-box" style="margin-top:14px"><h3>🚧 Gargalos da produção</h3>${gh}</div>`;
+  host.innerHTML = h;
+}
+
 function analiseMesAtual(){
   return ANALISES_POR_MES[planoMesAtivo] || ANALISES_POR_MES.agosto;
 }
 function renderAnalises(){
+  try{ renderProducao(); }catch(e){ console.error('renderProducao',e); }
 
   const A = analiseMesAtual();
 
