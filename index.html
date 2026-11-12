@@ -2977,7 +2977,7 @@ function applyRemoteState(rowsIn){
 
     if(aba==='enc'){
 
-      let parsed={date:'',qtd:'',motivo:'',obs:'',necessario:'',cortado:'',origem:'',mesOrigem:'',saida:'',volta:'',costureira:''};
+      let parsed={date:'',qtd:'',motivo:'',obs:'',necessario:'',cortado:'',origem:'',mesOrigem:'',saida:'',volta:'',costureira:'',previsao:''};
 
       if(campo2){
 
@@ -2993,7 +2993,7 @@ function applyRemoteState(rowsIn){
 
               cortado:(p.cortado===undefined||p.cortado===null)?'':p.cortado,
 
-              origem:p.origem||'',mesOrigem:p.mesOrigem||'',saida:p.saida||'',volta:p.volta||'',costureira:p.costureira||''};
+              origem:p.origem||'',mesOrigem:p.mesOrigem||'',saida:p.saida||'',volta:p.volta||'',costureira:p.costureira||'',previsao:p.previsao||''};
 
           } else {
 
@@ -3011,11 +3011,11 @@ function applyRemoteState(rowsIn){
 
       const cur=encSt[chave];
 
-      const diff=!cur||cur.chk!==ok||cur.date!==parsed.date||String(cur.cortado??'')!==String(parsed.cortado)||String(cur.necessario??'')!==String(parsed.necessario)||cur.motivo!==parsed.motivo||cur.obs!==parsed.obs||cur.origem!==parsed.origem||(cur.saida||'')!==parsed.saida||(cur.volta||'')!==parsed.volta||(cur.costureira||'')!==parsed.costureira||cur.by!==by;
+      const diff=!cur||cur.chk!==ok||cur.date!==parsed.date||String(cur.cortado??'')!==String(parsed.cortado)||String(cur.necessario??'')!==String(parsed.necessario)||cur.motivo!==parsed.motivo||cur.obs!==parsed.obs||cur.origem!==parsed.origem||(cur.saida||'')!==parsed.saida||(cur.volta||'')!==parsed.volta||(cur.costureira||'')!==parsed.costureira||(cur.previsao||'')!==parsed.previsao||cur.by!==by;
 
       if(diff){
 
-        encSt[chave]={chk:ok,date:parsed.date,qtd:parsed.qtd,motivo:parsed.motivo,obs:parsed.obs,necessario:parsed.necessario,cortado:parsed.cortado,origem:parsed.origem,mesOrigem:parsed.mesOrigem,saida:parsed.saida,volta:parsed.volta,costureira:parsed.costureira,by,at};
+        encSt[chave]={chk:ok,date:parsed.date,qtd:parsed.qtd,motivo:parsed.motivo,obs:parsed.obs,necessario:parsed.necessario,cortado:parsed.cortado,origem:parsed.origem,mesOrigem:parsed.mesOrigem,saida:parsed.saida,volta:parsed.volta,costureira:parsed.costureira,previsao:parsed.previsao,by,at};
 
         changed=true;
 
@@ -3097,7 +3097,7 @@ function pushLote(k){
 
     date:s.date||'',origem:s.origem||'',mesOrigem:s.mesOrigem||'',motivo:s.motivo||'',obs:s.obs||'',
 
-    saida:s.saida||'',volta:s.volta||'',costureira:s.costureira||''
+    saida:s.saida||'',volta:s.volta||'',costureira:s.costureira||'',previsao:s.previsao||''
 
   }));
 
@@ -4266,7 +4266,7 @@ function encHistoricoHtml(){
         return '<div class="lote-row feito" id="'+rid+'"><input type="checkbox" checked disabled>'+
           '<div class="lote-nome"><div class="l1">'+abcPill(cobj)+dot(x.cor)+' '+tag+'</div><div class="l2">'+tNome[x.L]+' · tam '+esc(x.tam)+'</div></div>'+
           '<div class="lote-progresso"><div class="lote-fracao"><span>'+(x.enf?'<b>'+folhasDe(x.L,x.tam,x.q)+'</b> folhas cortadas ('+f2(x.q)+' pç)':'<b>'+f2(x.q)+'</b> pç cortadas')+'</span></div></div>'+
-          '<div class="lote-input">'+input+'<span class="un">'+(x.enf?'folhas':'pç')+'</span></div><div class="lote-falta zero">✓</div></div>'+'<div class="lote-costura" id="cst_'+rid.slice(2)+'">🧵 Saída <input type="date" value="'+(encSt[x.k].saida||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'saida\',this.value)"> Volta <input type="date" value="'+(encSt[x.k].volta||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'volta\',this.value)"> Costureira <input list="lista-costureiras" value="'+esc(encSt[x.k].costureira||'')+'" placeholder="nome" style="width:90px" onchange="loteSetCostura(\''+x.k+'\',\'costureira\',this.value)"> <span class="cst-st">'+costStatus(encSt[x.k])+'</span></div>';
+          '<div class="lote-input">'+input+'<span class="un">'+(x.enf?'folhas':'pç')+'</span></div><div class="lote-falta zero">✓</div></div>'+'<div class="lote-costura" id="cst_'+rid.slice(2)+'">🧵 Saída <input type="date" value="'+(encSt[x.k].saida||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'saida\',this.value)"> Volta <input type="date" value="'+(encSt[x.k].volta||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'volta\',this.value)"> Prevista <input type="date" value="'+(encSt[x.k].previsao||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'previsao\',this.value)"> Costureira <input list="lista-costureiras" value="'+esc(encSt[x.k].costureira||'')+'" placeholder="nome" style="width:90px" onchange="loteSetCostura(\''+x.k+'\',\'costureira\',this.value)"> <span class="cst-st">'+costStatus(encSt[x.k])+'</span></div>';
       }).join('')+'</div></div>';
   });
   return out;
@@ -4570,7 +4570,7 @@ function loteSetCostura(k,campo,v){
 }
 function costStatus(s){
   if(s.saida&&s.volta) return '✅ costura levou <b>'+costDias(s.saida,s.volta)+'</b> dia(s)';
-  if(s.saida) return '🧵 em costura há <b>'+costDias(s.saida)+'</b> dia(s)';
+  if(s.saida) return '🧵 em costura há <b>'+costDias(s.saida)+'</b> dia(s)'+(s.previsao?' · volta prevista <b>'+s.previsao.split('-').reverse().join('/').slice(0,5)+'</b>':'');
   return '<span style="color:#999">sem registro de costura</span>';
 }
 function costuraDia(d){
