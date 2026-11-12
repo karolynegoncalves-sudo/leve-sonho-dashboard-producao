@@ -393,6 +393,7 @@ tr.row-ok td{color:#555}
 .lote-row{display:grid;grid-template-columns:22px 1.5fr 1fr 100px 68px;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid #f5f5f5;transition:background .12s}
 
 .lote-row:last-child{border-bottom:none}
+.lote-costura{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:4px 14px 9px 48px;font-size:11px;color:#555;border-bottom:1px solid #f5f5f5;background:#fafbff}.lote-costura input{font-size:11px;padding:2px 4px;border:1px solid #cfd3e6;border-radius:4px}.lote-costura button{font-size:11px;padding:3px 9px;border:0;border-radius:4px;background:#3949ab;color:#fff;cursor:pointer}.lote-costura-dia{background:#eef0fb;border-bottom:1px solid #dde0f2}
 
 .lote-row:hover{background:#f7f8fc}
 
@@ -2644,7 +2645,16 @@ function renderProducao(){
   const hist = (g.historicoFuros||[]);
   if(hist.length>1){ gh += `<div style="font-size:11px;margin-top:10px">Furos por dia: ` + hist.slice(-14).map(x=>`${anDataBR(x.data).slice(0,5)}: <b>${x.zerados}</b>`).join(' · ') + `</div>`; }
   else gh += `<div style="font-size:11px;color:#777;margin-top:10px">Histórico de furos começou a ser guardado em ${PROD.geradoEm}: um registro por dia, o gráfico aparece quando houver alguns dias.</div>`;
-  gh += `<div style="font-size:11px;color:#777;margin-top:10px;line-height:1.6"><b>Ainda sem dado (não dá para medir hoje):</b> costura (o dashboard não guarda a data em que cada lote saiu e voltou, nem a costureira), caseado e conferência do pijama, e falta de tecido ou aviamento por dia. Para medir, precisaria registrar a data de saída e de volta de cada lote. O “a caminho” hoje é digitado à mão.</div>`;
+  const ct=(g.costura||{});
+  gh += `<h4 style="margin:14px 0 6px;font-size:12px">🧵 Costura (registro por lote desde ${anDataBR(ct.inicioRegistro||'2026-11-12')})</h4>`;
+  if(ct.lotesComSaida){
+    gh += `<div class="sgrid"><div class="scard ora"><div class="v">${ct.emCostura.pcs} pç</div><div class="l">Em costura agora (${ct.emCostura.lotes} lotes${ct.emCostura.lotes?', o mais antigo há '+ct.emCostura.maisAntigoDias+' d':''})</div></div><div class="scard grn"><div class="v">${ct.concluidos}</div><div class="l">Lotes que já voltaram (de ${ct.lotesComSaida} com saída registrada)</div></div></div>`;
+    const LR=ct.leadReal||{}, PC=ct.porCostureira||{};
+    if(Object.keys(LR).length) gh += `<table class="an-tbl" style="margin-top:10px"><thead><tr><th>Linha</th><th class="r">Lotes</th><th class="r">Peças</th><th class="r">Dias na costura (média)</th><th class="r">Maior</th><th class="r">Configurado</th></tr></thead><tbody>`+Object.keys(LR).map(k=>`<tr><td>${k}</td><td class="r">${LR[k].lotes}</td><td class="r">${LR[k].pcs}</td><td class="r"><b>${prodF1(LR[k].medio)}</b></td><td class="r">${LR[k].maximo}</td><td class="r">${(lc[Object.keys(nom).find(x=>nom[x]===k)]!=null)?prodF1(lc[Object.keys(nom).find(x=>nom[x]===k)])+' d':'–'}</td></tr>`).join('')+`</tbody></table>`;
+    if(Object.keys(PC).length) gh += `<table class="an-tbl" style="margin-top:10px"><thead><tr><th>Costureira</th><th class="r">Lotes</th><th class="r">Peças</th><th class="r">Dias (média)</th><th class="r">Maior</th></tr></thead><tbody>`+Object.keys(PC).sort((a,b)=>PC[b].pcs-PC[a].pcs).map(k=>`<tr><td>${k}</td><td class="r">${PC[k].lotes}</td><td class="r">${PC[k].pcs}</td><td class="r"><b>${prodF1(PC[k].medio)}</b></td><td class="r">${PC[k].maximo}</td></tr>`).join('')+`</tbody></table>`;
+    gh += `<div style="font-size:11px;color:#777;margin-top:6px">“Dias na costura” = volta menos saída, pelas datas que você registra em <b>Encaixe de Corte → Cortes já feitos</b>. O lead time configurado soma costura e acabamento, então a comparação é aproximada.</div>`;
+  } else gh += `<div style="font-size:11px;color:#777;line-height:1.6">Nenhum lote com saída registrada ainda. Em <b>Encaixe de Corte → Cortes já feitos neste mês</b> cada registro tem Saída, Volta e Costureira (e um botão para aplicar ao dia inteiro). Os números aparecem aqui assim que houver datas.</div>`;
+  gh += `<div style="font-size:11px;color:#777;margin-top:10px;line-height:1.6"><b>Ainda sem dado:</b> caseado e conferência do pijama, e falta de tecido ou aviamento por dia. O “a caminho” que entra no plano continua sendo o lançado à mão.</div>`;
   h += `<div class="an-card-box" style="margin-top:14px"><h3>🚧 Gargalos da produção</h3>${gh}</div>`;
   host.innerHTML = h;
 }
@@ -2947,7 +2957,7 @@ function applyRemoteState(rowsIn){
 
     if(aba==='enc'){
 
-      let parsed={date:'',qtd:'',motivo:'',obs:'',necessario:'',cortado:'',origem:'',mesOrigem:''};
+      let parsed={date:'',qtd:'',motivo:'',obs:'',necessario:'',cortado:'',origem:'',mesOrigem:'',saida:'',volta:'',costureira:''};
 
       if(campo2){
 
@@ -2963,7 +2973,7 @@ function applyRemoteState(rowsIn){
 
               cortado:(p.cortado===undefined||p.cortado===null)?'':p.cortado,
 
-              origem:p.origem||'',mesOrigem:p.mesOrigem||''};
+              origem:p.origem||'',mesOrigem:p.mesOrigem||'',saida:p.saida||'',volta:p.volta||'',costureira:p.costureira||''};
 
           } else {
 
@@ -2981,11 +2991,11 @@ function applyRemoteState(rowsIn){
 
       const cur=encSt[chave];
 
-      const diff=!cur||cur.chk!==ok||cur.date!==parsed.date||String(cur.cortado??'')!==String(parsed.cortado)||String(cur.necessario??'')!==String(parsed.necessario)||cur.motivo!==parsed.motivo||cur.obs!==parsed.obs||cur.origem!==parsed.origem||cur.by!==by;
+      const diff=!cur||cur.chk!==ok||cur.date!==parsed.date||String(cur.cortado??'')!==String(parsed.cortado)||String(cur.necessario??'')!==String(parsed.necessario)||cur.motivo!==parsed.motivo||cur.obs!==parsed.obs||cur.origem!==parsed.origem||(cur.saida||'')!==parsed.saida||(cur.volta||'')!==parsed.volta||(cur.costureira||'')!==parsed.costureira||cur.by!==by;
 
       if(diff){
 
-        encSt[chave]={chk:ok,date:parsed.date,qtd:parsed.qtd,motivo:parsed.motivo,obs:parsed.obs,necessario:parsed.necessario,cortado:parsed.cortado,origem:parsed.origem,mesOrigem:parsed.mesOrigem,by,at};
+        encSt[chave]={chk:ok,date:parsed.date,qtd:parsed.qtd,motivo:parsed.motivo,obs:parsed.obs,necessario:parsed.necessario,cortado:parsed.cortado,origem:parsed.origem,mesOrigem:parsed.mesOrigem,saida:parsed.saida,volta:parsed.volta,costureira:parsed.costureira,by,at};
 
         changed=true;
 
@@ -3065,7 +3075,9 @@ function pushLote(k){
 
     cortado:(s.cortado===undefined||s.cortado===null)?'':s.cortado,
 
-    date:s.date||'',origem:s.origem||'',mesOrigem:s.mesOrigem||'',motivo:s.motivo||'',obs:s.obs||''
+    date:s.date||'',origem:s.origem||'',mesOrigem:s.mesOrigem||'',motivo:s.motivo||'',obs:s.obs||'',
+
+    saida:s.saida||'',volta:s.volta||'',costureira:s.costureira||''
 
   }));
 
@@ -4217,12 +4229,13 @@ function encHistoricoHtml(){
   }
   const datas=Object.keys(por).sort().reverse();
   if(!datas.length) return '';
+  encDiaKeys={}; datas.forEach(d=>{ encDiaKeys[d]=por[d].map(x=>x.k); });
   const br=d=>d?d.split('-').reverse().join('/'):'sem data';
-  let out='<h3 style="margin:22px 0 6px;font-size:15px">✅ Cortes já feitos neste mês</h3><p class="note" style="margin:0 0 10px">Tudo o que já foi registrado como cortado continua aqui, por data (mais recente primeiro). Dá para corrigir a quantidade.</p>';
+  let out='<datalist id="lista-costureiras">'+COSTUREIRAS.map(c=>'<option value="'+c+'">').join('')+'</datalist><h3 style="margin:22px 0 6px;font-size:15px">✅ Cortes já feitos neste mês</h3><p class="note" style="margin:0 0 10px">Tudo o que já foi registrado como cortado continua aqui, por data (mais recente primeiro). Dá para corrigir a quantidade e registrar a <b>saída e a volta da costura</b> de cada lote (ou de todo o dia de uma vez).</p>';
   datas.forEach(d=>{
     const lst=por[d].sort((a,b)=>(a.L<b.L?-1:a.L>b.L?1:0)||String(a.tam).localeCompare(String(b.tam),undefined,{numeric:true})||a.cor.localeCompare(b.cor));
     const tot=lst.reduce((s,x)=>s+x.q,0);
-    out+='<div class="lote-tam-bloco"><div class="lote-tam-hdr"><b>Cortes de '+br(d)+'</b> <span><b>'+Math.round(tot)+'</b> pç em '+lst.length+' registro'+(lst.length>1?'s':'')+'</span></div><div class="lote-lista">'+
+    out+='<div class="lote-tam-bloco"><div class="lote-tam-hdr"><b>Cortes de '+br(d)+'</b> <span><b>'+Math.round(tot)+'</b> pç em '+lst.length+' registro'+(lst.length>1?'s':'')+'</span></div>'+'<div class="lote-costura lote-costura-dia">🧵 <b>Aplicar a todos os registros deste dia:</b> Saída <input type="date" id="cd_s_'+d+'"> Volta <input type="date" id="cd_v_'+d+'"> Costureira <input list="lista-costureiras" id="cd_c_'+d+'" placeholder="nome" style="width:90px"> <button type="button" onclick="costuraDia(\''+d+'\')">Aplicar ao dia</button></div><div class="lote-lista">'+
       lst.map(x=>{
         const rid='h_'+x.k.replace(/[^A-Za-z0-9]/g,'_'), pp=x.motivo.slice(8).split('|');
         const tag=x.enf?'<span class="lote-tag lote-tag-ok">enfesto '+esc(pp[3]||'')+'</span>':'<span class="lote-tag lote-tag-ok">lote</span>';
@@ -4231,7 +4244,7 @@ function encHistoricoHtml(){
         return '<div class="lote-row feito" id="'+rid+'"><input type="checkbox" checked disabled>'+
           '<div class="lote-nome"><div class="l1">'+abcPill(cobj)+dot(x.cor)+' '+tag+'</div><div class="l2">'+tNome[x.L]+' · tam '+esc(x.tam)+'</div></div>'+
           '<div class="lote-progresso"><div class="lote-fracao"><span><b>'+f2(x.q)+'</b> pç cortadas</span></div></div>'+
-          '<div class="lote-input">'+input+'<span class="un">pç</span></div><div class="lote-falta zero">✓</div></div>';
+          '<div class="lote-input">'+input+'<span class="un">pç</span></div><div class="lote-falta zero">✓</div></div>'+'<div class="lote-costura" id="cst_'+rid.slice(2)+'">🧵 Saída <input type="date" value="'+(encSt[x.k].saida||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'saida\',this.value)"> Volta <input type="date" value="'+(encSt[x.k].volta||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'volta\',this.value)"> Costureira <input list="lista-costureiras" value="'+esc(encSt[x.k].costureira||'')+'" placeholder="nome" style="width:90px" onchange="loteSetCostura(\''+x.k+'\',\'costureira\',this.value)"> <span class="cst-st">'+costStatus(encSt[x.k])+'</span></div>';
       }).join('')+'</div></div>';
   });
   return out;
@@ -4521,6 +4534,33 @@ function refreshEncCardsFromDom(){
 
 const MOTIVOS_FALTA=['Falta de tecido','Mudança de estratégia','Problema na máquina','Falta de energia','Outro'];
 
+
+// ─── COSTURA: data de saída, volta e costureira de cada lote cortado (Karol 12/11) ───
+const COSTUREIRAS=['Deise','Vilma','Natielly'];
+let encDiaKeys={};
+function costDias(a,b){ if(!a) return null; const x=new Date(a+'T12:00:00'), y=b?new Date(b+'T12:00:00'):new Date(); return Math.max(0,Math.round((y-x)/86400000)); }
+function loteSetCostura(k,campo,v){
+  if(!encSt[k]) return;
+  encSt[k][campo]=v||'';
+  pushLote(k);
+  const el=document.getElementById('cst_'+k.replace(/[^A-Za-z0-9]/g,'_'));
+  if(el){ const s=encSt[k]; el.querySelector('.cst-st').innerHTML=costStatus(s); }
+}
+function costStatus(s){
+  if(s.saida&&s.volta) return '✅ costura levou <b>'+costDias(s.saida,s.volta)+'</b> dia(s)';
+  if(s.saida) return '🧵 em costura há <b>'+costDias(s.saida)+'</b> dia(s)';
+  return '<span style="color:#999">sem registro de costura</span>';
+}
+function costuraDia(d){
+  const sa=document.getElementById('cd_s_'+d), vo=document.getElementById('cd_v_'+d), co=document.getElementById('cd_c_'+d);
+  const ks=encDiaKeys[d]||[]; let n=0;
+  ks.forEach(k=>{ if(!encSt[k]) return;
+    if(sa&&sa.value) encSt[k].saida=sa.value;
+    if(vo&&vo.value) encSt[k].volta=vo.value;
+    if(co&&co.value) encSt[k].costureira=co.value;
+    pushLote(k); n++; });
+  renderEncaixe();
+}
 function loteSetDat(k,v,necessario){
 
   if(!encSt[k])encSt[k]={chk:true,necessario,cortado:'',date:'',origem:'inicial',mesOrigem:'',motivo:'',obs:''};
