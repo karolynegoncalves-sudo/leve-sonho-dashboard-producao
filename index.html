@@ -4154,12 +4154,12 @@ function encEnfestosHtml(){
     const tot=itens.reduce((s,x)=>s+x.q,0), pend=itens.reduce((s,x)=>s+Math.max(0,x.q-x.qty),0), dia=Math.floor(i/2)+1;
     const tec=tecMedioFallback(e.L,e.tam), isG=(e.L==='RMC'||e.L==='RIF')&&TAMS_G[e.tam], medFolha=isG?tec:tec*2, ppf=ppfDe(e.L,e.tam), folhasTot=itens.reduce((s,x)=>s+Math.ceil(x.q/ppf),0);
     out+='<div class="lote-tam-bloco"><div class="lote-tam-hdr"><b>Enfesto '+(i+1)+'</b> <span class="badge '+tBad[e.L]+'">'+tNome[e.L]+'</span> <b>Tam. '+e.tam+'</b>'+(e.n>1?' <span>('+e.k+' de '+e.n+' deste tamanho)</span>':'')+
-      ' <span>'+tot+' pç · corte do dia '+dia+' · '+e.pontos+' pts'+(e.f1?' · '+e.f1+' urgentes':'')+'</span> <span>📐 '+f2(medFolha)+' m/folha</span> <span>🗂️ <b>'+folhasTot+'</b> folhas</span> <span><b>'+Math.round(pend)+'</b> pç pendentes</span>'+
+      ' <span>'+tot+' pç · corte do dia '+dia+' · '+e.pontos+' pts'+(e.f1?' · '+e.f1+' urgentes':'')+'</span> <span>📐 '+f2(medFolha)+' m/folha</span> <span>🗂️ <b>'+folhasTot+'</b> folhas</span> <span>📏 <b>'+f2(tot*tec)+'</b> m no enfesto</span> <span><b>'+Math.round(pend)+'</b> pç pendentes</span>'+
       '<span class="lote-falta-tec'+(pend<=0?' ok':'')+'">'+(pend<=0?'🧵 enfesto completo':'🧵 '+f2(pend*tec)+' m de tecido')+'</span></div><div class="lote-lista">'+
       itens.map(x=>{
         const feito=x.qty>=x.q, falta=Math.max(0,x.q-x.qty), pct=x.q>0?Math.min(100,(x.qty/x.q)*100):0, cobj={tipo:e.L,tam:e.tam,cor:x.cor};
         return '<div class="lote-row'+(feito?' feito':'')+'"><input type="checkbox" '+(feito?'checked':'')+' onchange="encEnfCheck('+i+','+x.ci+',this)">'+
-          '<div class="lote-nome"><div class="l1">'+abcPill(cobj)+dot(x.cor)+'</div><div class="l2">no enfesto: '+x.q+' pç · <b>'+Math.ceil(x.q/ppf)+' folhas</b></div></div>'+
+          '<div class="lote-nome"><div class="l1">'+abcPill(cobj)+dot(x.cor)+'</div><div class="l2">no enfesto: '+x.q+' pç · <b>'+Math.ceil(x.q/ppf)+' folhas</b> · <b>'+f2(x.q*tec)+' m</b></div></div>'+
           '<div class="lote-progresso"><div class="lote-fracao"><span><b>'+f2(x.qty)+'</b> / '+f2(x.q)+' pç</span></div><div class="lote-barra"><div class="fill'+(feito?' completo':'')+'" style="width:'+pct+'%"></div></div></div>'+
           '<div class="lote-input"><input type="number" min="0" step="1" value="'+x.qty+'" onchange="encEnfQty('+i+','+x.ci+',this.value)"><span class="un">pç</span></div>'+
           '<div class="lote-falta'+(falta<=0?' zero':'')+'">'+Math.round(falta)+'</div></div>';
