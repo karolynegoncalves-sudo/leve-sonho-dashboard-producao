@@ -525,7 +525,7 @@ tr.row-ok td{color:#555}
 
 </div>
 
-<div class="banner warn2">
+<div class="banner warn2" style="display:none">
   <b>✔️ Atualizado em 12/11:</b> curva ABC das vendas de 13/10–12/11 no Bling, com <b>Nuvemshop já excluída</b> (é sob demanda). Recomendado a fabricar = <b>(36 dias de cobertura + lead time real (variavel por linha (corte+costura+conferência/caseado), calibrado com fichas de costureiras) = efetivo) × venda/dia (ritmo das últimas semanas, limitado a 2× a média de 31 dias) − estoque atual (12/11) − o que já foi cortado para novembro até agora</b> (264 peças). Robe infantil: mínimo de 6 peças em cada combinação que vendeu no mês. A lista está em ordem de venda (peças por dia nas últimas semanas), com a classe A/B/C da curva ABC (por faturamento) ao lado do SKU. Estoque muda rápido — refresh completo segunda, quarta e sexta; todo dia às 8h15 uma leitura leve atualiza o Encaixe de Corte (enfestos).
 </div>
 
@@ -567,7 +567,7 @@ tr.row-ok td{color:#555}
 
   <h2>📊 Análises — Projetado × Realizado</h2>
 
-  <div class="banner" style="margin-bottom:14px">
+  <div class="banner" style="display:none;margin-bottom:14px">
 
     <span id="an-titulo-mes">Relatório fechado — Agosto/2026</span> — comparando o que foi planejado com o que realmente saiu da mesa de corte, com base nas datas e quantidades registradas na aba Encaixe de Corte. Use o seletor de mês da aba Plano para trocar o período aqui também.
 
@@ -4148,7 +4148,7 @@ function encEnfestosHtml(){
   if(!E.length) return '<p style="padding:12px;color:#999">Sem enfestos calculados nesta atualização.</p>';
   const tBad={RMC:'b-rmc',RIF:'b-rif',PMC:'b-pmc',PMI:'b-pmi'}, tNome={RMC:'Adulto',RIF:'Infantil',PMC:'Pijama',PMI:'Pijama inverno'};
   const m=abcMapa(); enfQtyDe._m=enfLotePorMotivo();
-  let out='<p class="note" style="margin:6px 0 12px">Ordem de corte: <b>furo + curva ABC</b> (pontuação = peso da curva A3/B2/C1 × 1 ÷ (dias de cobertura + 1)). Cada enfesto tem de 60 a 70 peças de <b>um tamanho</b>, com as cores empilhadas, em números pares. As <b>folhas</b> são calculadas pelo tamanho: G1, G2 e G3 cortam 1 peça por folha; os demais cortam 2 (40 peças = 20 folhas). Digite quantas peças cortou (ou marque a cor): o que for cortado sai do pendente do Encaixe. Posição de '+esc(R.geradoEm)+' (vendas até '+esc(R.ate)+'); atualiza todo dia às 8h15.</p>';
+  let out='<p class="note" style="margin:6px 0 12px">Ordem de corte: <b>furo + curva ABC</b> (pontuação = peso da curva A3/B2/C1 × 1 ÷ (dias de cobertura + 1)). Cada enfesto tem de 60 a 70 peças de <b>um tamanho</b>, com as cores empilhadas, em números pares. As <b>folhas</b> são calculadas pelo tamanho: G1, G2 e G3 cortam 1 peça por folha; os demais cortam 2 (40 peças = 20 folhas). Digite quantas <b>folhas</b> cortou (ou marque a cor): o que for cortado sai do pendente do Encaixe. Posição de '+esc(R.geradoEm)+' (vendas até '+esc(R.ate)+'); atualiza todo dia às 8h15.</p>';
   let n=0;
   E.forEach((e,i)=>{
     const itens=e.cores.map((c,ci)=>({cor:c[0],q:c[1],ci:ci,qty:enfQtyDe(e,c[0]),letra:((m[e.L+'|'+e.tam+'|'+c[0]]||{}).classe)||'C'}));
@@ -4162,15 +4162,15 @@ function encEnfestosHtml(){
     const tot=itens.reduce((s,x)=>s+x.q,0), pend=itens.reduce((s,x)=>s+Math.max(0,x.q-x.qty),0), dia=Math.floor(i/2)+1;
     const tec=tecMedioFallback(e.L,e.tam), isG=(e.L==='RMC'||e.L==='RIF')&&TAMS_G[e.tam], medFolha=isG?tec:tec*2, ppf=ppfDe(e.L,e.tam), folhasTot=itens.reduce((s,x)=>s+Math.ceil(x.q/ppf),0);
     out+='<div class="lote-tam-bloco"><div class="lote-tam-hdr"><b>Enfesto '+(i+1)+'</b> <span class="badge '+tBad[e.L]+'">'+tNome[e.L]+'</span> <b>Tam. '+e.tam+'</b>'+(e.n>1?' <span>('+e.k+' de '+e.n+' deste tamanho)</span>':'')+
-      ' <span>'+tot+' pç · corte do dia '+dia+' · '+e.pontos+' pts'+(e.f1?' · '+e.f1+' urgentes':'')+'</span> <span>📐 '+f2(medFolha)+' m/folha</span> <span>🗂️ <b>'+folhasTot+'</b> folhas</span> <span>📏 <b>'+f2(tot*tec)+'</b> m no enfesto</span> <span><b>'+Math.round(pend)+'</b> pç pendentes</span>'+
+      ' <span>'+tot+' pç · corte do dia '+dia+' · '+e.pontos+' pts'+(e.f1?' · '+e.f1+' urgentes':'')+'</span> <span>📐 '+f2(medFolha)+' m/folha</span> <span>🗂️ <b>'+folhasTot+'</b> folhas</span> <span>📏 <b>'+f2(tot*tec)+'</b> m no enfesto</span> <span><b>'+(Math.round(pend/ppf*10)/10)+'</b> folhas pendentes</span>'+
       '<span class="lote-falta-tec'+(pend<=0?' ok':'')+'">'+(pend<=0?'🧵 enfesto completo':'🧵 '+f2(pend*tec)+' m de tecido')+'</span></div><div class="lote-lista">'+
       itens.map(x=>{
         const feito=x.qty>=x.q, falta=Math.max(0,x.q-x.qty), pct=x.q>0?Math.min(100,(x.qty/x.q)*100):0, cobj={tipo:e.L,tam:e.tam,cor:x.cor};
         return '<div class="lote-row'+(feito?' feito':'')+'"><input type="checkbox" '+(feito?'checked':'')+' onchange="encEnfCheck('+i+','+x.ci+',this)">'+
-          '<div class="lote-nome"><div class="l1">'+abcPill(cobj)+dot(x.cor)+'</div><div class="l2">no enfesto: '+x.q+' pç · <b>'+Math.ceil(x.q/ppf)+' folhas</b> · <b>'+f2(x.q*tec)+' m</b></div></div>'+
-          '<div class="lote-progresso"><div class="lote-fracao"><span><b>'+f2(x.qty)+'</b> / '+f2(x.q)+' pç</span></div><div class="lote-barra"><div class="fill'+(feito?' completo':'')+'" style="width:'+pct+'%"></div></div></div>'+
-          '<div class="lote-input"><input type="number" min="0" step="1" value="'+x.qty+'" onchange="encEnfQty('+i+','+x.ci+',this.value)"><span class="un">pç</span></div>'+
-          '<div class="lote-falta'+(falta<=0?' zero':'')+'">'+Math.round(falta)+'</div></div>';
+          '<div class="lote-nome"><div class="l1">'+abcPill(cobj)+dot(x.cor)+'</div><div class="l2">no enfesto: <b>'+Math.ceil(x.q/ppf)+' folhas</b> ('+x.q+' pç) · <b>'+f2(x.q*tec)+' m</b></div></div>'+
+          '<div class="lote-progresso"><div class="lote-fracao"><span><b>'+f2(x.qty/ppf)+'</b> / '+f2(x.q/ppf)+' folhas</span></div><div class="lote-barra"><div class="fill'+(feito?' completo':'')+'" style="width:'+pct+'%"></div></div></div>'+
+          '<div class="lote-input"><input type="number" min="0" step="1" value="'+(Math.round(x.qty/ppf*100)/100)+'" onchange="encEnfFolhas('+i+','+x.ci+',this.value)"><span class="un">folhas</span></div>'+
+          '<div class="lote-falta'+(falta<=0?' zero':'')+'">'+(Math.round(falta/ppf*10)/10)+'</div></div>';
       }).join('')+'</div></div>';
   });
   return n?out:out+'<p style="padding:12px;color:#999">Nenhum enfesto neste filtro.</p>';
@@ -4217,6 +4217,8 @@ function encEnfQty(i,ci,val){
   syncPush('enf',key,Q>=c[1],JSON.stringify({qty:Q}));
   renderEncaixe(); renderFaltaram();
 }
+function encEnfFolhas(i,ci,val){ const e=REPOSICAO.enfestos[i]; encEnfQty(i,ci,(parseFloat(val)||0)*ppfDe(e.L,e.tam)); }   // Karol 12/11: digita FOLHAS, grava pecas
+function encEnfHistF(k,val){ const s=encSt[k]; if(!s) return; const p=String(s.motivo).slice(8).split('|'); encEnfHist(k,(parseFloat(val)||0)*ppfDe(p[1],p[2])); }
 function encEnfCheck(i,ci,el){
   const e=REPOSICAO.enfestos[i], c=e.cores[ci];
   encEnfQty(i,ci,el.checked?c[1]:0);
@@ -4251,11 +4253,11 @@ function encHistoricoHtml(){
         const rid='h_'+x.k.replace(/[^A-Za-z0-9]/g,'_'), pp=x.motivo.slice(8).split('|');
         const tag=x.enf?'<span class="lote-tag lote-tag-ok">enfesto '+esc(pp[3]||'')+'</span>':'<span class="lote-tag lote-tag-ok">lote</span>';
         const cobj={tipo:x.L,tam:x.tam,cor:x.cor};
-        const input=x.enf?'<input type="number" min="0" step="1" value="'+x.q+'" onchange="encEnfHist(\''+x.k+'\',this.value)">':'<input type="number" min="0" step="1" value="'+x.q+'" oninput="loteSetCortado(\''+x.k+'\',this.value,'+x.nec+',\''+rid+'\')">';
+        const input=x.enf?'<input type="number" min="0" step="1" value="'+(x.q/ppfDe(x.L,x.tam))+'" onchange="encEnfHistF(\''+x.k+'\',this.value)">':'<input type="number" min="0" step="1" value="'+x.q+'" oninput="loteSetCortado(\''+x.k+'\',this.value,'+x.nec+',\''+rid+'\')">';
         return '<div class="lote-row feito" id="'+rid+'"><input type="checkbox" checked disabled>'+
           '<div class="lote-nome"><div class="l1">'+abcPill(cobj)+dot(x.cor)+' '+tag+'</div><div class="l2">'+tNome[x.L]+' · tam '+esc(x.tam)+'</div></div>'+
-          '<div class="lote-progresso"><div class="lote-fracao"><span><b>'+f2(x.q)+'</b> pç cortadas'+(x.enf?' · '+folhasDe(x.L,x.tam,x.q)+' folhas':'')+'</span></div></div>'+
-          '<div class="lote-input">'+input+'<span class="un">pç</span></div><div class="lote-falta zero">✓</div></div>'+'<div class="lote-costura" id="cst_'+rid.slice(2)+'">🧵 Saída <input type="date" value="'+(encSt[x.k].saida||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'saida\',this.value)"> Volta <input type="date" value="'+(encSt[x.k].volta||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'volta\',this.value)"> Costureira <input list="lista-costureiras" value="'+esc(encSt[x.k].costureira||'')+'" placeholder="nome" style="width:90px" onchange="loteSetCostura(\''+x.k+'\',\'costureira\',this.value)"> <span class="cst-st">'+costStatus(encSt[x.k])+'</span></div>';
+          '<div class="lote-progresso"><div class="lote-fracao"><span>'+(x.enf?'<b>'+folhasDe(x.L,x.tam,x.q)+'</b> folhas cortadas ('+f2(x.q)+' pç)':'<b>'+f2(x.q)+'</b> pç cortadas')+'</span></div></div>'+
+          '<div class="lote-input">'+input+'<span class="un">'+(x.enf?'folhas':'pç')+'</span></div><div class="lote-falta zero">✓</div></div>'+'<div class="lote-costura" id="cst_'+rid.slice(2)+'">🧵 Saída <input type="date" value="'+(encSt[x.k].saida||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'saida\',this.value)"> Volta <input type="date" value="'+(encSt[x.k].volta||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'volta\',this.value)"> Costureira <input list="lista-costureiras" value="'+esc(encSt[x.k].costureira||'')+'" placeholder="nome" style="width:90px" onchange="loteSetCostura(\''+x.k+'\',\'costureira\',this.value)"> <span class="cst-st">'+costStatus(encSt[x.k])+'</span></div>';
       }).join('')+'</div></div>';
   });
   return out;
