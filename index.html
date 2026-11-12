@@ -4536,7 +4536,7 @@ const MOTIVOS_FALTA=['Falta de tecido','Mudança de estratégia','Problema na m�
 
 
 // ─── COSTURA: data de saída, volta e costureira de cada lote cortado (Karol 12/11) ───
-const COSTUREIRAS=['Deise','Vilma','Natielly'];
+const COSTUREIRAS=['Deise','Vilma','Natielly','Margarida','Cristina'];
 let encDiaKeys={};
 function costDias(a,b){ if(!a) return null; const x=new Date(a+'T12:00:00'), y=b?new Date(b+'T12:00:00'):new Date(); return Math.max(0,Math.round((y-x)/86400000)); }
 function loteSetCostura(k,campo,v){
