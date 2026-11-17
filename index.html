@@ -889,7 +889,7 @@ tr.row-ok td{color:#555}
 
     
 
-    <input class="search" type="text" placeholder="🔍 Buscar por cor..." oninput="encBusca(this.value)" style="margin-left:4px">
+    <input class="search" type="text" placeholder="🔍 Buscar: cor, tamanho ou modelo (ex.: robe G rose)" oninput="encBusca(this.value)" style="margin-left:4px">
 
   </div>
 
@@ -3911,6 +3911,16 @@ function busca(v){buscoT=v;renderPlano();}
 const encSt={};
 
 let encFiltro='todos', encTermo='', encMostrarCortados=false;
+// Busca do Encaixe (Karol 17/11): palavras separadas por espaco, TODAS precisam casar. Ex.: "robe g rose", "infantil 8 rose", "pijama marsala".
+// Cada palavra casa com a cor (parte do nome), com o TAMANHO (exato: g nao pega gg nem g1) ou com o modelo (robe, infantil, adulto, pijama, verao, inverno, manga curta...). Sem acento e sem diferenca de maiuscula.
+const ENC_MODELO_TXT={RMC:'robe manga curta adulto',RIF:'robe infantil',PMC:'pijama manga curta verao',PMI:'pijama manga longa inverno'};
+const ENC_TAMS_BUSCA=['p','m','g','gg','g1','g2','g3','2','4','6','8','10','12','14'];
+function encNorm(s){ return String(s==null?'':s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+function encCasa(L,tam,cor){
+  if(!encTermo) return true;
+  const c=encNorm(cor), t=encNorm(tam), md=ENC_MODELO_TXT[L]||'';
+  return encNorm(encTermo).split(/\s+/).filter(Boolean).every(w=> ENC_TAMS_BUSCA.indexOf(w)>=0 ? t===w : (c.indexOf(w)>=0||md.indexOf(w)>=0));
+}
 
 function loteKey(prod,tam,cor,n){ return `${prod}|${tam}|${cor}|LOTE${n}`; }
 
@@ -4071,7 +4081,7 @@ function encBusca(v){
 
   if(!encTermo){el.style.display='none';return;}
 
-  const m=rows.filter(r=>r.cor.toLowerCase().includes(encTermo));
+  const m=rows.filter(r=>encCasa(tip(r),r.sku.split('-')[1],r.cor));
 
   if(!m.length){el.style.display='none';return;}
 
@@ -4085,7 +4095,7 @@ function encBusca(v){
 
   el.style.display='block';
 
-  el.innerHTML=`🔍 <b>${m[0].cor}</b> — Total: <b>${total} peças</b> · ${partes} · ${m.length} combinações`;
+  el.innerHTML=`🔍 <b>${v.trim().replace(/&/g,'&amp;').replace(/</g,'&lt;')}</b> — Total: <b>${total} peças</b> · ${partes} · ${m.length} combinações`;
 
 }
 
@@ -4163,7 +4173,7 @@ function encEnfestosHtml(){
     if(['RMC','RIF','PMC','PMI'].indexOf(encFiltro)>=0&&e.L!==encFiltro) return;
     if(encFiltro==='pendentes'&&todos) return;
     if(encFiltro==='cortados'&&!todos) return;
-    if(encTermo&&!itens.some(x=>x.cor.toLowerCase().indexOf(encTermo)>=0)) return;
+    if(encTermo&&!itens.some(x=>encCasa(e.L,e.tam,x.cor))) return;
     n++;
     itens.sort((a,b)=>(a.letra<b.letra?-1:a.letra>b.letra?1:0)||(b.q-a.q));            // A, B, B, C
     const tot=itens.reduce((s,x)=>s+x.q,0), pend=itens.reduce((s,x)=>s+Math.max(0,x.q-x.qty),0), dia=Math.floor(i/2)+1;
@@ -4244,7 +4254,7 @@ function encHistoricoHtml(){
     const q=parseFloat(s.cortado)||0; if(q<=0) continue;
     const L=PRODNOME_INV_ENC[p[0]]; if(!L) continue;
     if(['RMC','RIF','PMC','PMI'].indexOf(encFiltro)>=0&&L!==encFiltro) continue;
-    if(encTermo&&p[2].toLowerCase().indexOf(encTermo)<0) continue;
+    if(encTermo&&!encCasa(L,p[1],p[2])) continue;
     (por[s.date||'']=por[s.date||'']||[]).push({k,L,tam:p[1],cor:p[2],q,nec:parseFloat(s.necessario)||0,chk:!!s.chk,enf:s.origem==='enfesto',motivo:s.motivo||''});
   }
   const datas=Object.keys(por).sort().reverse();
@@ -4335,7 +4345,7 @@ function renderEncaixe(){
       const ordemC=cs.slice().sort((a,b)=>(repScoreDe(b)-repScoreDe(a))||(abcRankDe(a)-abcRankDe(b))||a.cor.localeCompare(b.cor));
       const conta=(l,status)=>{ tLotes++; if(status==='completo')tCompletos++; else if(status==='parcial')tParciais++; if(l.origem==='novo')tNovos++; };
       ordemC.forEach(c=>{
-        const mb=!encTermo||c.cor.toLowerCase().includes(encTermo);
+        const mb=!encTermo||encCasa(c.tipo,c.tam,c.cor);
         const lotes=lotesDoCombo(c.prod,c.tam,c.cor);
         const plano=lotes.filter(l=>!l.chk&&l.origem!=='retalho');
         const outros=lotes.filter(l=>l.chk||l.origem==='retalho');
