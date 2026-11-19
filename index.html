@@ -2618,6 +2618,26 @@ function renderProducao(){
       : '<span class="na">Ainda sem dados.</span>')
     + `<div style="font-size:11px;color:#777;margin-top:10px;line-height:1.6"><b>Como ler:</b> mede quanto tempo o lote fica com a costureira, do envio até a volta. Não é produtividade: elas trabalham em paralelo e o tamanho do lote muda o prazo. A média é <b>ponderada pela quantidade de peças</b>, então lote grande pesa mais. Fonte: históricos das contas a pagar (via chat Contas, de outubro em diante, sem lotes parciais) e os lotes que você registrar no Encaixe. Setembro não entra: só tem a data de envio.</div></div>`;
 
+  // --- grafico de costura: pecas que voltaram por semana, por costureira (grafico de costura) ---
+  (function(){
+    const CS = ((PROD.gargalos||{}).costura||{}); const SW = CS.semanas||[]; const NM = CS.semanasNomes||[];
+    const CC = {'Margarida':'#d81b60','Vilma':'#1e88e5','Deise':'#43a047','Cristina':'#fb8c00','Natielly':'#00897b'};
+    if(!SW.length){ return; }
+    const tot = s=>NM.reduce((a,n)=>a+(s[n]||0),0), mx = Math.max(1,...SW.map(tot));
+    const W=Math.max(560,SW.length*70), H=200, pl=34, pb=34, pt=14, bw=Math.min(40,(W-pl-10)/SW.length-10);
+    let sv = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;height:auto;font-family:inherit">`;
+    [0,.5,1].forEach(f=>{ const y=pt+(H-pt-pb)*(1-f); sv+=`<line x1="${pl}" x2="${W-4}" y1="${y}" y2="${y}" stroke="#e3e5ee"/><text x="${pl-4}" y="${y+3}" font-size="9" text-anchor="end" fill="#777">${Math.round(mx*f)}</text>`; });
+    SW.forEach((s,i)=>{ const x=pl+8+i*((W-pl-10)/SW.length); let y=H-pb;
+      NM.forEach(n=>{ const q=s[n]||0, hh=(H-pt-pb)*q/mx; if(hh>0){ y-=hh; sv+=`<rect x="${x}" y="${y}" width="${bw}" height="${hh}" fill="${CC[n]||'#999'}"><title>Semana de ${anDataBR(s.ini)} · ${n}: ${q} pç voltaram</title></rect>`; if(hh>13) sv+=`<text x="${x+bw/2}" y="${y+hh/2+3}" font-size="9" text-anchor="middle" fill="#fff">${q}</text>`; } });
+      const t=tot(s); sv+=`<text x="${x+bw/2}" y="${(t?y:H-pb)-3}" font-size="9.5" font-weight="bold" text-anchor="middle" fill="#333">${t}</text>`;
+      sv+=`<text x="${x+bw/2}" y="${H-pb+12}" font-size="8.5" text-anchor="middle" fill="#777">${anDataBR(s.ini).slice(0,5)}</text>`; });
+    sv += `</svg>`;
+    const ag = (CS.emCostura||{}), agn = Object.keys(ag.porCostureira||{}).sort((a,b)=>ag.porCostureira[b]-ag.porCostureira[a]);
+    h += `<div class="an-card-box" style="margin-top:14px"><h3>🧵 Peças que voltaram da costura por semana</h3><div style="font-size:11px;margin-bottom:6px">${NM.map(n=>`<span style="color:${CC[n]||'#999'}">■</span> ${n}`).join(' &nbsp; ')} &nbsp;· semana começando na segunda, pela data de volta</div><div style="overflow-x:auto">${sv}</div>`
+      + `<div style="font-size:12px;margin-top:8px"><b>Na costura agora:</b> ${ag.pcs||0} pç em ${ag.lotes||0} lotes${agn.length?' — '+agn.map(n=>`<span style="color:${CC[n]||'#999'}">■</span> ${n} ${ag.porCostureira[n]} pç`).join(' &nbsp; '):''}</div>`
+      + `<div style="font-size:11px;color:#777;margin-top:8px;line-height:1.6">Conta as peças pelo dia em que o lote <b>voltou</b>. Até 12/11 vem do histórico das contas das costureiras (Contas, de outubro em diante, sem lote parcial); depois disso, dos lotes com data de volta registrada no Encaixe. A semana atual está em andamento.</div></div>`;
+  })();
+
   // --- 2. linha do tempo semanal (queda e retomada) ---
   const PS = PROD.pessoas||['Natália','Karol']; const S = PROD.semanas; const sumS = s=>PS.reduce((a,p)=>a+(s[p]||0),0); const maxS = Math.max(1,...S.map(sumS));
   const W=Math.max(560,S.length*38), H=190, pl=34, pb=34, pt=10, bw=Math.min(26,(W-pl-10)/S.length-6);
