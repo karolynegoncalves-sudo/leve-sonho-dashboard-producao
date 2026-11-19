@@ -2587,7 +2587,7 @@ function prodF1(n){ return (Math.round(n*10)/10).toString().replace('.',','); }
 function renderProducao(){
   const host = document.getElementById('an-producao'); if(!host) return;
   if(!PROD || !PROD.meses){ host.innerHTML = '<span class="na">Ranking e gargalos aparecem depois do próximo refresh.</span>'; return; }
-  const COR = {'Natália':'#3949ab','Karol':'#e65100','Deia':'#2e7d32','Thayssa':'#8e24aa'};
+  const COR = {'Natália':'#3949ab','Karol':'#e65100','Deia':'#2e7d32','Thayssa':'#8e24aa','Natielly':'#00897b'};
   const per = [['tudo','Tudo (set–nov)'],['2026-09','Setembro'],['2026-10','Outubro'],['2026-11','Novembro']];
   // --- 1. ranking por pessoa ---
   const sel = prodPeriodo==='tudo' ? PROD.meses : PROD.meses.filter(m=>m.ym===prodPeriodo);
@@ -2601,7 +2601,7 @@ function renderProducao(){
   h += nomes.length ? `<table class="an-tbl"><thead><tr><th>#</th><th>Pessoa</th><th class="r">Peças</th><th class="r">Lotes</th><th class="r">Dias com corte</th><th class="r">Peças por dia com corte</th><th class="r">Peças por dia útil</th><th class="r">Peças por enfesto</th><th class="r">Retalho</th></tr></thead><tbody>`
     + nomes.map((n,i)=>{ const a=agg[n]; return `<tr><td>${i+1}</td><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${COR[n]};margin-right:6px"></span><b>${n}</b></td><td class="r"><b>${a.pcs}</b></td><td class="r">${a.lotes}</td><td class="r">${a.dias}</td><td class="r">${a.dias?prodF1(a.pcs/a.dias):'–'}</td><td class="r">${a.du?prodF1(a.pcs/a.du):'–'}</td><td class="r">${a.enf?Math.round(a.enfPcs/a.enf):'–'}</td><td class="r">${a.ret}</td></tr>`; }).join('')
     + `</tbody></table>` : '<span class="na">Sem corte neste período.</span>';
-  h += `<div style="font-size:11px;color:#777;margin-top:10px;line-height:1.6">Regra de atribuição (Karol, 12/11): <b>${PROD.regra}</b>. O login gravado na planilha é só quem digitou, então não é usado. Cada lote tem uma data (a do último corte), então “dias com corte” conta dias de registro: se vários dias foram lançados juntos, as peças por dia ficam infladas. “Dia útil” = segunda a sexta desde o início do período da pessoa; o corte de sábado e domingo entra nas peças, mas não nos dias úteis. <b>No corte, tudo de 31/10 em diante é da Karol</b>; quem ajuda a enfestar aparece no ranking de enfesto, logo abaixo.</div></div>`;
+  h += `<div style="font-size:11px;color:#777;margin-top:10px;line-height:1.6">Regra de atribuição (Karol, 12/11): <b>${PROD.regra}</b>. O login gravado na planilha é só quem digitou, então não é usado. Cada lote tem uma data (a do último corte), então “dias com corte” conta dias de registro: se vários dias foram lançados juntos, as peças por dia ficam infladas. “Dia útil” = segunda a sexta desde o início do período da pessoa; o corte de sábado e domingo entra nas peças, mas não nos dias úteis. <b>No corte, tudo de 31/10 em diante é da Karol</b>, exceto os enfestos de 18/11 (GG e M), que a Natielly cortou; quem ajuda a enfestar aparece no ranking de enfesto, logo abaixo.</div></div>`;
   // --- ranking de ENFESTO (quem enfestou; pelo nome de quem registrou) ---
   const EN = (PROD.enfesto||[]).filter(m=>prodPeriodo==='tudo'||m.ym===prodPeriodo), ea = {};
   EN.forEach(m=>{ const a = ea[m.pessoa] = ea[m.pessoa] || {pcs:0,fol:0,enf:0,reg:0,dias:0}; a.pcs+=m.pcs; a.fol+=m.folhas; a.enf+=m.enfestos; a.reg+=m.registros; a.dias+=m.dias; });
