@@ -3000,7 +3000,7 @@ function applyRemoteState(rowsIn){
 
     if(aba==='enc'){
 
-      let parsed={date:'',qtd:'',motivo:'',obs:'',necessario:'',cortado:'',origem:'',mesOrigem:'',saida:'',volta:'',costureira:'',previsao:''};
+      let parsed={date:'',qtd:'',motivo:'',obs:'',necessario:'',cortado:'',origem:'',mesOrigem:'',saida:'',volta:'',costureira:'',previsao:'',corteLocal:''};
 
       if(campo2){
 
@@ -3016,7 +3016,7 @@ function applyRemoteState(rowsIn){
 
               cortado:(p.cortado===undefined||p.cortado===null)?'':p.cortado,
 
-              origem:p.origem||'',mesOrigem:p.mesOrigem||'',saida:p.saida||'',volta:p.volta||'',costureira:p.costureira||'',previsao:p.previsao||''};
+              origem:p.origem||'',mesOrigem:p.mesOrigem||'',saida:p.saida||'',volta:p.volta||'',costureira:p.costureira||'',previsao:p.previsao||'',corteLocal:p.corteLocal||''};
 
           } else {
 
@@ -3034,11 +3034,11 @@ function applyRemoteState(rowsIn){
 
       const cur=encSt[chave];
 
-      const diff=!cur||cur.chk!==ok||cur.date!==parsed.date||String(cur.cortado??'')!==String(parsed.cortado)||String(cur.necessario??'')!==String(parsed.necessario)||cur.motivo!==parsed.motivo||cur.obs!==parsed.obs||cur.origem!==parsed.origem||(cur.saida||'')!==parsed.saida||(cur.volta||'')!==parsed.volta||(cur.costureira||'')!==parsed.costureira||(cur.previsao||'')!==parsed.previsao||cur.by!==by;
+      const diff=!cur||cur.chk!==ok||cur.date!==parsed.date||String(cur.cortado??'')!==String(parsed.cortado)||String(cur.necessario??'')!==String(parsed.necessario)||cur.motivo!==parsed.motivo||cur.obs!==parsed.obs||cur.origem!==parsed.origem||(cur.saida||'')!==parsed.saida||(cur.volta||'')!==parsed.volta||(cur.costureira||'')!==parsed.costureira||(cur.previsao||'')!==parsed.previsao||(cur.corteLocal||'')!==parsed.corteLocal||cur.by!==by;
 
       if(diff){
 
-        encSt[chave]={chk:ok,date:parsed.date,qtd:parsed.qtd,motivo:parsed.motivo,obs:parsed.obs,necessario:parsed.necessario,cortado:parsed.cortado,origem:parsed.origem,mesOrigem:parsed.mesOrigem,saida:parsed.saida,volta:parsed.volta,costureira:parsed.costureira,previsao:parsed.previsao,by,at};
+        encSt[chave]={chk:ok,date:parsed.date,qtd:parsed.qtd,motivo:parsed.motivo,obs:parsed.obs,necessario:parsed.necessario,cortado:parsed.cortado,origem:parsed.origem,mesOrigem:parsed.mesOrigem,saida:parsed.saida,volta:parsed.volta,costureira:parsed.costureira,previsao:parsed.previsao,corteLocal:parsed.corteLocal,by,at};
 
         changed=true;
 
@@ -3120,7 +3120,7 @@ function pushLote(k){
 
     date:s.date||'',origem:s.origem||'',mesOrigem:s.mesOrigem||'',motivo:s.motivo||'',obs:s.obs||'',
 
-    saida:s.saida||'',volta:s.volta||'',costureira:s.costureira||'',previsao:s.previsao||''
+    saida:s.saida||'',volta:s.volta||'',costureira:s.costureira||'',previsao:s.previsao||'',corteLocal:s.corteLocal||''
 
   }));
 
@@ -4286,7 +4286,9 @@ function encHistoricoHtml(){
   if(!datas.length) return '';
   encDiaKeys={}; datas.forEach(d=>{ encDiaKeys[d]=por[d].map(x=>x.k); });
   const br=d=>d?d.split('-').reverse().join('/'):'sem data';
-  let out='<datalist id="lista-costureiras">'+COSTUREIRAS.map(c=>'<option value="'+c+'">').join('')+'</datalist><h3 style="margin:22px 0 6px;font-size:15px">✅ Cortes já feitos neste mês</h3><p class="note" style="margin:0 0 10px">Tudo o que já foi registrado como cortado continua aqui, por data (mais recente primeiro). Dá para corrigir a quantidade e registrar a <b>saída e a volta da costura</b> de cada lote (ou de todo o dia de uma vez).</p>';
+  let _tJB=0,_tAll=0; datas.forEach(d=>por[d].forEach(x=>{ _tAll+=x.q; if(corteLocalDe(encSt[x.k])==='JB') _tJB+=x.q; }));
+  const _resCorte=_tAll>0?' <b>Corte fora (JB) neste mês: '+Math.round(_tJB)+' de '+Math.round(_tAll)+' pç ('+(100*_tJB/_tAll).toFixed(1).replace('.',',')+'%).</b> Marque em cada lote se foi cortado em casa ou pela JB.':'';
+  let out='<datalist id="lista-costureiras">'+COSTUREIRAS.map(c=>'<option value="'+c+'">').join('')+'</datalist><h3 style="margin:22px 0 6px;font-size:15px">✅ Cortes já feitos neste mês</h3><p class="note" style="margin:0 0 10px">Tudo o que já foi registrado como cortado continua aqui, por data (mais recente primeiro). Dá para corrigir a quantidade e registrar a <b>saída e a volta da costura</b> de cada lote (ou de todo o dia de uma vez).'+_resCorte+'</p>';
   datas.forEach(d=>{
     const lst=por[d].sort((a,b)=>(a.L<b.L?-1:a.L>b.L?1:0)||String(a.tam).localeCompare(String(b.tam),undefined,{numeric:true})||a.cor.localeCompare(b.cor));
     const tot=lst.reduce((s,x)=>s+x.q,0);
@@ -4299,7 +4301,7 @@ function encHistoricoHtml(){
         return '<div class="lote-row feito" id="'+rid+'"><input type="checkbox" checked disabled>'+
           '<div class="lote-nome"><div class="l1">'+abcPill(cobj)+dot(x.cor)+' '+tag+'</div><div class="l2">'+tNome[x.L]+' · tam '+esc(x.tam)+'</div></div>'+
           '<div class="lote-progresso"><div class="lote-fracao"><span>'+(x.enf?'<b>'+folhasDe(x.L,x.tam,x.q)+'</b> folhas cortadas ('+f2(x.q)+' pç)':'<b>'+f2(x.q)+'</b> pç cortadas')+'</span></div></div>'+
-          '<div class="lote-input">'+input+'<span class="un">'+(x.enf?'folhas':'pç')+'</span></div><div class="lote-falta zero">✓</div></div>'+'<div class="lote-costura" id="cst_'+rid.slice(2)+'">🧵 Saída <input type="date" value="'+(encSt[x.k].saida||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'saida\',this.value)"> Volta <input type="date" value="'+(encSt[x.k].volta||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'volta\',this.value)"> Prevista <input type="date" value="'+(encSt[x.k].previsao||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'previsao\',this.value)"> Costureira <input list="lista-costureiras" value="'+esc(encSt[x.k].costureira||'')+'" placeholder="nome" style="width:90px" onchange="loteSetCostura(\''+x.k+'\',\'costureira\',this.value)"> <span class="cst-st">'+costStatus(encSt[x.k])+'</span></div>';
+          '<div class="lote-input">'+input+'<span class="un">'+(x.enf?'folhas':'pç')+'</span></div><div class="lote-falta zero">✓</div></div>'+'<div class="lote-costura" id="cst_'+rid.slice(2)+'">🧵 Saída <input type="date" value="'+(encSt[x.k].saida||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'saida\',this.value)"> Volta <input type="date" value="'+(encSt[x.k].volta||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'volta\',this.value)"> Prevista <input type="date" value="'+(encSt[x.k].previsao||'')+'" onchange="loteSetCostura(\''+x.k+'\',\'previsao\',this.value)"> Costureira <input list="lista-costureiras" value="'+esc(encSt[x.k].costureira||'')+'" placeholder="nome" style="width:90px" onchange="loteSetCostura(\''+x.k+'\',\'costureira\',this.value)"> '+corteLocalSel(x.k)+' <span class="cst-st">'+costStatus(encSt[x.k])+'</span></div>';
       }).join('')+'</div></div>';
   });
   return out;
@@ -4594,6 +4596,8 @@ const MOTIVOS_FALTA=['Falta de tecido','Mudança de estratégia','Problema na m�
 const COSTUREIRAS=['Deise','Vilma','Natielly','Margarida','Cristina'];
 let encDiaKeys={};
 function costDias(a,b){ if(!a) return null; const x=new Date(a+'T12:00:00'), y=b?new Date(b+'T12:00:00'):new Date(); return Math.max(0,Math.round((y-x)/86400000)); }
+function corteLocalDe(s){ return (s&&s.corteLocal)||((s&&s.origem==='externo')?'JB':'interno'); }
+function corteLocalSel(k){ const v=corteLocalDe(encSt[k]); return ' Corte <select onchange="loteSetCostura(\''+k+'\',\'corteLocal\',this.value)"><option value="interno"'+(v==='interno'?' selected':'')+'>em casa</option><option value="JB"'+(v==='JB'?' selected':'')+'>JB (externo)</option></select>'; }
 function loteSetCostura(k,campo,v){
   if(!encSt[k]) return;
   encSt[k][campo]=v||'';
