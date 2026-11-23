@@ -2679,7 +2679,7 @@ function renderProducao(){
     + `<div class="scard"><div class="v">${g.ritmoKarol!=null?prodF1(g.ritmoKarol):'–'} pç/dia útil</div><div class="l">Corte da Karol desde 31/10 (Natália em set/out: ${g.ritmoNataliaSetOut!=null?prodF1(g.ritmoNataliaSetOut):'–'})</div></div>`
     + `<div class="scard"><div class="v">120 a 210 pç/dia</div><div class="l">Capacidade da mesa (2 a 3 enfestos de 60 a 70 pç)</div></div>`
     + (f?`<div class="scard red"><div class="v">${f.zerados}</div><div class="l">Combinações zeradas hoje (${f.abaixo} abaixo do prazo)</div></div>`:'')
-    + (f?`<div class="scard ora"><div class="v">${f.wip} pç</div><div class="l">${f.wipCostura!=null?`A caminho: ${f.wipCostura} na costura + ${f.wipExterno} no corte externo (lotes com saída e sem volta no Encaixe)`:'A caminho (costura lançada à mão)'}</div></div>`:'')
+    + (f?`<div class="scard ora"><div class="v">${f.wip} pç</div><div class="l">${f.wipCostura!=null?`A caminho: ${f.wipCostura} na costura + ${f.wipExterno} no corte externo (JB), data incerta: a Karol avisa quando devolver`:'A caminho (costura lançada à mão)'}</div></div>`:'')
     + `</div>`;
   if(f){ gh += `<table class="an-tbl" style="margin-top:12px"><thead><tr><th>Linha</th><th class="r">Zeradas</th><th class="r">Abaixo do prazo</th><th class="r">Lead time de costura (config.)</th></tr></thead><tbody>`
     + Object.keys(f.porLinha).map(k=>`<tr><td>${nom[k]||k}</td><td class="r">${f.porLinha[k].zerados}</td><td class="r">${f.porLinha[k].abaixo}</td><td class="r">${lc[k]!=null?prodF1(lc[k])+' d':'–'}</td></tr>`).join('') + `</tbody></table>`; }
