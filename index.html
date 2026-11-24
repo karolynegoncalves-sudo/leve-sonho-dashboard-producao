@@ -3257,7 +3257,7 @@ function buildEla(){
 
   const m={};
 
-  rows.filter(r=>tip(r)==='PMC'||tip(r)==='PMI').forEach(r=>{
+  rows.filter(r=>(tip(r)==='PMC'||tip(r)==='PMI')&&!(tip(r)==='PMC'&&r.cor==='Pink'))   /* Pink: tecido ja em casa (Karol 23/11), fora da lista de tecido */.forEach(r=>{
 
     const c=r.cor; if(!m[c])m[c]={p:0,mt:0,t:ESCUROS.includes(c)?'e':'c'};
 
@@ -3591,7 +3591,7 @@ function calcListaCompras(){
 
     const m={};
 
-    rows.filter(r=>tip(r)==='PMC'||tip(r)==='PMI').forEach(r=>{
+    rows.filter(r=>(tip(r)==='PMC'||tip(r)==='PMI')&&!(tip(r)==='PMC'&&r.cor==='Pink'))   /* Pink: tecido ja em casa (Karol 23/11), fora da lista de tecido */.forEach(r=>{
 
       const c=r.cor; if(!m[c])m[c]={mt:0}; m[c].mt+=restante(r)*r.tec;
 
