@@ -2986,6 +2986,7 @@ async function syncPull(){
 
 }
 
+var extraSt={};   // 26/11: cortes fora do plano (Forfun B2B, encomendas de cliente). Só leitura no painel; a Claude grava na aba NOV26_extra
 function applyRemoteState(rowsIn){
 
   let changed=false;
@@ -3052,6 +3053,7 @@ function applyRemoteState(rowsIn){
 
     } else {
 
+      if(aba==='extra'){ let pp={}; try{ pp=JSON.parse(campo2||'{}')||{}; }catch(x){} const cur=extraSt[chave]; if(!cur||JSON.stringify(cur.d)!==JSON.stringify(pp)){ extraSt[chave]={d:pp,by,at}; changed=true; } return; }
       if(aba==='enf'){ let q2=''; try{ const pp=JSON.parse(campo2||'{}'); q2=(pp.qty===undefined||pp.qty===null)?'':pp.qty; }catch(x){} const cur=enfSt[chave]; if(!cur||cur.ok!==ok||String(cur.qty??'')!==String(q2)){ enfSt[chave]={ok,qty:q2,by,at}; changed=true; } return; }
       if(!st[aba]) return;
 
@@ -4291,7 +4293,8 @@ function encHistoricoHtml(){
     if(s.origem==='externo'&&!s.volta){ jbEnv.push({k,L,tam:p[1],cor:p[2],q}); continue; }   // 23/11: lote enviado à JB e ainda não devolvido NÃO é corte feito
     (por[s.date||'']=por[s.date||'']||[]).push({k,L,tam:p[1],cor:p[2],q,nec:parseFloat(s.necessario)||0,chk:!!s.chk,enf:s.origem==='enfesto',motivo:s.motivo||''});
   }
-  const datas=Object.keys(por).sort().reverse();
+  const exPor={}; for(const k in extraSt){ const e=extraSt[k]&&extraSt[k].d; if(!e||!e.date||!(parseFloat(e.qtd)>0)) continue; if(['RMC','RIF','PMC','PMI'].indexOf(encFiltro)>=0) continue; if(encTermo&&!(String(e.grupo||'')+' '+String(e.cor||'')).toLowerCase().includes(String(encTermo).toLowerCase())) continue; (exPor[e.date]=exPor[e.date]||[]).push(e); }
+  const datas=Object.keys(Object.assign({},por,exPor)).sort().reverse();
   if(!datas.length) return jbHtml();
   encDiaKeys={}; datas.forEach(d=>{ encDiaKeys[d]=por[d].map(x=>x.k); });
   const br=d=>d?d.split('-').reverse().join('/'):'sem data';
@@ -4300,9 +4303,12 @@ function encHistoricoHtml(){
   const _jbTot=jbEnv.reduce((a,x)=>a+x.q,0), _resEnv=_jbTot>0?' <b>JB: '+Math.round(_jbTot)+' pç enviadas, ainda não devolvidas (abaixo).</b>':'';
   let out='<datalist id="lista-costureiras">'+COSTUREIRAS.map(c=>'<option value="'+c+'">').join('')+'</datalist><h3 style="margin:22px 0 6px;font-size:15px">✅ Cortes já feitos neste mês</h3><p class="note" style="margin:0 0 10px">Tudo o que já foi registrado como cortado continua aqui, por data (mais recente primeiro). Dá para corrigir a quantidade e registrar a <b>saída e a volta da costura</b> de cada lote (ou de todo o dia de uma vez).'+_resCorte+_resEnv+'</p>';
   datas.forEach(d=>{
-    const lst=por[d].sort((a,b)=>(a.L<b.L?-1:a.L>b.L?1:0)||String(a.tam).localeCompare(String(b.tam),undefined,{numeric:true})||a.cor.localeCompare(b.cor));
+    const exL=exPor[d]||[], exT=exL.reduce((a,x)=>a+(parseFloat(x.qtd)||0),0);
+    const exHtml=exL.length?'<div class="lote-costura" style="margin-top:6px">📌 <b>Fora do plano</b> (não entra no estoque nem na curva): '+Object.entries(exL.reduce((m,x)=>{ (m[x.grupo||'Outros']=m[x.grupo||'Outros']||[]).push(x); return m; },{})).map(([g,l])=>'<b>'+esc(g)+'</b> '+l.map(x=>esc((x.tam?x.tam+' ':'')+(x.cor||''))+' '+Math.round(parseFloat(x.qtd)||0)).join(' · ')).join(' &nbsp;|&nbsp; ')+' = <b>'+Math.round(exT)+' pç</b></div>':'';
+    const lst=(por[d]||[]).sort((a,b)=>(a.L<b.L?-1:a.L>b.L?1:0)||String(a.tam).localeCompare(String(b.tam),undefined,{numeric:true})||a.cor.localeCompare(b.cor));
     const tot=lst.reduce((s,x)=>s+x.q,0);
-    out+='<div class="lote-tam-bloco"><div class="lote-tam-hdr"><b>Cortes de '+br(d)+'</b> <span><b>'+Math.round(tot)+'</b> pç em '+lst.length+' registro'+(lst.length>1?'s':'')+'</span></div>'+'<div class="lote-costura lote-costura-dia">🧵 <b>Aplicar a todos os registros deste dia:</b> Saída <input type="date" id="cd_s_'+d+'"> Volta <input type="date" id="cd_v_'+d+'"> Costureira <input list="lista-costureiras" id="cd_c_'+d+'" placeholder="nome" style="width:90px"> <button type="button" onclick="costuraDia(\''+d+'\')">Aplicar ao dia</button></div><div class="lote-lista">'+
+    if(!lst.length){ out+='<div class="lote-tam-bloco"><div class="lote-tam-hdr"><b>Cortes de '+br(d)+'</b> <span><b>'+Math.round(exT)+'</b> pç fora do plano</span></div>'+exHtml+'</div>'; return; }
+    out+='<div class="lote-tam-bloco"><div class="lote-tam-hdr"><b>Cortes de '+br(d)+'</b> <span><b>'+Math.round(tot+exT)+'</b> pç em '+(lst.length+exL.length)+' registro'+((lst.length+exL.length)>1?'s':'')+(exT>0?' ('+Math.round(tot)+' do plano + '+Math.round(exT)+' fora do plano)':'')+'</span></div>'+exHtml+'<div class="lote-costura lote-costura-dia">🧵 <b>Aplicar a todos os registros deste dia:</b> Saída <input type="date" id="cd_s_'+d+'"> Volta <input type="date" id="cd_v_'+d+'"> Costureira <input list="lista-costureiras" id="cd_c_'+d+'" placeholder="nome" style="width:90px"> <button type="button" onclick="costuraDia(\''+d+'\')">Aplicar ao dia</button></div><div class="lote-lista">'+
       lst.map(x=>{
         const rid='h_'+x.k.replace(/[^A-Za-z0-9]/g,'_'), pp=x.motivo.slice(8).split('|');
         const tag=x.enf?'<span class="lote-tag lote-tag-ok">enfesto '+esc(pp[3]||'')+'</span>':'<span class="lote-tag lote-tag-ok">lote</span>';
